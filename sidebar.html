@@ -1,0 +1,169 @@
+<div class="sidebar">
+    <h2>🏭 MEBEL ERP</h2>
+
+    <!-- Search Box -->
+    <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" placeholder="Modul qidirish..." onkeyup="searchModules(this.value)">
+    </div>
+
+    <!-- 1-bosqich: Core -->
+    <div class="menu-group">
+        <div class="menu-group-header" onclick="toggleGroup('core')">
+            <div class="menu-group-title">
+                <span class="menu-group-icon">📋</span>
+                <span>Asosiy modullar</span>
+            </div>
+            <span class="menu-toggle" id="toggle-core">▶</span>
+        </div>
+        <div class="menu-items" id="group-core">
+            <a href="1-buyurtmalar.html" class="menu-item">
+                <span class="menu-item-icon">📦</span> Buyurtmalar
+            </a>
+            <a href="2-katalog.html" class="menu-item">
+                <span class="menu-item-icon">🪑</span> Mahsulot katalogi
+            </a>
+            <a href="3-xom-ashyolar.html" class="menu-item">
+                <span class="menu-item-icon">📊</span> Xom ashyolar bazasi
+            </a>
+            <a href="4-sexlar.html" class="menu-item">
+                <span class="menu-item-icon">🏢</span> Sexlar boshqaruvi
+            </a>
+            <a href="5-xodimlar.html" class="menu-item">
+                <span class="menu-item-icon">👷</span> Xodimlar ro'yxati
+            </a>
+            <a href="6-sklad-balansi.html" class="menu-item">
+                <span class="menu-item-icon">📈</span> Sklad balansi
+            </a>
+        </div>
+    </div>
+
+    <!-- 2-bosqich: Production -->
+    <div class="menu-group">
+        <div class="menu-group-header" onclick="toggleGroup('production')">
+            <div class="menu-group-title">
+                <span class="menu-group-icon">🏭</span>
+                <span>Ishlab chiqarish</span>
+            </div>
+            <span class="menu-toggle" id="toggle-production">▶</span>
+        </div>
+        <div class="menu-items" id="group-production">
+            <a href="7-bom-kalkulyatsiya.html" class="menu-item">
+                <span class="menu-item-icon">📋</span> BOM va Kalkulyatsiya
+            </a>
+            <a href="8-routelar.html" class="menu-item">
+                <span class="menu-item-icon">🛤️</span> Ishlab chiqarish routelari
+            </a>
+            <a href="9-buyurtma-tayyorligi.html" class="menu-item">
+                <span class="menu-item-icon">✅</span> Buyurtma tayyorligi
+            </a>
+            <a href="10-tannarx-kalkulyatsiya.html" class="menu-item">
+                <span class="menu-item-icon">💰</span> Tannarx kalkulyatsiyasi
+            </a>
+            <a href="11-texnik-hujjatlar.html" class="menu-item">
+                <span class="menu-item-icon">📑</span> Texnik hujjatlar
+            </a>
+            <a href="12-barcode-qr-tracking.html" class="menu-item">
+                <span class="menu-item-icon">🔍</span> Barcode/QR tracking
+            </a>
+            <a href="13-mobile-app.html" class="menu-item">
+                <span class="menu-item-icon">📱</span> Mobil ilova (ishchilar)
+            </a>
+        </div>
+    </div>
+
+    <!-- 3-bosqich: HR & Finance -->
+    <div class="menu-group">
+        <div class="menu-group-header" onclick="toggleGroup('hr')">
+            <div class="menu-group-title">
+                <span class="menu-group-icon">💼</span>
+                <span>Ish haqi boshqaruvi</span>
+            </div>
+            <span class="menu-toggle" id="toggle-hr">▶</span>
+        </div>
+        <div class="menu-items" id="group-hr">
+            <a href="14-ish-haqi.html" class="menu-item">
+                <span class="menu-item-icon">💵</span> Ish haqi hisoblash
+            </a>
+        </div>
+    </div>
+
+    <!-- 4-bosqich: Sales & Integration -->
+    <div class="menu-group">
+        <div class="menu-group-header" onclick="toggleGroup('sales')">
+            <div class="menu-group-title">
+                <span class="menu-group-icon">📅</span>
+                <span>Rejalashtirish va nazorat</span>
+            </div>
+            <span class="menu-toggle" id="toggle-sales">▶</span>
+        </div>
+        <div class="menu-items" id="group-sales">
+            <a href="15-sifat-nazorati.html" class="menu-item">
+                <span class="menu-item-icon">🏆</span> Sifat nazorati (KPI)
+            </a>
+            <a href="16-supermarket.html" class="menu-item">
+                <span class="menu-item-icon">🏪</span> Supermarket integratsiyasi
+            </a>
+            <a href="17-mps.html" class="menu-item">
+                <span class="menu-item-icon">🤝</span> MPS (Yetkazib beruvchilar)
+            </a>
+            <a href="18-gantt-diagrams.html" class="menu-item">
+                <span class="menu-item-icon">📊</span> Gantt diagrammalari
+            </a>
+        </div>
+    </div>
+
+    <!-- 5-bosqich: Analytics & Planning -->
+    <div class="menu-group">
+        <div class="menu-group-header" onclick="toggleGroup('analytics')">
+            <div class="menu-group-title">
+                <span class="menu-group-icon">📈</span>
+                <span>Monitoring va hisobotlar</span>
+            </div>
+            <span class="menu-toggle" id="toggle-analytics">▶</span>
+        </div>
+        <div class="menu-items" id="group-analytics">
+            <a href="19-monitoring.html" class="menu-item">
+                <span class="menu-item-icon">🖥️</span> Real-time monitoring
+            </a>
+            <a href="20-hisobotlar.html" class="menu-item">
+                <span class="menu-item-icon">📊</span> Analitik hisobotlar
+            </a>
+        </div>
+    </div>
+
+    <!-- 6-bosqich: Advanced Planning -->
+    <div class="menu-group">
+        <div class="menu-group-header" onclick="toggleGroup('advanced')">
+            <div class="menu-group-title">
+                <span class="menu-group-icon">🚀</span>
+                <span>Ilg'or rejalashtirish</span>
+            </div>
+            <span class="menu-toggle" id="toggle-advanced">▶</span>
+        </div>
+        <div class="menu-items" id="group-advanced">
+            <a href="21-mrp.html" class="menu-item">
+                <span class="menu-item-icon">🔄</span> MRP tizimi
+            </a>
+            <a href="22-capacity-planning-new.html" class="menu-item">
+                <span class="menu-item-icon">⚙️</span> Quvvat rejalashtirish
+            </a>
+        </div>
+    </div>
+
+    <!-- 7-bosqich: Management -->
+    <div class="menu-group">
+        <div class="menu-group-header" onclick="toggleGroup('management')">
+            <div class="menu-group-title">
+                <span class="menu-group-icon">💼</span>
+                <span>Rahbariyat uchun</span>
+            </div>
+            <span class="menu-toggle" id="toggle-management">▶</span>
+        </div>
+        <div class="menu-items" id="group-management">
+            <a href="23-foyda-zarar-tahlili.html" class="menu-item">
+                <span class="menu-item-icon">💹</span> Foyda/zarar tahlili
+            </a>
+        </div>
+    </div>
+</div>

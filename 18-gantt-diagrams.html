@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gantt Diagrammalar - Mebel ERP</title>
+    <link rel="stylesheet" href="sidebar-styles.css">
     <style>
         * {
             margin: 0;
@@ -33,9 +34,7 @@
             cursor: pointer;
             transition: background 0.3s;
         }
-        .menu-item.active {
-            background: #34495e;
-        }
+
         .main-content {
             margin-left: 250px;
             padding: 20px;
@@ -502,41 +501,16 @@
             stroke-width: 3 !important;
         }
         @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            .main-content {
-                margin-left: 0;
-            }
-            .gantt-sidebar, .task-list {
+.gantt-sidebar, .task-list {
                 width: 200px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="sidebar">
-        <h2>🏭 Mebel ERP</h2>
-        <div class="sidebar-menu">
-            <div class="menu-item">📦 Buyurtmalar</div>
-            <div class="menu-item">🪑 Katalog</div>
-            <div class="menu-item">📊 Xom ashyolar</div>
-            <div class="menu-item">🏢 Sexlar</div>
-            <div class="menu-item">👷 Xodimlar</div>
-            <div class="menu-item">📈 Sklad balansi</div>
-            <div class="menu-item">📋 BOM/Kalkulyatsiya</div>
-            <div class="menu-item">🛤️ Routelar</div>
-            <div class="menu-item">📊 Buyurtma tayyorligi</div>
-            <div class="menu-item">💰 Tannarx kalkulyatsiya</div>
-            <div class="menu-item">📄 Texnik hujjatlar</div>
-            <div class="menu-item">📲 Barcode/QR Tracking</div>
-            <div class="menu-item">📱 Mobile App</div>
-            <div class="menu-item">💵 Ish haqi</div>
-            <div class="menu-item">✅ Sifat nazorati</div>
-            <div class="menu-item">🛒 Supermarket</div>
-            <div class="menu-item">📅 MPS</div>
-            <div class="menu-item active">📊 Gantt diagrammalar</div>
-        </div>
+    <div id="sidebar-container"></div>
+
+
     </div>
 
     <div class="main-content">
@@ -1110,5 +1084,6 @@
             });
         });
     </script>
+    <script src="sidebar-loader.js"></script>
 </body>
 </html>

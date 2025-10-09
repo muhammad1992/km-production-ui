@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Foyda/Zarar tahlili - Mebel ERP</title>
+    <link rel="stylesheet" href="sidebar-styles.css">
     <style>
         * {
             margin: 0;
@@ -14,111 +15,7 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #f5f5f5;
         }
-        .sidebar {
-            width: 280px;
-            background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
-            height: 100vh;
-            position: fixed;
-            color: white;
-            padding: 25px;
-            overflow-y: auto;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-        }
-        .sidebar h2 {
-            font-size: 24px;
-            margin-bottom: 25px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #34495e;
-            font-weight: 300;
-            letter-spacing: 1px;
-        }
-        .sidebar::-webkit-scrollbar {
-            width: 6px;
-        }
-        .sidebar::-webkit-scrollbar-track {
-            background: #34495e;
-        }
-        .sidebar::-webkit-scrollbar-thumb {
-            background: #5a6c7d;
-            border-radius: 3px;
-        }
-        .menu-group {
-            margin-bottom: 15px;
-            background: rgba(52, 73, 94, 0.5);
-            border-radius: 8px;
-            overflow: hidden;
-            transition: all 0.3s;
-        }
-        .menu-group:hover {
-            background: rgba(52, 73, 94, 0.8);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-        .menu-group-header {
-            padding: 16px 18px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            transition: background 0.3s;
-            font-weight: 500;
-            font-size: 15px;
-            letter-spacing: 0.5px;
-        }
-        .menu-group-header:hover {
-            background: rgba(61, 86, 110, 0.5);
-        }
-        .menu-group-icon {
-            margin-right: 12px;
-            font-size: 20px;
-        }
-        .menu-group-title {
-            flex: 1;
-            display: flex;
-            align-items: center;
-        }
-        .menu-toggle {
-            transition: transform 0.3s;
-            font-size: 14px;
-            opacity: 0.7;
-        }
-        .menu-toggle.expanded {
-            transform: rotate(90deg);
-        }
-        .menu-items {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.4s ease;
-            background: rgba(44, 62, 80, 0.3);
-        }
-        .menu-items.expanded {
-            max-height: 500px;
-        }
-        .menu-item {
-            padding: 14px 20px 14px 45px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            border-left: 4px solid transparent;
-            letter-spacing: 0.3px;
-            font-weight: 400;
-        }
-        .menu-item:hover {
-            background: rgba(52, 152, 219, 0.15);
-            border-left-color: #3498db;
-            padding-left: 50px;
-        }
-        .menu-item.active {
-            background: linear-gradient(90deg, rgba(231, 76, 60, 0.2) 0%, rgba(231, 76, 60, 0.1) 100%);
-            border-left-color: #e74c3c;
-            font-weight: 500;
-        }
-        .menu-item-icon {
-            margin-right: 12px;
-            opacity: 0.9;
-            font-size: 16px;
-        }
+
         .search-box {
             margin-bottom: 20px;
             position: relative;
@@ -468,175 +365,7 @@
     </style>
 </head>
 <body>
-    <div class="sidebar">
-        <h2>🏭 MEBEL ERP</h2>
-        
-        <!-- Modern Search Box -->
-        <div class="search-box">
-            <span class="search-icon">🔍</span>
-            <input type="text" placeholder="Modul qidirish..." onkeyup="searchModules(this.value)">
-        </div>
-        
-        <!-- 1-bosqich: Core -->
-        <div class="menu-group">
-            <div class="menu-group-header" onclick="toggleGroup('core')">
-                <div class="menu-group-title">
-                    <span class="menu-group-icon">📋</span>
-                    <span>Asosiy modullar</span>
-                </div>
-                <span class="menu-toggle" id="toggle-core">▶</span>
-            </div>
-            <div class="menu-items" id="group-core">
-                <div class="menu-item">
-                    <span class="menu-item-icon">📦</span> Buyurtmalar
-                </div>
-                <div class="menu-item">
-                    <span class="menu-item-icon">🪑</span> Mahsulot katalogi
-                </div>
-                <div class="menu-item">
-                    <span class="menu-item-icon">📊</span> Xom ashyolar bazasi
-                </div>
-                <div class="menu-item">
-                    <span class="menu-item-icon">🏢</span> Sexlar boshqaruvi
-                </div>
-                <div class="menu-item">
-                    <span class="menu-item-icon">👷</span> Xodimlar ro'yxati
-                </div>
-                <div class="menu-item">
-                    <span class="menu-item-icon">📈</span> Sklad balansi
-                </div>
-            </div>
-        </div>
-
-        <!-- 2-bosqich: Production -->
-        <div class="menu-group">
-            <div class="menu-group-header" onclick="toggleGroup('production')">
-                <div class="menu-group-title">
-                    <span class="menu-group-icon">🏭</span>
-                    <span>Ishlab chiqarish</span>
-                </div>
-                <span class="menu-toggle" id="toggle-production">▶</span>
-            </div>
-            <div class="menu-items" id="group-production">
-                <div class="menu-item">
-                    <span class="menu-item-icon">📋</span> BOM va Kalkulyatsiya
-                </div>
-                <div class="menu-item">
-                    <span class="menu-item-icon">🛤️</span> Ishlab chiqarish routelari
-                </div>
-                <div class="menu-item">
-                    <span class="menu-item-icon">📊</span> Buyurtma tayyorligi
-                </div>
-                <div class="menu-item">
-                    <span class="menu-item-icon">💰</span> Tannarx kalkulyatsiya
-                </div>
-                <div class="menu-item">
-                    <span class="menu-item-icon">📄</span> Texnik hujjatlar
-                </div>
-                <div class="menu-item">
-                    <span class="menu-item-icon">📲</span> Barcode/QR Tracking
-                </div>
-                <div class="menu-item">
-                    <span class="menu-item-icon">📱</span> Mobil ilova
-                </div>
-            </div>
-        </div>
-
-        <!-- 3-bosqich: Ish haqi -->
-        <div class="menu-group">
-            <div class="menu-group-header" onclick="toggleGroup('salary')">
-                <div class="menu-group-title">
-                    <span class="menu-group-icon">💵</span>
-                    <span>Ish haqi boshqaruvi</span>
-                </div>
-                <span class="menu-toggle" id="toggle-salary">▶</span>
-            </div>
-            <div class="menu-items" id="group-salary">
-                <div class="menu-item">
-                    <span class="menu-item-icon">💵</span> Ish haqi hisobi
-                </div>
-            </div>
-        </div>
-
-        <!-- 4-bosqich: Planning & Control -->
-        <div class="menu-group">
-            <div class="menu-group-header" onclick="toggleGroup('planning')">
-                <div class="menu-group-title">
-                    <span class="menu-group-icon">📅</span>
-                    <span>Rejalashtirish va nazorat</span>
-                </div>
-                <span class="menu-toggle" id="toggle-planning">▶</span>
-            </div>
-            <div class="menu-items" id="group-planning">
-                <div class="menu-item">
-                    <span class="menu-item-icon">✅</span> Sifat nazorati
-                </div>
-                <div class="menu-item">
-                    <span class="menu-item-icon">🛒</span> Supermarket tizimi
-                </div>
-                <div class="menu-item">
-                    <span class="menu-item-icon">📅</span> MPS (Master Schedule)
-                </div>
-                <div class="menu-item">
-                    <span class="menu-item-icon">📊</span> Gantt diagrammalar
-                </div>
-            </div>
-        </div>
-
-        <!-- 5-bosqich: Monitoring & Reports -->
-        <div class="menu-group">
-            <div class="menu-group-header" onclick="toggleGroup('monitoring')">
-                <div class="menu-group-title">
-                    <span class="menu-group-icon">📈</span>
-                    <span>Monitoring va hisobotlar</span>
-                </div>
-                <span class="menu-toggle" id="toggle-monitoring">▶</span>
-            </div>
-            <div class="menu-items" id="group-monitoring">
-                <div class="menu-item">
-                    <span class="menu-item-icon">📈</span> Real-time monitoring
-                </div>
-                <div class="menu-item">
-                    <span class="menu-item-icon">📊</span> Analitik hisobotlar
-                </div>
-            </div>
-        </div>
-
-        <!-- 6-bosqich: Advanced Planning -->
-        <div class="menu-group">
-            <div class="menu-group-header" onclick="toggleGroup('advanced')">
-                <div class="menu-group-title">
-                    <span class="menu-group-icon">🚀</span>
-                    <span>Ilg'or rejalashtirish</span>
-                </div>
-                <span class="menu-toggle" id="toggle-advanced">▶</span>
-            </div>
-            <div class="menu-items" id="group-advanced">
-                <div class="menu-item">
-                    <span class="menu-item-icon">📋</span> MRP tizimi
-                </div>
-                <div class="menu-item">
-                    <span class="menu-item-icon">⚙️</span> Capacity Planning
-                </div>
-            </div>
-        </div>
-
-        <!-- 7-bosqich: Management -->
-        <div class="menu-group">
-            <div class="menu-group-header" onclick="toggleGroup('management')">
-                <div class="menu-group-title">
-                    <span class="menu-group-icon">💼</span>
-                    <span>Rahbariyat uchun</span>
-                </div>
-                <span class="menu-toggle expanded" id="toggle-management">▶</span>
-            </div>
-            <div class="menu-items expanded" id="group-management">
-                <div class="menu-item active">
-                    <span class="menu-item-icon">💰</span> Foyda/Zarar tahlili
-                </div>
-            </div>
-        </div>
-    </div>
+    <div id="sidebar-container"></div>
 
     <div class="main-content">
         <div class="header">
@@ -1133,19 +862,6 @@
     </div>
 
     <script>
-        function toggleGroup(groupId) {
-            const groupElement = document.getElementById('group-' + groupId);
-            const toggleIcon = document.getElementById('toggle-' + groupId);
-            
-            if (groupElement.classList.contains('expanded')) {
-                groupElement.classList.remove('expanded');
-                toggleIcon.classList.remove('expanded');
-            } else {
-                groupElement.classList.add('expanded');
-                toggleIcon.classList.add('expanded');
-            }
-        }
-
         function toggleDetails(orderId) {
             const detailsRow = document.getElementById(orderId);
             const icon = document.getElementById('icon-' + orderId);
@@ -1158,55 +874,7 @@
                 icon.classList.add('expanded');
             }
         }
-        
-        function searchModules(searchText) {
-            const groups = document.querySelectorAll('.menu-group');
-            searchText = searchText.toLowerCase();
-            
-            if (searchText === '') {
-                // If search is empty, show all groups and collapse all except management
-                groups.forEach(group => {
-                    group.style.display = 'block';
-                    const items = group.querySelector('.menu-items');
-                    const toggle = group.querySelector('.menu-toggle');
-                    if (items.id !== 'group-management') {
-                        items.classList.remove('expanded');
-                        toggle.classList.remove('expanded');
-                    }
-                });
-            } else {
-                // Search and expand matching groups
-                groups.forEach(group => {
-                    const menuItems = group.querySelectorAll('.menu-item');
-                    let hasMatch = false;
-                    
-                    menuItems.forEach(item => {
-                        const text = item.textContent.toLowerCase();
-                        if (text.includes(searchText)) {
-                            hasMatch = true;
-                            item.style.background = '#3d566e';
-                        } else {
-                            item.style.background = '';
-                        }
-                    });
-                    
-                    if (hasMatch) {
-                        group.style.display = 'block';
-                        const items = group.querySelector('.menu-items');
-                        const toggle = group.querySelector('.menu-toggle');
-                        items.classList.add('expanded');
-                        toggle.classList.add('expanded');
-                    } else {
-                        group.style.display = 'none';
-                    }
-                });
-            }
-        }
-        
-        // Auto-expand active menu group on load
-        window.addEventListener('DOMContentLoaded', function() {
-            // Management group is already expanded by default since it contains the active item
-        });
     </script>
+    <script src="sidebar-loader.js"></script>
 </body>
 </html>
