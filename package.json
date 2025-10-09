@@ -1,0 +1,15 @@
+{
+  "name": "mebel-erp-mockups",
+  "version": "1.0.0",
+  "description": "Mebel ERP System Mockups",
+  "main": "index.html",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": ["erp", "mebel", "mockups"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {}
+}
