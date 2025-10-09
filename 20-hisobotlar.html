@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hisobotlar - Mebel ERP</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+        }
+        .sidebar {
+            width: 250px;
+            background: #2c3e50;
+            height: 100vh;
+            position: fixed;
+            color: white;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .sidebar-menu {
+            margin-top: 30px;
+        }
+        .menu-item {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .menu-item.active {
+            background: #34495e;
+        }
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+        .header {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .report-tabs {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+        }
+        .tab-btn {
+            padding: 10px 20px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+        .tab-btn.active {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        .tab-btn:hover {
+            background: #ecf0f1;
+        }
+        .tab-btn.active:hover {
+            background: #2980b9;
+        }
+        .filter-bar {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .filter-label {
+            font-size: 13px;
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+        select, input {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+        }
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+        .report-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .report-header {
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .report-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+        .report-subtitle {
+            font-size: 13px;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+        .export-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        .summary-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .summary-info {
+            flex: 1;
+        }
+        .summary-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        .summary-label {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+        .summary-change {
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+        .change-up {
+            color: #27ae60;
+        }
+        .change-down {
+            color: #e74c3c;
+        }
+        .summary-icon {
+            font-size: 32px;
+            opacity: 0.3;
+        }
+        .report-body {
+            padding: 20px;
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .data-table th {
+            background: #34495e;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 500;
+            font-size: 13px;
+        }
+        .data-table td {
+            padding: 12px;
+            border-bottom: 1px solid #ecf0f1;
+            font-size: 13px;
+        }
+        .data-table tr:hover {
+            background: #f8f9fa;
+        }
+        .chart-container {
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .chart-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        .chart-content {
+            height: 300px;
+            position: relative;
+        }
+        .progress-bar {
+            height: 25px;
+            background: #ecf0f1;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+        .progress-fill {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            border-radius: 12px;
+        }
+        .deadline-status {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        .deadline-card {
+            padding: 15px;
+            border: 2px solid;
+            border-radius: 8px;
+            background: white;
+        }
+        .deadline-good {
+            border-color: #27ae60;
+            background: #e8f5e9;
+        }
+        .deadline-warning {
+            border-color: #f39c12;
+            background: #fff3e0;
+        }
+        .deadline-bad {
+            border-color: #e74c3c;
+            background: #ffebee;
+        }
+        .material-usage-table {
+            width: 100%;
+            margin-top: 20px;
+        }
+        .material-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px;
+            border-bottom: 1px solid #ecf0f1;
+            align-items: center;
+        }
+        .material-row:hover {
+            background: #f8f9fa;
+        }
+        .material-name {
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        .material-details {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        .material-amount {
+            font-weight: 600;
+            color: #3498db;
+        }
+        .material-cost {
+            color: #7f8c8d;
+            font-size: 12px;
+        }
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .comparison-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .comparison-title {
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ecf0f1;
+        }
+        .comparison-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 13px;
+        }
+        .comparison-label {
+            color: #7f8c8d;
+        }
+        .comparison-value {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        .pie-chart {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: conic-gradient(
+                #3498db 0deg 126deg,
+                #27ae60 126deg 216deg,
+                #f39c12 216deg 288deg,
+                #e74c3c 288deg 324deg,
+                #9b59b6 324deg 360deg
+            );
+            margin: 20px auto;
+            position: relative;
+        }
+        .pie-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120px;
+            height: 120px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .pie-legend {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+        }
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+        }
+        .print-header {
+            display: none;
+        }
+        @media print {
+            .sidebar, .header, .filter-bar, .report-tabs {
+                display: none;
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .print-header {
+                display: block;
+                text-align: center;
+                margin-bottom: 20px;
+            }
+            .export-buttons {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>🏭 Mebel ERP</h2>
+        <div class="sidebar-menu">
+            <div class="menu-item">📦 Buyurtmalar</div>
+            <div class="menu-item">🪑 Katalog</div>
+            <div class="menu-item">📊 Xom ashyolar</div>
+            <div class="menu-item">🏢 Sexlar</div>
+            <div class="menu-item">👷 Xodimlar</div>
+            <div class="menu-item">📈 Sklad balansi</div>
+            <div class="menu-item">📋 BOM/Kalkulyatsiya</div>
+            <div class="menu-item">🛤️ Routelar</div>
+            <div class="menu-item">📊 Buyurtma tayyorligi</div>
+            <div class="menu-item">💰 Tannarx kalkulyatsiya</div>
+            <div class="menu-item">📄 Texnik hujjatlar</div>
+            <div class="menu-item">📲 Barcode/QR Tracking</div>
+            <div class="menu-item">📱 Mobile App</div>
+            <div class="menu-item">💵 Ish haqi</div>
+            <div class="menu-item">✅ Sifat nazorati</div>
+            <div class="menu-item">🛒 Supermarket</div>
+            <div class="menu-item">📅 MPS</div>
+            <div class="menu-item">📊 Gantt diagrammalar</div>
+            <div class="menu-item">📈 Monitoring</div>
+            <div class="menu-item active">📊 Hisobotlar</div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="print-header">
+            <h1>🏭 Mebel ERP - Hisobot</h1>
+            <p>Sana: <span id="printDate"></span></p>
+        </div>
+
+        <div class="header">
+            <div>
+                <h1>Hisobotlar va Tahlillar</h1>
+                <p style="color: #7f8c8d; margin-top: 5px;">Ishlab chiqarish ma'lumotlari tahlili</p>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn btn-success" onclick="exportAllReports()">📊 Barcha hisobotlar</button>
+                <button class="btn btn-primary" onclick="window.print()">🖨️ Chop etish</button>
+            </div>
+        </div>
+
+        <div class="report-tabs">
+            <button class="tab-btn active" onclick="showReport('monthly')">📅 Oylik hisobot</button>
+            <button class="tab-btn" onclick="showReport('materials')">📦 Xom ashyo sarfi</button>
+            <button class="tab-btn" onclick="showReport('deadlines')">⏰ Muddatlar tahlili</button>
+            <button class="tab-btn" onclick="showReport('requirements')">📋 Material talablar</button>
+            <button class="tab-btn" onclick="showReport('production')">🏭 Ishlab chiqarish</button>
+            <button class="tab-btn" onclick="showReport('financial')">💰 Moliyaviy</button>
+            <button class="tab-btn" onclick="showReport('quality')">✅ Sifat nazorati</button>
+            <button class="tab-btn" onclick="showReport('employees')">👷 Xodimlar samaradorligi</button>
+        </div>
+
+        <div class="filter-bar">
+            <div class="filter-group">
+                <span class="filter-label">Davr:</span>
+                <select id="periodSelect">
+                    <option>Yanvar 2025</option>
+                    <option>Dekabr 2024</option>
+                    <option>Noyabr 2024</option>
+                    <option>4-kvartal 2024</option>
+                    <option>2024 yil</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <span class="filter-label">Sex:</span>
+                <select>
+                    <option>Barcha sexlar</option>
+                    <option>Kesish sexi</option>
+                    <option>Yig'ish sexi</option>
+                    <option>Bo'yash sexi</option>
+                    <option>Furnitura sexi</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <span class="filter-label">Mahsulot:</span>
+                <select>
+                    <option>Barcha mahsulotlar</option>
+                    <option>Oshxona to'plami</option>
+                    <option>Yotoq to'plami</option>
+                    <option>Ofis mebellari</option>
+                </select>
+            </div>
+            <button class="btn btn-primary btn-sm">🔍 Filtr</button>
+            <button class="btn btn-warning btn-sm" onclick="exportToExcel()">📥 Excel yuklash</button>
+        </div>
+
+        <!-- Oylik hisobot -->
+        <div id="monthlyReport" class="report-section">
+            <div class="report-container">
+                <div class="report-header">
+                    <div>
+                        <div class="report-title">Yanvar 2025 - Oylik hisobot</div>
+                        <div class="report-subtitle">01.01.2025 - 31.01.2025 davr uchun</div>
+                    </div>
+                    <div class="export-buttons">
+                        <button class="btn btn-sm" style="background: white; color: #667eea;" onclick="exportToExcel('monthly')">📥 Excel</button>
+                        <button class="btn btn-sm" style="background: white; color: #667eea;" onclick="exportToPDF('monthly')">📄 PDF</button>
+                    </div>
+                </div>
+
+                <div class="summary-cards">
+                    <div class="summary-card" style="border-color: #3498db;">
+                        <div class="summary-info">
+                            <div class="summary-value">286</div>
+                            <div class="summary-label">Jami buyurtmalar</div>
+                            <div class="summary-change change-up">↑ 15% o'tgan oyga nisbatan</div>
+                        </div>
+                        <div class="summary-icon">📦</div>
+                    </div>
+                    <div class="summary-card" style="border-color: #27ae60;">
+                        <div class="summary-info">
+                            <div class="summary-value">245</div>
+                            <div class="summary-label">Tugallangan</div>
+                            <div class="summary-change change-up">↑ 85.7% bajarilish</div>
+                        </div>
+                        <div class="summary-icon">✅</div>
+                    </div>
+                    <div class="summary-card" style="border-color: #f39c12;">
+                        <div class="summary-info">
+                            <div class="summary-value">28</div>
+                            <div class="summary-label">Jarayonda</div>
+                            <div class="summary-change">9.8% hissa</div>
+                        </div>
+                        <div class="summary-icon">⚙️</div>
+                    </div>
+                    <div class="summary-card" style="border-color: #e74c3c;">
+                        <div class="summary-info">
+                            <div class="summary-value">13</div>
+                            <div class="summary-label">Bekor qilingan</div>
+                            <div class="summary-change change-down">↓ 4.5%</div>
+                        </div>
+                        <div class="summary-icon">❌</div>
+                    </div>
+                </div>
+
+                <div class="report-body">
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <div class="chart-title">📊 Kunlik buyurtmalar dinamikasi</div>
+                            <select style="padding: 5px 10px; border-radius: 4px; border: 1px solid #ddd;">
+                                <option>Chiziqli grafik</option>
+                                <option>Ustunli diagramma</option>
+                                <option>Jadval ko'rinishi</option>
+                            </select>
+                        </div>
+                        <div style="height: 250px; background: #f8f9fa; border-radius: 5px; padding: 20px;">
+                            <canvas id="monthlyChart" style="width: 100%; height: 100%;"></canvas>
+                        </div>
+                    </div>
+
+                    <h3 style="margin: 20px 0 10px; font-size: 16px;">Mahsulotlar bo'yicha taqsimot</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Mahsulot turi</th>
+                                <th>Buyurtmalar soni</th>
+                                <th>Tugallangan</th>
+                                <th>Jarayonda</th>
+                                <th>Muddatida</th>
+                                <th>Daromad (mln so'm)</th>
+                                <th>Ulush (%)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>🪑 Oshxona to'plami</strong></td>
+                                <td>98</td>
+                                <td style="color: #27ae60;">85</td>
+                                <td style="color: #f39c12;">10</td>
+                                <td>92%</td>
+                                <td>1,250.5</td>
+                                <td>34.3%</td>
+                            </tr>
+                            <tr>
+                                <td><strong>🛏️ Yotoq to'plami</strong></td>
+                                <td>76</td>
+                                <td style="color: #27ae60;">68</td>
+                                <td style="color: #f39c12;">7</td>
+                                <td>88%</td>
+                                <td>875.2</td>
+                                <td>26.6%</td>
+                            </tr>
+                            <tr>
+                                <td><strong>💼 Ofis mebellari</strong></td>
+                                <td>65</td>
+                                <td style="color: #27ae60;">58</td>
+                                <td style="color: #f39c12;">6</td>
+                                <td>95%</td>
+                                <td>980.7</td>
+                                <td>22.7%</td>
+                            </tr>
+                            <tr>
+                                <td><strong>🚪 Shkaf-kupe</strong></td>
+                                <td>32</td>
+                                <td style="color: #27ae60;">28</td>
+                                <td style="color: #f39c12;">4</td>
+                                <td>90%</td>
+                                <td>420.3</td>
+                                <td>11.2%</td>
+                            </tr>
+                            <tr>
+                                <td><strong>📦 Boshqa</strong></td>
+                                <td>15</td>
+                                <td style="color: #27ae60;">6</td>
+                                <td style="color: #f39c12;">1</td>
+                                <td>85%</td>
+                                <td>118.8</td>
+                                <td>5.2%</td>
+                            </tr>
+                            <tr style="background: #f8f9fa; font-weight: bold;">
+                                <td>JAMI:</td>
+                                <td>286</td>
+                                <td>245</td>
+                                <td>28</td>
+                                <td>91.2%</td>
+                                <td>3,645.5</td>
+                                <td>100%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Xom ashyo sarfi -->
+        <div id="materialsReport" class="report-section" style="display: none;">
+            <div class="report-container">
+                <div class="report-header" style="background: linear-gradient(135deg, #f39c12, #e67e22);">
+                    <div>
+                        <div class="report-title">Xom ashyo sarfi hisoboti</div>
+                        <div class="report-subtitle">Yanvar 2025 - Material iste'moli tahlili</div>
+                    </div>
+                    <div class="export-buttons">
+                        <button class="btn btn-sm" style="background: white; color: #f39c12;" onclick="exportToExcel('materials')">📥 Excel</button>
+                        <button class="btn btn-sm" style="background: white; color: #f39c12;" onclick="exportToPDF('materials')">📄 PDF</button>
+                    </div>
+                </div>
+
+                <div class="summary-cards">
+                    <div class="summary-card" style="border-color: #3498db;">
+                        <div class="summary-info">
+                            <div class="summary-value">2,850</div>
+                            <div class="summary-label">DSP listlar</div>
+                            <div class="summary-change">18mm va 16mm</div>
+                        </div>
+                        <div class="summary-icon">🪵</div>
+                    </div>
+                    <div class="summary-card" style="border-color: #27ae60;">
+                        <div class="summary-info">
+                            <div class="summary-value">1,420</div>
+                            <div class="summary-label">MDF listlar</div>
+                            <div class="summary-change">Fasad uchun</div>
+                        </div>
+                        <div class="summary-icon">🪵</div>
+                    </div>
+                    <div class="summary-card" style="border-color: #f39c12;">
+                        <div class="summary-info">
+                            <div class="summary-value">8,500m</div>
+                            <div class="summary-label">Kromka</div>
+                            <div class="summary-change">PVC 2mm</div>
+                        </div>
+                        <div class="summary-icon">📏</div>
+                    </div>
+                    <div class="summary-card" style="border-color: #e74c3c;">
+                        <div class="summary-info">
+                            <div class="summary-value">385.5</div>
+                            <div class="summary-label">Mln so'm</div>
+                            <div class="summary-change change-up">↑ 12% xarajat</div>
+                        </div>
+                        <div class="summary-icon">💰</div>
+                    </div>
+                </div>
+
+                <div class="report-body">
+                    <h3 style="margin-bottom: 15px;">📊 Asosiy materiallar sarfi</h3>
+                    <div class="material-usage-table">
+                        <div class="material-row">
+                            <div>
+                                <div class="material-name">DSP 18mm (Oq)</div>
+                                <div style="font-size: 12px; color: #7f8c8d;">Asosiy korpus materiali</div>
+                            </div>
+                            <div class="material-details">
+                                <div class="material-amount">1,850 list</div>
+                                <div class="material-cost">185.0 mln so'm</div>
+                                <div class="progress-bar" style="width: 150px; height: 8px; margin: 0;">
+                                    <div class="progress-fill" style="background: #3498db; width: 65%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="material-row">
+                            <div>
+                                <div class="material-name">DSP 16mm</div>
+                                <div style="font-size: 12px; color: #7f8c8d;">Polkalar va orqa devor</div>
+                            </div>
+                            <div class="material-details">
+                                <div class="material-amount">1,000 list</div>
+                                <div class="material-cost">90.0 mln so'm</div>
+                                <div class="progress-bar" style="width: 150px; height: 8px; margin: 0;">
+                                    <div class="progress-fill" style="background: #3498db; width: 35%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="material-row">
+                            <div>
+                                <div class="material-name">MDF 16mm</div>
+                                <div style="font-size: 12px; color: #7f8c8d;">Fasadlar uchun</div>
+                            </div>
+                            <div class="material-details">
+                                <div class="material-amount">1,420 list</div>
+                                <div class="material-cost">142.0 mln so'm</div>
+                                <div class="progress-bar" style="width: 150px; height: 8px; margin: 0;">
+                                    <div class="progress-fill" style="background: #27ae60; width: 50%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="material-row">
+                            <div>
+                                <div class="material-name">Kromka PVC 2mm</div>
+                                <div style="font-size: 12px; color: #7f8c8d;">Chetlarni yopish</div>
+                            </div>
+                            <div class="material-details">
+                                <div class="material-amount">8,500 metr</div>
+                                <div class="material-cost">25.5 mln so'm</div>
+                                <div class="progress-bar" style="width: 150px; height: 8px; margin: 0;">
+                                    <div class="progress-fill" style="background: #f39c12; width: 70%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="material-row">
+                            <div>
+                                <div class="material-name">Ilgaklar (Blum)</div>
+                                <div style="font-size: 12px; color: #7f8c8d;">Yumshoq yopiluvchi</div>
+                            </div>
+                            <div class="material-details">
+                                <div class="material-amount">3,200 dona</div>
+                                <div class="material-cost">48.0 mln so'm</div>
+                                <div class="progress-bar" style="width: 150px; height: 8px; margin: 0;">
+                                    <div class="progress-fill" style="background: #9b59b6; width: 45%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="material-row">
+                            <div>
+                                <div class="material-name">Bo'yoq va lak</div>
+                                <div style="font-size: 12px; color: #7f8c8d;">Turli ranglar</div>
+                            </div>
+                            <div class="material-details">
+                                <div class="material-amount">450 litr</div>
+                                <div class="material-cost">36.0 mln so'm</div>
+                                <div class="progress-bar" style="width: 150px; height: 8px; margin: 0;">
+                                    <div class="progress-fill" style="background: #e74c3c; width: 80%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="comparison-grid">
+                        <div class="comparison-card">
+                            <div class="comparison-title">📈 O'tgan oy bilan taqqoslash</div>
+                            <div class="comparison-item">
+                                <span class="comparison-label">DSP sarfi:</span>
+                                <span class="comparison-value" style="color: #e74c3c;">+15%</span>
+                            </div>
+                            <div class="comparison-item">
+                                <span class="comparison-label">MDF sarfi:</span>
+                                <span class="comparison-value" style="color: #e74c3c;">+8%</span>
+                            </div>
+                            <div class="comparison-item">
+                                <span class="comparison-label">Kromka sarfi:</span>
+                                <span class="comparison-value" style="color: #27ae60;">-5%</span>
+                            </div>
+                            <div class="comparison-item">
+                                <span class="comparison-label">Furnitura:</span>
+                                <span class="comparison-value" style="color: #e74c3c;">+12%</span>
+                            </div>
+                            <div class="comparison-item">
+                                <span class="comparison-label">Umumiy xarajat:</span>
+                                <span class="comparison-value" style="color: #e74c3c;">+10.5%</span>
+                            </div>
+                        </div>
+
+                        <div class="comparison-card">
+                            <div class="comparison-title">💰 Xarajat taqsimoti</div>
+                            <div class="pie-chart">
+                                <div class="pie-center">
+                                    <div style="font-size: 24px; font-weight: bold;">385.5</div>
+                                    <div style="font-size: 12px; color: #7f8c8d;">mln so'm</div>
+                                </div>
+                            </div>
+                            <div class="pie-legend">
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background: #3498db;"></div>
+                                    <span>DSP (35%)</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background: #27ae60;"></div>
+                                    <span>MDF (25%)</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background: #f39c12;"></div>
+                                    <span>Furnitura (20%)</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background: #e74c3c;"></div>
+                                    <span>Bo'yoq (10%)</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background: #9b59b6;"></div>
+                                    <span>Boshqa (10%)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Muddatlar tahlili -->
+        <div id="deadlinesReport" class="report-section" style="display: none;">
+            <div class="report-container">
+                <div class="report-header" style="background: linear-gradient(135deg, #e74c3c, #c0392b);">
+                    <div>
+                        <div class="report-title">Muddatlarga rioya qilish tahlili</div>
+                        <div class="report-subtitle">Yanvar 2025 - Yetkazib berish muddatlari</div>
+                    </div>
+                    <div class="export-buttons">
+                        <button class="btn btn-sm" style="background: white; color: #e74c3c;" onclick="exportToExcel('deadlines')">📥 Excel</button>
+                    </div>
+                </div>
+
+                <div class="summary-cards">
+                    <div class="summary-card" style="border-color: #27ae60;">
+                        <div class="summary-info">
+                            <div class="summary-value">198</div>
+                            <div class="summary-label">Muddatida</div>
+                            <div class="summary-change change-up">80.8%</div>
+                        </div>
+                        <div class="summary-icon">✅</div>
+                    </div>
+                    <div class="summary-card" style="border-color: #f39c12;">
+                        <div class="summary-info">
+                            <div class="summary-value">32</div>
+                            <div class="summary-label">1-3 kun kech</div>
+                            <div class="summary-change">13.1%</div>
+                        </div>
+                        <div class="summary-icon">⚠️</div>
+                    </div>
+                    <div class="summary-card" style="border-color: #e74c3c;">
+                        <div class="summary-info">
+                            <div class="summary-value">15</div>
+                            <div class="summary-label">3+ kun kech</div>
+                            <div class="summary-change change-down">6.1%</div>
+                        </div>
+                        <div class="summary-icon">🚨</div>
+                    </div>
+                    <div class="summary-card" style="border-color: #3498db;">
+                        <div class="summary-info">
+                            <div class="summary-value">4.2</div>
+                            <div class="summary-label">O'rtacha kun</div>
+                            <div class="summary-change">ishlab chiqarish</div>
+                        </div>
+                        <div class="summary-icon">📅</div>
+                    </div>
+                </div>
+
+                <div class="report-body">
+                    <h3 style="margin-bottom: 15px;">📊 Sexlar bo'yicha muddatlarga rioya qilish</h3>
+                    
+                    <div class="deadline-status">
+                        <div class="deadline-card deadline-good">
+                            <h4 style="margin-bottom: 10px;">✅ Kesish sexi</h4>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="background: #27ae60; width: 92%;">92%</div>
+                            </div>
+                            <div style="font-size: 13px;">
+                                <div>Muddatida: 230/250 buyurtma</div>
+                                <div>O'rtacha vaqt: 1.5 kun</div>
+                            </div>
+                        </div>
+                        <div class="deadline-card deadline-warning">
+                            <h4 style="margin-bottom: 10px;">⚠️ Yig'ish sexi</h4>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="background: #f39c12; width: 78%;">78%</div>
+                            </div>
+                            <div style="font-size: 13px;">
+                                <div>Muddatida: 195/250 buyurtma</div>
+                                <div>O'rtacha vaqt: 2.8 kun</div>
+                            </div>
+                        </div>
+                        <div class="deadline-card deadline-good">
+                            <h4 style="margin-bottom: 10px;">✅ Bo'yash sexi</h4>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="background: #27ae60; width: 88%;">88%</div>
+                            </div>
+                            <div style="font-size: 13px;">
+                                <div>Muddatida: 176/200 buyurtma</div>
+                                <div>O'rtacha vaqt: 1.2 kun</div>
+                            </div>
+                        </div>
+                        <div class="deadline-card deadline-bad">
+                            <h4 style="margin-bottom: 10px;">🚨 Furnitura sexi</h4>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="background: #e74c3c; width: 65%;">65%</div>
+                            </div>
+                            <div style="font-size: 13px;">
+                                <div>Muddatida: 130/200 buyurtma</div>
+                                <div>O'rtacha vaqt: 3.5 kun</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 style="margin: 20px 0 10px;">Kechikish sabablari tahlili</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Sabab</th>
+                                <th>Holatlar soni</th>
+                                <th>Ulush (%)</th>
+                                <th>O'rtacha kechikish</th>
+                                <th>Zarar (mln so'm)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Xom ashyo tanqisligi</td>
+                                <td>18</td>
+                                <td>38.3%</td>
+                                <td>2.5 kun</td>
+                                <td style="color: #e74c3c;">12.5</td>
+                            </tr>
+                            <tr>
+                                <td>Ishchilar yetishmasligi</td>
+                                <td>12</td>
+                                <td>25.5%</td>
+                                <td>1.8 kun</td>
+                                <td style="color: #e74c3c;">8.2</td>
+                            </tr>
+                            <tr>
+                                <td>Texnik nosozliklar</td>
+                                <td>8</td>
+                                <td>17.0%</td>
+                                <td>3.2 kun</td>
+                                <td style="color: #e74c3c;">15.8</td>
+                            </tr>
+                            <tr>
+                                <td>Dizayn o'zgarishlari</td>
+                                <td>6</td>
+                                <td>12.8%</td>
+                                <td>2.0 kun</td>
+                                <td style="color: #e74c3c;">5.5</td>
+                            </tr>
+                            <tr>
+                                <td>Boshqa sabablar</td>
+                                <td>3</td>
+                                <td>6.4%</td>
+                                <td>1.5 kun</td>
+                                <td style="color: #e74c3c;">2.0</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Material talablar -->
+        <div id="requirementsReport" class="report-section" style="display: none;">
+            <div class="report-container">
+                <div class="report-header" style="background: linear-gradient(135deg, #27ae60, #229954);">
+                    <div>
+                        <div class="report-title">Zarur xom ashyolar prognozi</div>
+                        <div class="report-subtitle">Keyingi oy uchun material talablar</div>
+                    </div>
+                    <div class="export-buttons">
+                        <button class="btn btn-sm" style="background: white; color: #27ae60;" onclick="exportToExcel('requirements')">📥 Excel</button>
+                    </div>
+                </div>
+
+                <div class="report-body">
+                    <h3 style="margin-bottom: 15px;">📋 Fevral 2025 uchun prognoz</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Material nomi</th>
+                                <th>Hozirgi zahira</th>
+                                <th>Kutilayotgan sarf</th>
+                                <th>Kerakli miqdor</th>
+                                <th>Buyurtma sanasi</th>
+                                <th>Summa (mln so'm)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>DSP 18mm (Oq)</td>
+                                <td style="color: #e74c3c;">120 list</td>
+                                <td>1,950 list</td>
+                                <td style="font-weight: bold;">1,830 list</td>
+                                <td style="color: #e74c3c; font-weight: bold;">22.01.2025</td>
+                                <td>183.0</td>
+                            </tr>
+                            <tr>
+                                <td>MDF 16mm</td>
+                                <td style="color: #f39c12;">280 list</td>
+                                <td>1,500 list</td>
+                                <td style="font-weight: bold;">1,220 list</td>
+                                <td style="color: #f39c12;">25.01.2025</td>
+                                <td>122.0</td>
+                            </tr>
+                            <tr>
+                                <td>Kromka PVC 2mm</td>
+                                <td style="color: #27ae60;">850 metr</td>
+                                <td>9,000 metr</td>
+                                <td style="font-weight: bold;">8,150 metr</td>
+                                <td>28.01.2025</td>
+                                <td>24.5</td>
+                            </tr>
+                            <tr>
+                                <td>Ilgaklar (Blum)</td>
+                                <td style="color: #27ae60;">320 dona</td>
+                                <td>3,500 dona</td>
+                                <td style="font-weight: bold;">3,180 dona</td>
+                                <td>30.01.2025</td>
+                                <td>47.7</td>
+                            </tr>
+                            <tr>
+                                <td>Bo'yoq (Oq mat)</td>
+                                <td style="color: #e74c3c;">12 litr</td>
+                                <td>480 litr</td>
+                                <td style="font-weight: bold;">468 litr</td>
+                                <td style="color: #e74c3c; font-weight: bold;">20.01.2025</td>
+                                <td>37.4</td>
+                            </tr>
+                            <tr style="background: #f8f9fa; font-weight: bold;">
+                                <td colspan="5">JAMI BUYURTMA QIYMATI:</td>
+                                <td style="font-size: 18px; color: #2c3e50;">414.6</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div style="margin-top: 20px; padding: 15px; background: #fff3e0; border-radius: 8px; border-left: 3px solid #f39c12;">
+                        <h4 style="margin-bottom: 10px;">⚠️ Diqqat! Shoshilinch buyurtmalar:</h4>
+                        <ul style="margin: 0; padding-left: 20px; font-size: 14px;">
+                            <li style="margin-bottom: 5px;"><strong>Bo'yoq</strong> - 20.01.2025 gacha buyurtma berish kerak (1 kun qoldi)</li>
+                            <li style="margin-bottom: 5px;"><strong>DSP 18mm</strong> - 22.01.2025 gacha buyurtma berish kerak (3 kun qoldi)</li>
+                            <li><strong>MDF 16mm</strong> - 25.01.2025 gacha buyurtma berish kerak (6 kun qoldi)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showReport(reportType) {
+            // Hide all reports
+            document.querySelectorAll('.report-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected report
+            const reportMap = {
+                'monthly': 'monthlyReport',
+                'materials': 'materialsReport',
+                'deadlines': 'deadlinesReport',
+                'requirements': 'requirementsReport'
+            };
+            
+            if (reportMap[reportType]) {
+                document.getElementById(reportMap[reportType]).style.display = 'block';
+            }
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+
+        function exportToExcel(reportType) {
+            // Simulate Excel export
+            const reportName = reportType || 'hisobot';
+            const date = new Date().toISOString().split('T')[0];
+            const filename = `${reportName}_${date}.xlsx`;
+            
+            alert(`Excel fayl yuklanmoqda: ${filename}\n\nBu demo versiya. Real tizimda fayl yuklanadi.`);
+            
+            // Real implementation would generate actual Excel file
+            // Using libraries like SheetJS or server-side generation
+        }
+
+        function exportToPDF(reportType) {
+            // Simulate PDF export
+            const reportName = reportType || 'hisobot';
+            const date = new Date().toISOString().split('T')[0];
+            const filename = `${reportName}_${date}.pdf`;
+            
+            alert(`PDF fayl yuklanmoqda: ${filename}\n\nBu demo versiya. Real tizimda fayl yuklanadi.`);
+        }
+
+        function exportAllReports() {
+            alert('Barcha hisobotlar ZIP faylda yuklanmoqda...\n\nBu demo versiya. Real tizimda barcha hisobotlar bitta arxivda yuklanadi.');
+        }
+
+        // Set print date
+        document.getElementById('printDate') && (document.getElementById('printDate').textContent = new Date().toLocaleDateString('uz-UZ'));
+
+        // Simulate chart rendering
+        window.addEventListener('load', function() {
+            const canvas = document.getElementById('monthlyChart');
+            if (canvas && canvas.getContext) {
+                const ctx = canvas.getContext('2d');
+                // Simple line chart simulation
+                ctx.strokeStyle = '#3498db';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(10, 100);
+                ctx.lineTo(50, 80);
+                ctx.lineTo(100, 60);
+                ctx.lineTo(150, 75);
+                ctx.lineTo(200, 40);
+                ctx.lineTo(250, 55);
+                ctx.lineTo(300, 30);
+                ctx.stroke();
+            }
+        });
+    </script>
+</body>
+</html>

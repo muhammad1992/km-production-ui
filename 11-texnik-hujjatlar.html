@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Texnik Hujjatlar - Mebel ERP</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+        }
+        .sidebar {
+            width: 250px;
+            background: #2c3e50;
+            height: 100vh;
+            position: fixed;
+            color: white;
+            padding: 20px;
+        }
+        .sidebar-menu {
+            margin-top: 30px;
+        }
+        .menu-item {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .menu-item.active {
+            background: #34495e;
+        }
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+        .header {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .filter-bar {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        .documents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .document-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        .document-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        }
+        .document-preview {
+            height: 200px;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .preview-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .document-type-icon {
+            font-size: 48px;
+            color: #95a5a6;
+        }
+        .document-info {
+            padding: 15px;
+        }
+        .document-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+        .document-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .document-code {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+        .document-version {
+            padding: 3px 8px;
+            background: #e3f2fd;
+            color: #1976d2;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .document-details {
+            display: flex;
+            gap: 15px;
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #ecf0f1;
+        }
+        .action-btn {
+            flex: 1;
+            padding: 6px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        .action-btn:hover {
+            background: #f8f9fa;
+            border-color: #3498db;
+            color: #3498db;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+        .category-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .tab {
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid #ecf0f1;
+        }
+        .tab.active {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        input[type="text"], select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .document-viewer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .viewer-content {
+            width: 90%;
+            height: 90%;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+        }
+        .viewer-header {
+            padding: 20px;
+            border-bottom: 1px solid #ecf0f1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .viewer-body {
+            flex: 1;
+            padding: 20px;
+            overflow: auto;
+        }
+        .viewer-sidebar {
+            width: 300px;
+            padding: 20px;
+            border-left: 1px solid #ecf0f1;
+            background: #f8f9fa;
+        }
+        .viewer-main {
+            display: flex;
+            flex: 1;
+        }
+        .drawing-canvas {
+            flex: 1;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 500px;
+        }
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+        .file-type-badge {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .type-drawing { background: #e3f2fd; color: #1976d2; }
+        .type-spec { background: #e8f5e9; color: #388e3c; }
+        .type-3d { background: #f3e5f5; color: #7b1fa2; }
+        .type-pdf { background: #ffebee; color: #c62828; }
+        .type-excel { background: #e8f5e9; color: #388e3c; }
+        .recent-activity {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .activity-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 18px;
+        }
+        .icon-upload { background: #e8f5e9; color: #388e3c; }
+        .icon-edit { background: #fff3e0; color: #f57c00; }
+        .icon-view { background: #e3f2fd; color: #1976d2; }
+        .activity-info {
+            flex: 1;
+        }
+        .activity-title {
+            font-weight: 500;
+            margin-bottom: 3px;
+        }
+        .activity-desc {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+        .activity-time {
+            font-size: 12px;
+            color: #95a5a6;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>🏭 Mebel ERP</h2>
+        <div class="sidebar-menu">
+            <div class="menu-item">📦 Buyurtmalar</div>
+            <div class="menu-item">🪑 Katalog</div>
+            <div class="menu-item">📊 Xom ashyolar</div>
+            <div class="menu-item">🏢 Sexlar</div>
+            <div class="menu-item">👷 Xodimlar</div>
+            <div class="menu-item">📈 Sklad balansi</div>
+            <div class="menu-item">📋 BOM/Kalkulyatsiya</div>
+            <div class="menu-item">🛤️ Routelar</div>
+            <div class="menu-item">📊 Buyurtma tayyorligi</div>
+            <div class="menu-item">💰 Tannarx kalkulyatsiya</div>
+            <div class="menu-item active">📐 Texnik hujjatlar</div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <div>
+                <h1>Texnik hujjatlar bazasi</h1>
+                <p style="color: #7f8c8d; margin-top: 5px;">Chizmalar, spetsifikatsiyalar va texnik ma'lumotlar</p>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn btn-primary">+ Hujjat yuklash</button>
+                <button class="btn" style="background: #27ae60; color: white;">📥 Import</button>
+            </div>
+        </div>
+
+        <div class="stats-cards">
+            <div class="stat-card">
+                <div class="stat-value">342</div>
+                <div class="stat-label">Jami hujjatlar</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">156</div>
+                <div class="stat-label">Chizmalar</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">89</div>
+                <div class="stat-label">3D modellar</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">24</div>
+                <div class="stat-label">Yangilangan (hafta)</div>
+            </div>
+        </div>
+
+        <div class="category-tabs">
+            <div class="tab active">🗂️ Barcha (342)</div>
+            <div class="tab">📐 Chizmalar (156)</div>
+            <div class="tab">📋 Spetsifikatsiyalar (97)</div>
+            <div class="tab">🎨 3D Modellar (89)</div>
+            <div class="tab">📊 Kalkulyatsiyalar (45)</div>
+            <div class="tab">📄 Standartlar (28)</div>
+        </div>
+
+        <div class="filter-bar">
+            <input type="text" placeholder="Qidirish..." style="width: 250px;">
+            <select>
+                <option>Barcha mahsulotlar</option>
+                <option>Oshxona to'plami</option>
+                <option>Yotoq to'plami</option>
+                <option>Ofis mebellari</option>
+            </select>
+            <select>
+                <option>Fayl turi</option>
+                <option>DWG</option>
+                <option>PDF</option>
+                <option>Excel</option>
+                <option>3D Model</option>
+            </select>
+            <select>
+                <option>Oxirgi versiya</option>
+                <option>Barcha versiyalar</option>
+            </select>
+        </div>
+
+        <div class="documents-grid">
+            <div class="document-card">
+                <div class="document-preview">
+                    <div style="width: 100%; height: 100%; background: linear-gradient(45deg, #f0f0f0 25%, transparent 25%, transparent 75%, #f0f0f0 75%, #f0f0f0), linear-gradient(45deg, #f0f0f0 25%, transparent 25%, transparent 75%, #f0f0f0 75%, #f0f0f0); background-size: 20px 20px; background-position: 0 0, 10px 10px;">
+                        <div style="display: flex; align-items: center; justify-content: center; height: 100%; background: rgba(255,255,255,0.9);">
+                            <span style="font-size: 64px;">📐</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="document-info">
+                    <div class="document-title">Oshxona shkafi - Yuqori</div>
+                    <div class="document-meta">
+                        <span class="document-code">DRW-001-A</span>
+                        <span class="document-version">v2.1</span>
+                    </div>
+                    <div class="document-details">
+                        <div class="detail-item">
+                            <span class="file-type-badge type-drawing">DWG</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>📅 15.01.2025</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>👤 Aliyev S.</span>
+                        </div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn">👁️ Ko'rish</button>
+                        <button class="action-btn">📥 Yuklab olish</button>
+                        <button class="action-btn">✏️ Tahrir</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="document-card">
+                <div class="document-preview">
+                    <div style="width: 100%; height: 100%; background: #f8f9fa;">
+                        <div style="display: flex; align-items: center; justify-content: center; height: 100%;">
+                            <span style="font-size: 64px;">📋</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="document-info">
+                    <div class="document-title">Oshxona to'plami - Spetsifikatsiya</div>
+                    <div class="document-meta">
+                        <span class="document-code">SPEC-001</span>
+                        <span class="document-version">v1.3</span>
+                    </div>
+                    <div class="document-details">
+                        <div class="detail-item">
+                            <span class="file-type-badge type-spec">EXCEL</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>📅 14.01.2025</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>👤 Karimov J.</span>
+                        </div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn">👁️ Ko'rish</button>
+                        <button class="action-btn">📥 Yuklab olish</button>
+                        <button class="action-btn">✏️ Tahrir</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="document-card">
+                <div class="document-preview">
+                    <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <div style="display: flex; align-items: center; justify-content: center; height: 100%;">
+                            <span style="font-size: 64px; color: white;">🎨</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="document-info">
+                    <div class="document-title">Oshxona to'plami - 3D Model</div>
+                    <div class="document-meta">
+                        <span class="document-code">3D-001</span>
+                        <span class="document-version">v3.0</span>
+                    </div>
+                    <div class="document-details">
+                        <div class="detail-item">
+                            <span class="file-type-badge type-3d">STEP</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>📅 16.01.2025</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>👤 Rahimov A.</span>
+                        </div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn">👁️ 3D Ko'rish</button>
+                        <button class="action-btn">📥 Yuklab olish</button>
+                        <button class="action-btn">🔄 Export</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="document-card">
+                <div class="document-preview">
+                    <div style="width: 100%; height: 100%; background: #ffebee;">
+                        <div style="display: flex; align-items: center; justify-content: center; height: 100%;">
+                            <span style="font-size: 64px;">📄</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="document-info">
+                    <div class="document-title">Yig'ish instruksiyasi</div>
+                    <div class="document-meta">
+                        <span class="document-code">INS-001</span>
+                        <span class="document-version">v1.0</span>
+                    </div>
+                    <div class="document-details">
+                        <div class="detail-item">
+                            <span class="file-type-badge type-pdf">PDF</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>📅 12.01.2025</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>👤 Toshev M.</span>
+                        </div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn">👁️ Ko'rish</button>
+                        <button class="action-btn">📥 Yuklab olish</button>
+                        <button class="action-btn">🖨️ Chop etish</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="document-card">
+                <div class="document-preview">
+                    <div style="width: 100%; height: 100%; background: linear-gradient(45deg, #f0f0f0 25%, transparent 25%, transparent 75%, #f0f0f0 75%, #f0f0f0), linear-gradient(45deg, #f0f0f0 25%, transparent 25%, transparent 75%, #f0f0f0 75%, #f0f0f0); background-size: 20px 20px; background-position: 0 0, 10px 10px;">
+                        <div style="display: flex; align-items: center; justify-content: center; height: 100%; background: rgba(255,255,255,0.9);">
+                            <span style="font-size: 64px;">📐</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="document-info">
+                    <div class="document-title">Yotoqxona shkafi - Fasad</div>
+                    <div class="document-meta">
+                        <span class="document-code">DRW-002-B</span>
+                        <span class="document-version">v1.5</span>
+                    </div>
+                    <div class="document-details">
+                        <div class="detail-item">
+                            <span class="file-type-badge type-drawing">DWG</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>📅 10.01.2025</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>👤 Saidov B.</span>
+                        </div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn">👁️ Ko'rish</button>
+                        <button class="action-btn">📥 Yuklab olish</button>
+                        <button class="action-btn">✏️ Tahrir</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="document-card">
+                <div class="document-preview">
+                    <div style="width: 100%; height: 100%; background: #e8f5e9;">
+                        <div style="display: flex; align-items: center; justify-content: center; height: 100%;">
+                            <span style="font-size: 64px;">📊</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="document-info">
+                    <div class="document-title">Kesish optimizatsiyasi</div>
+                    <div class="document-meta">
+                        <span class="document-code">OPT-001</span>
+                        <span class="document-version">v2.0</span>
+                    </div>
+                    <div class="document-details">
+                        <div class="detail-item">
+                            <span class="file-type-badge type-spec">EXCEL</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>📅 18.01.2025</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>👤 Xoliqov D.</span>
+                        </div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="action-btn">👁️ Ko'rish</button>
+                        <button class="action-btn">📥 Yuklab olish</button>
+                        <button class="action-btn">🔄 Qayta hisoblash</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="recent-activity">
+            <h3 style="margin-bottom: 20px;">So'nggi harakatlar</h3>
+            <div class="activity-item">
+                <div class="activity-icon icon-upload">📤</div>
+                <div class="activity-info">
+                    <div class="activity-title">Yangi chizma yuklandi</div>
+                    <div class="activity-desc">Ofis stoli "Manager" - Detallar chizmasi</div>
+                </div>
+                <div class="activity-time">10 daqiqa oldin</div>
+            </div>
+            <div class="activity-item">
+                <div class="activity-icon icon-edit">✏️</div>
+                <div class="activity-info">
+                    <div class="activity-title">Spetsifikatsiya yangilandi</div>
+                    <div class="activity-desc">Oshxona to'plami - Material ro'yxati</div>
+                </div>
+                <div class="activity-time">2 soat oldin</div>
+            </div>
+            <div class="activity-item">
+                <div class="activity-icon icon-view">👁️</div>
+                <div class="activity-info">
+                    <div class="activity-title">3D model ko'rildi</div>
+                    <div class="activity-desc">Shkaf-kupe "Premium" modeli</div>
+                </div>
+                <div class="activity-time">5 soat oldin</div>
+            </div>
+            <div class="activity-item">
+                <div class="activity-icon icon-upload">📤</div>
+                <div class="activity-info">
+                    <div class="activity-title">Instruksiya qo'shildi</div>
+                    <div class="activity-desc">Yotoq to'plami yig'ish bo'yicha</div>
+                </div>
+                <div class="activity-time">Kecha 16:45</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="document-viewer" id="viewer">
+        <div class="viewer-content">
+            <div class="viewer-header">
+                <div>
+                    <h2>Oshxona shkafi - Yuqori (DRW-001-A)</h2>
+                    <p style="color: #7f8c8d; font-size: 14px; margin-top: 5px;">Versiya: v2.1 | Yangilangan: 15.01.2025</p>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-primary">📥 Yuklab olish</button>
+                    <button class="btn" style="background: #95a5a6; color: white;" onclick="document.getElementById('viewer').style.display='none'">✕ Yopish</button>
+                </div>
+            </div>
+            <div class="viewer-main">
+                <div class="viewer-body">
+                    <div class="drawing-canvas">
+                        <span style="font-size: 128px; color: #ddd;">📐</span>
+                    </div>
+                </div>
+                <div class="viewer-sidebar">
+                    <h3 style="margin-bottom: 15px;">Hujjat ma'lumotlari</h3>
+                    <div style="margin-bottom: 20px;">
+                        <div style="padding: 10px 0; border-bottom: 1px solid #ecf0f1;">
+                            <div style="color: #7f8c8d; font-size: 12px; margin-bottom: 5px;">Fayl turi</div>
+                            <div style="font-weight: 500;">AutoCAD Drawing (DWG)</div>
+                        </div>
+                        <div style="padding: 10px 0; border-bottom: 1px solid #ecf0f1;">
+                            <div style="color: #7f8c8d; font-size: 12px; margin-bottom: 5px;">Fayl hajmi</div>
+                            <div style="font-weight: 500;">2.4 MB</div>
+                        </div>
+                        <div style="padding: 10px 0; border-bottom: 1px solid #ecf0f1;">
+                            <div style="color: #7f8c8d; font-size: 12px; margin-bottom: 5px;">O'lchamlar</div>
+                            <div style="font-weight: 500;">800 x 350 x 700 mm</div>
+                        </div>
+                        <div style="padding: 10px 0; border-bottom: 1px solid #ecf0f1;">
+                            <div style="color: #7f8c8d; font-size: 12px; margin-bottom: 5px;">Muallif</div>
+                            <div style="font-weight: 500;">Aliyev Sardor</div>
+                        </div>
+                    </div>
+                    <h3 style="margin-bottom: 15px;">Versiya tarixi</h3>
+                    <div>
+                        <div style="padding: 8px; background: #f8f9fa; border-radius: 4px; margin-bottom: 8px;">
+                            <div style="font-weight: 500;">v2.1 (joriy)</div>
+                            <div style="font-size: 12px; color: #7f8c8d;">15.01.2025 - O'lchamlar yangilandi</div>
+                        </div>
+                        <div style="padding: 8px; background: #f8f9fa; border-radius: 4px; margin-bottom: 8px;">
+                            <div style="font-weight: 500;">v2.0</div>
+                            <div style="font-size: 12px; color: #7f8c8d;">10.01.2025 - Furnitura joylashuvi</div>
+                        </div>
+                        <div style="padding: 8px; background: #f8f9fa; border-radius: 4px; margin-bottom: 8px;">
+                            <div style="font-weight: 500;">v1.0</div>
+                            <div style="font-size: 12px; color: #7f8c8d;">05.01.2025 - Boshlang'ich versiya</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

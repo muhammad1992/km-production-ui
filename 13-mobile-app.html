@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile App - Mebel ERP</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .devices-container {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .phone-frame {
+            width: 375px;
+            height: 812px;
+            background: #000;
+            border-radius: 40px;
+            padding: 10px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            position: relative;
+        }
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background: #f5f5f5;
+            border-radius: 30px;
+            overflow: hidden;
+            position: relative;
+        }
+        .phone-notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 30px;
+            background: #000;
+            border-radius: 0 0 20px 20px;
+            z-index: 10;
+        }
+        .status-bar {
+            height: 44px;
+            background: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            font-size: 14px;
+        }
+        .app-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .app-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .user-info {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        .app-content {
+            height: calc(100% - 44px - 180px);
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            background: white;
+            border-top: 1px solid #ecf0f1;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding-bottom: 20px;
+        }
+        .nav-item {
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .nav-item.active {
+            color: #667eea;
+        }
+        .nav-icon {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        .nav-label {
+            font-size: 11px;
+        }
+        .task-card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .task-number {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        .task-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .status-new { background: #e3f2fd; color: #1976d2; }
+        .status-progress { background: #fff3e0; color: #f57c00; }
+        .status-complete { background: #e8f5e9; color: #388e3c; }
+        .task-info {
+            margin-bottom: 15px;
+        }
+        .task-product {
+            font-size: 14px;
+            color: #34495e;
+            margin-bottom: 5px;
+        }
+        .task-detail {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+        .task-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .action-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-start {
+            background: #3498db;
+            color: white;
+        }
+        .btn-complete {
+            background: #27ae60;
+            color: white;
+        }
+        .btn-pause {
+            background: #f39c12;
+            color: white;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        .tablet-frame {
+            width: 768px;
+            height: 1024px;
+            background: #333;
+            border-radius: 30px;
+            padding: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .tablet-screen {
+            width: 100%;
+            height: 100%;
+            background: #f5f5f5;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .tablet-content {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            height: 100%;
+        }
+        .tablet-sidebar {
+            background: white;
+            border-right: 1px solid #ecf0f1;
+            padding: 20px;
+        }
+        .tablet-main {
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .order-list-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .order-list-item:hover {
+            background: #ecf0f1;
+        }
+        .order-list-item.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .production-view {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        .materials-list {
+            display: grid;
+            gap: 10px;
+        }
+        .material-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .material-name {
+            font-size: 14px;
+            color: #34495e;
+        }
+        .material-qty {
+            font-weight: 600;
+            color: #667eea;
+        }
+        .progress-bar {
+            height: 8px;
+            background: #ecf0f1;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, #667eea, #764ba2);
+            border-radius: 10px;
+        }
+        .qr-scanner {
+            width: 200px;
+            height: 200px;
+            background: #2c3e50;
+            border-radius: 12px;
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .scan-animation {
+            position: absolute;
+            width: 80%;
+            height: 2px;
+            background: #e74c3c;
+            animation: scan 2s infinite;
+        }
+        @keyframes scan {
+            0% { top: 20%; }
+            50% { top: 80%; }
+            100% { top: 20%; }
+        }
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .quick-btn {
+            padding: 15px;
+            background: white;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .quick-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .quick-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+        .quick-label {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+    <div class="devices-container">
+        <!-- Mobile Phone View -->
+        <div class="phone-frame">
+            <div class="phone-screen">
+                <div class="phone-notch"></div>
+                <div class="status-bar">
+                    <span>9:41</span>
+                    <span>100% 🔋</span>
+                </div>
+                
+                <div class="app-header">
+                    <div class="app-title">Mebel ERP</div>
+                    <div class="user-info">Karimov Jasur - Yig'ish sexi</div>
+                </div>
+
+                <div class="app-content">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value">5</div>
+                            <div class="stat-label">Bugungi vazifalar</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">2</div>
+                            <div class="stat-label">Tugallangan</div>
+                        </div>
+                    </div>
+
+                    <div style="font-size: 16px; font-weight: 600; margin-bottom: 15px; color: #2c3e50;">
+                        📋 Mening vazifalarim
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-header">
+                            <div class="task-number">#Z001-YIG-03</div>
+                            <span class="task-status status-progress">Jarayonda</span>
+                        </div>
+                        <div class="task-info">
+                            <div class="task-product">Oshxona yuqori shkaf</div>
+                            <div class="task-detail">800x600x350 mm - 3 dona</div>
+                            <div class="task-detail">⏱ Boshlangan: 10:30</div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 65%;"></div>
+                        </div>
+                        <div class="task-actions">
+                            <button class="action-btn btn-pause">⏸ Pauza</button>
+                            <button class="action-btn btn-complete">✅ Tugatish</button>
+                        </div>
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-header">
+                            <div class="task-number">#Z001-YIG-04</div>
+                            <span class="task-status status-new">Yangi</span>
+                        </div>
+                        <div class="task-info">
+                            <div class="task-product">Oshxona pastki shkaf</div>
+                            <div class="task-detail">800x850x600 mm - 4 dona</div>
+                            <div class="task-detail">⏱ Taxminiy vaqt: 2.5 soat</div>
+                        </div>
+                        <div class="task-actions">
+                            <button class="action-btn btn-start">▶️ Boshlash</button>
+                        </div>
+                    </div>
+
+                    <div class="task-card">
+                        <div class="task-header">
+                            <div class="task-number">#Z002-YIG-01</div>
+                            <span class="task-status status-complete">Tugallangan</span>
+                        </div>
+                        <div class="task-info">
+                            <div class="task-product">Yotoq ramkasi</div>
+                            <div class="task-detail">2000x1800x400 mm</div>
+                            <div class="task-detail">✅ Tugallandi: 09:45</div>
+                        </div>
+                    </div>
+
+                    <div style="font-size: 16px; font-weight: 600; margin: 20px 0 15px; color: #2c3e50;">
+                        ⚡ Tezkor amallar
+                    </div>
+
+                    <div class="quick-actions">
+                        <div class="quick-btn">
+                            <div class="quick-icon">📷</div>
+                            <div class="quick-label">Skaner</div>
+                        </div>
+                        <div class="quick-btn">
+                            <div class="quick-icon">📋</div>
+                            <div class="quick-label">Material</div>
+                        </div>
+                        <div class="quick-btn">
+                            <div class="quick-icon">⚠️</div>
+                            <div class="quick-label">Muammo</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bottom-nav">
+                    <div class="nav-item active">
+                        <div class="nav-icon">🏠</div>
+                        <div class="nav-label">Asosiy</div>
+                    </div>
+                    <div class="nav-item">
+                        <div class="nav-icon">📋</div>
+                        <div class="nav-label">Vazifalar</div>
+                    </div>
+                    <div class="nav-item">
+                        <div class="nav-icon">📷</div>
+                        <div class="nav-label">Skaner</div>
+                    </div>
+                    <div class="nav-item">
+                        <div class="nav-icon">📊</div>
+                        <div class="nav-label">Hisobot</div>
+                    </div>
+                    <div class="nav-item">
+                        <div class="nav-icon">👤</div>
+                        <div class="nav-label">Profil</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tablet View -->
+        <div class="tablet-frame">
+            <div class="tablet-screen">
+                <div class="tablet-content">
+                    <div class="tablet-sidebar">
+                        <div style="padding: 20px 0; border-bottom: 1px solid #ecf0f1; margin-bottom: 20px;">
+                            <h2 style="font-size: 24px; color: #2c3e50;">Mebel ERP</h2>
+                            <p style="font-size: 14px; color: #7f8c8d; margin-top: 5px;">Kesish sexi</p>
+                        </div>
+
+                        <div style="font-size: 14px; font-weight: 600; margin-bottom: 15px; color: #34495e;">
+                            Aktiv buyurtmalar
+                        </div>
+
+                        <div class="order-list-item active">
+                            <div style="font-weight: 600; margin-bottom: 5px;">#Z001</div>
+                            <div style="font-size: 12px; color: #95a5a6;">Oshxona to'plami</div>
+                            <div style="font-size: 12px; margin-top: 5px;">🔄 65% tayyor</div>
+                        </div>
+
+                        <div class="order-list-item">
+                            <div style="font-weight: 600; margin-bottom: 5px;">#Z003</div>
+                            <div style="font-size: 12px; color: #7f8c8d;">Ofis mebellari</div>
+                            <div style="font-size: 12px; color: #7f8c8d; margin-top: 5px;">⏳ Navbatda</div>
+                        </div>
+
+                        <div class="order-list-item">
+                            <div style="font-weight: 600; margin-bottom: 5px;">#Z004</div>
+                            <div style="font-size: 12px; color: #7f8c8d;">Shkaf-kupe</div>
+                            <div style="font-size: 12px; color: #7f8c8d; margin-top: 5px;">⏳ Navbatda</div>
+                        </div>
+
+                        <div class="qr-scanner">
+                            <div class="scan-animation"></div>
+                            <div style="color: white; font-size: 48px; opacity: 0.3;">📷</div>
+                        </div>
+
+                        <button style="width: 100%; padding: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 10px;">
+                            🔍 Skanerlash
+                        </button>
+                    </div>
+
+                    <div class="tablet-main">
+                        <div class="production-view">
+                            <div class="section-title">📦 Buyurtma #Z001 - Oshxona to'plami</div>
+                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px;">
+                                <div>
+                                    <div style="font-size: 12px; color: #7f8c8d;">Mijoz</div>
+                                    <div style="font-weight: 600;">Aliyev Sardor</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 12px; color: #7f8c8d;">Muddat</div>
+                                    <div style="font-weight: 600;">25.01.2025</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 12px; color: #7f8c8d;">Holat</div>
+                                    <div style="font-weight: 600; color: #f39c12;">Kesish sexi</div>
+                                </div>
+                            </div>
+                            <div class="progress-bar" style="height: 12px;">
+                                <div class="progress-fill" style="width: 35%;"></div>
+                            </div>
+                            <div style="text-align: right; margin-top: 5px; font-size: 14px; color: #667eea; font-weight: 600;">35% tugallangan</div>
+                        </div>
+
+                        <div class="production-view">
+                            <div class="section-title">🔨 Kesish sexi vazifalari</div>
+                            
+                            <div class="materials-list">
+                                <div class="material-item">
+                                    <div>
+                                        <div class="material-name">DSP 18mm Oq - Yuqori shkaf</div>
+                                        <div style="font-size: 12px; color: #7f8c8d;">800x600 mm</div>
+                                    </div>
+                                    <div>
+                                        <div class="material-qty">15 list</div>
+                                        <div style="font-size: 12px; color: #27ae60;">✅ Kesildi</div>
+                                    </div>
+                                </div>
+
+                                <div class="material-item" style="background: #fff3e0;">
+                                    <div>
+                                        <div class="material-name">DSP 18mm Oq - Pastki shkaf</div>
+                                        <div style="font-size: 12px; color: #7f8c8d;">800x850 mm</div>
+                                    </div>
+                                    <div>
+                                        <div class="material-qty">20 list</div>
+                                        <div style="font-size: 12px; color: #f39c12;">⚙️ Jarayonda</div>
+                                    </div>
+                                </div>
+
+                                <div class="material-item">
+                                    <div>
+                                        <div class="material-name">MDF 16mm - Fasadlar</div>
+                                        <div style="font-size: 12px; color: #7f8c8d;">720x496 mm</div>
+                                    </div>
+                                    <div>
+                                        <div class="material-qty">8 list</div>
+                                        <div style="font-size: 12px; color: #95a5a6;">⏳ Navbatda</div>
+                                    </div>
+                                </div>
+
+                                <div class="material-item">
+                                    <div>
+                                        <div class="material-name">Kromka - Oq mat</div>
+                                        <div style="font-size: 12px; color: #7f8c8d;">2mm qalinlik</div>
+                                    </div>
+                                    <div>
+                                        <div class="material-qty">120 m</div>
+                                        <div style="font-size: 12px; color: #95a5a6;">⏳ Navbatda</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                                <button style="flex: 1; padding: 12px; background: #27ae60; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                                    ✅ Vazifani tugatish
+                                </button>
+                                <button style="flex: 1; padding: 12px; background: #e74c3c; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                                    ⚠️ Muammo xabar qilish
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="production-view">
+                            <div class="section-title">📊 Bugungi natijalar</div>
+                            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px;">
+                                <div style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                                    <div style="font-size: 28px; font-weight: bold; color: #667eea;">45</div>
+                                    <div style="font-size: 12px; color: #7f8c8d;">List kesildi</div>
+                                </div>
+                                <div style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                                    <div style="font-size: 28px; font-weight: bold; color: #27ae60;">3</div>
+                                    <div style="font-size: 12px; color: #7f8c8d;">Buyurtma</div>
+                                </div>
+                                <div style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                                    <div style="font-size: 28px; font-weight: bold; color: #f39c12;">85%</div>
+                                    <div style="font-size: 12px; color: #7f8c8d;">Samaradorlik</div>
+                                </div>
+                                <div style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                                    <div style="font-size: 28px; font-weight: bold; color: #e74c3c;">2</div>
+                                    <div style="font-size: 12px; color: #7f8c8d;">Xatolik</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

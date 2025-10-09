@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Katalog Moduli - Mebel ERP</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+        }
+        .sidebar {
+            width: 250px;
+            background: #2c3e50;
+            height: 100vh;
+            position: fixed;
+            color: white;
+            padding: 20px;
+        }
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+        .header {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .filters {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .product-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .product-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 48px;
+        }
+        .product-info {
+            padding: 15px;
+        }
+        .product-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .product-code {
+            color: #7f8c8d;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+        .product-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #ecf0f1;
+        }
+        .product-price {
+            font-size: 20px;
+            font-weight: bold;
+            color: #27ae60;
+        }
+        .product-status {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .status-active { background: #e8f5e9; color: #388e3c; }
+        .status-inactive { background: #ffebee; color: #c62828; }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+        select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: white;
+        }
+        input[type="text"] {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 250px;
+        }
+        .category-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .tab {
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid #ecf0f1;
+        }
+        .tab.active {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        .tab:hover:not(.active) {
+            background: #f8f9fa;
+        }
+        .product-tags {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        .tag {
+            padding: 3px 8px;
+            background: #ecf0f1;
+            border-radius: 3px;
+            font-size: 11px;
+            color: #34495e;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 15px;
+        }
+        .action-btn {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        .action-btn:hover {
+            background: #f8f9fa;
+            border-color: #3498db;
+            color: #3498db;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2 style="margin-bottom: 30px;">🏭 Mebel ERP</h2>
+        <div style="margin-bottom: 10px; padding: 10px;">📦 Buyurtmalar</div>
+        <div style="margin-bottom: 10px; padding: 10px; background: #34495e; border-radius: 5px;">🪑 Katalog</div>
+        <div style="margin-bottom: 10px; padding: 10px;">📊 Xom ashyolar</div>
+        <div style="margin-bottom: 10px; padding: 10px;">🏢 Sexlar</div>
+        <div style="margin-bottom: 10px; padding: 10px;">👷 Xodimlar</div>
+        <div style="margin-bottom: 10px; padding: 10px;">📈 Sklad balansi</div>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <div>
+                <h1>Mahsulotlar katalogi</h1>
+                <p style="color: #7f8c8d; margin-top: 5px;">Barcha mebel modellari va ularning xususiyatlari</p>
+            </div>
+            <button class="btn btn-primary">+ Yangi mahsulot</button>
+        </div>
+
+        <div class="category-tabs">
+            <div class="tab active">🏠 Barcha (47)</div>
+            <div class="tab">🍳 Oshxona (12)</div>
+            <div class="tab">🛏️ Yotoqxona (15)</div>
+            <div class="tab">🛋️ Mehmonxona (8)</div>
+            <div class="tab">💼 Ofis (7)</div>
+            <div class="tab">👶 Bolalar (5)</div>
+        </div>
+
+        <div class="filters">
+            <input type="text" placeholder="Mahsulot nomi yoki kodi bo'yicha qidirish...">
+            <select>
+                <option>Narx: Past-Yuqori</option>
+                <option>Narx: Yuqori-Past</option>
+                <option>Nom: A-Z</option>
+                <option>Nom: Z-A</option>
+            </select>
+            <select>
+                <option>Barcha holatlar</option>
+                <option>Faol</option>
+                <option>Nofaol</option>
+            </select>
+            <select>
+                <option>Material turi</option>
+                <option>DSP</option>
+                <option>MDF</option>
+                <option>Massiv</option>
+            </select>
+        </div>
+
+        <div class="products-grid">
+            <div class="product-card">
+                <div class="product-image">🍳</div>
+                <div class="product-info">
+                    <div class="product-title">Oshxona to'plami "Lux-2024"</div>
+                    <div class="product-code">Kod: KIT-001</div>
+                    <div class="product-tags">
+                        <span class="tag">3.2m uzunlik</span>
+                        <span class="tag">MDF</span>
+                        <span class="tag">Oq rang</span>
+                    </div>
+                    <div class="product-details">
+                        <div class="product-price">12,500,000 so'm</div>
+                        <div class="product-status status-active">Faol</div>
+                    </div>
+                    <div class="action-buttons">
+                        <div class="action-btn">📋 BOM</div>
+                        <div class="action-btn">📐 Chizma</div>
+                        <div class="action-btn">✏️ Tahrir</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-image">🛏️</div>
+                <div class="product-info">
+                    <div class="product-title">Yotoq to'plami "Comfort Plus"</div>
+                    <div class="product-code">Kod: BED-002</div>
+                    <div class="product-tags">
+                        <span class="tag">200x180cm</span>
+                        <span class="tag">DSP</span>
+                        <span class="tag">Venge</span>
+                    </div>
+                    <div class="product-details">
+                        <div class="product-price">8,750,000 so'm</div>
+                        <div class="product-status status-active">Faol</div>
+                    </div>
+                    <div class="action-buttons">
+                        <div class="action-btn">📋 BOM</div>
+                        <div class="action-btn">📐 Chizma</div>
+                        <div class="action-btn">✏️ Tahrir</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-image">💼</div>
+                <div class="product-info">
+                    <div class="product-title">Ofis stoli "Manager"</div>
+                    <div class="product-code">Kod: OFC-003</div>
+                    <div class="product-tags">
+                        <span class="tag">160x80cm</span>
+                        <span class="tag">MDF</span>
+                        <span class="tag">Dub</span>
+                    </div>
+                    <div class="product-details">
+                        <div class="product-price">2,100,000 so'm</div>
+                        <div class="product-status status-active">Faol</div>
+                    </div>
+                    <div class="action-buttons">
+                        <div class="action-btn">📋 BOM</div>
+                        <div class="action-btn">📐 Chizma</div>
+                        <div class="action-btn">✏️ Tahrir</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-image">🛋️</div>
+                <div class="product-info">
+                    <div class="product-title">Divan "Royal"</div>
+                    <div class="product-code">Kod: SOF-004</div>
+                    <div class="product-tags">
+                        <span class="tag">3 o'rinli</span>
+                        <span class="tag">Eko teri</span>
+                        <span class="tag">Qora</span>
+                    </div>
+                    <div class="product-details">
+                        <div class="product-price">6,500,000 so'm</div>
+                        <div class="product-status status-active">Faol</div>
+                    </div>
+                    <div class="action-buttons">
+                        <div class="action-btn">📋 BOM</div>
+                        <div class="action-btn">📐 Chizma</div>
+                        <div class="action-btn">✏️ Tahrir</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-image">🗄️</div>
+                <div class="product-info">
+                    <div class="product-title">Shkaf-kupe "Premium"</div>
+                    <div class="product-code">Kod: WRD-005</div>
+                    <div class="product-tags">
+                        <span class="tag">250x240cm</span>
+                        <span class="tag">DSP+Oyna</span>
+                        <span class="tag">3 bo'lim</span>
+                    </div>
+                    <div class="product-details">
+                        <div class="product-price">9,800,000 so'm</div>
+                        <div class="product-status status-active">Faol</div>
+                    </div>
+                    <div class="action-buttons">
+                        <div class="action-btn">📋 BOM</div>
+                        <div class="action-btn">📐 Chizma</div>
+                        <div class="action-btn">✏️ Tahrir</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-image">👶</div>
+                <div class="product-info">
+                    <div class="product-title">Bolalar kravati "Chaqaloq"</div>
+                    <div class="product-code">Kod: KID-006</div>
+                    <div class="product-tags">
+                        <span class="tag">120x60cm</span>
+                        <span class="tag">Massiv qarag'ay</span>
+                        <span class="tag">Oq</span>
+                    </div>
+                    <div class="product-details">
+                        <div class="product-price">3,200,000 so'm</div>
+                        <div class="product-status status-inactive">Nofaol</div>
+                    </div>
+                    <div class="action-buttons">
+                        <div class="action-btn">📋 BOM</div>
+                        <div class="action-btn">📐 Chizma</div>
+                        <div class="action-btn">✏️ Tahrir</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

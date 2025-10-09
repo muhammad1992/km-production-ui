@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sklad Balansi - Mebel ERP</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+        }
+        .sidebar {
+            width: 250px;
+            background: #2c3e50;
+            height: 100vh;
+            position: fixed;
+            color: white;
+            padding: 20px;
+        }
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+        .header {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .summary-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-left: 4px solid #3498db;
+        }
+        .summary-title {
+            color: #7f8c8d;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+        .summary-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .summary-change {
+            margin-top: 5px;
+            font-size: 12px;
+        }
+        .change-positive {
+            color: #27ae60;
+        }
+        .change-negative {
+            color: #e74c3c;
+        }
+        .warehouse-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .warehouse-tab {
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid #ecf0f1;
+        }
+        .warehouse-tab.active {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        .balance-table {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .table-header {
+            padding: 15px 20px;
+            background: #ecf0f1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            background: #34495e;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 500;
+            position: sticky;
+            top: 0;
+        }
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        tr:hover {
+            background: #f8f9fa;
+        }
+        .material-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .material-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        .icon-wood { background: #ffeaa7; }
+        .icon-metal { background: #dfe6e9; }
+        .icon-fabric { background: #fab1a0; }
+        .icon-glass { background: #a8e6cf; }
+        .material-name {
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+        .material-code {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+        .location-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            background: #ecf0f1;
+            color: #34495e;
+        }
+        .stock-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .stock-bar {
+            width: 100px;
+            height: 8px;
+            background: #ecf0f1;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .stock-fill {
+            height: 100%;
+            border-radius: 10px;
+        }
+        .stock-good { background: #27ae60; }
+        .stock-warning { background: #f39c12; }
+        .stock-critical { background: #e74c3c; }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+        }
+        .filter-section {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        input[type="text"] {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 250px;
+        }
+        select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: white;
+        }
+        .action-btns {
+            display: flex;
+            gap: 5px;
+        }
+        .action-btn {
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .action-btn:hover {
+            background: #f8f9fa;
+            border-color: #3498db;
+            color: #3498db;
+        }
+        .movement-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+        .movement-in {
+            background: #e8f5e9;
+            color: #388e3c;
+        }
+        .movement-out {
+            background: #ffebee;
+            color: #c62828;
+        }
+        .alert-box {
+            background: #fff3cd;
+            border-left: 4px solid #f39c12;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .alert-icon {
+            font-size: 24px;
+        }
+        .alert-text {
+            flex: 1;
+        }
+        .alert-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .alert-desc {
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2 style="margin-bottom: 30px;">🏭 Mebel ERP</h2>
+        <div style="margin-bottom: 10px; padding: 10px;">📦 Buyurtmalar</div>
+        <div style="margin-bottom: 10px; padding: 10px;">🪑 Katalog</div>
+        <div style="margin-bottom: 10px; padding: 10px;">📊 Xom ashyolar</div>
+        <div style="margin-bottom: 10px; padding: 10px;">🏢 Sexlar</div>
+        <div style="margin-bottom: 10px; padding: 10px;">👷 Xodimlar</div>
+        <div style="margin-bottom: 10px; padding: 10px; background: #34495e; border-radius: 5px;">📈 Sklad balansi</div>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <div>
+                <h1>Sklad balansi</h1>
+                <p style="color: #7f8c8d; margin-top: 5px;">Sexlar va skladlar bo'yicha xom ashyo harakati</p>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn btn-success">📥 Kirim</button>
+                <button class="btn btn-warning">📤 Chiqim</button>
+                <button class="btn btn-primary">🔄 Transfer</button>
+            </div>
+        </div>
+
+        <div class="alert-box">
+            <div class="alert-icon">⚠️</div>
+            <div class="alert-text">
+                <div class="alert-title">Diqqat: 5 ta material kritik holatda</div>
+                <div class="alert-desc">Shisha (4mm), MDF 16mm Venge va boshqa materiallar zahirasini to'ldirish kerak</div>
+            </div>
+            <button class="btn btn-warning">Ko'rish</button>
+        </div>
+
+        <div class="summary-cards">
+            <div class="summary-card" style="border-color: #3498db;">
+                <div class="summary-title">UMUMIY QIYMAT</div>
+                <div class="summary-value">2.3 mlrd so'm</div>
+                <div class="summary-change change-positive">↑ 5.2% oxirgi oyda</div>
+            </div>
+            <div class="summary-card" style="border-color: #27ae60;">
+                <div class="summary-title">BUGUNGI KIRIM</div>
+                <div class="summary-value">45.2 mln so'm</div>
+                <div class="summary-change change-positive">↑ 15 ta operatsiya</div>
+            </div>
+            <div class="summary-card" style="border-color: #f39c12;">
+                <div class="summary-title">BUGUNGI CHIQIM</div>
+                <div class="summary-value">32.5 mln so'm</div>
+                <div class="summary-change">↓ 23 ta operatsiya</div>
+            </div>
+            <div class="summary-card" style="border-color: #e74c3c;">
+                <div class="summary-title">KRITIK MATERIALLAR</div>
+                <div class="summary-value">5 ta</div>
+                <div class="summary-change change-negative">Zudlik bilan buyurtma berish</div>
+            </div>
+        </div>
+
+        <div class="warehouse-tabs">
+            <div class="warehouse-tab active">📊 Barcha (127)</div>
+            <div class="warehouse-tab">🏗️ Asosiy sklad (82)</div>
+            <div class="warehouse-tab">🔨 Kesish sexi (25)</div>
+            <div class="warehouse-tab">🔧 Yig'ish sexi (38)</div>
+            <div class="warehouse-tab">🎨 Bo'yash sexi (18)</div>
+            <div class="warehouse-tab">🔩 Furnitura sexi (45)</div>
+        </div>
+
+        <div class="balance-table">
+            <div class="table-header">
+                <h3>Material qoldiqlari va harakati</h3>
+                <div class="filter-section">
+                    <input type="text" placeholder="Material nomi yoki kodi...">
+                    <select>
+                        <option>Barcha joylashuvlar</option>
+                        <option>Asosiy sklad</option>
+                        <option>Kesish sexi</option>
+                        <option>Yig'ish sexi</option>
+                    </select>
+                    <select>
+                        <option>Holat</option>
+                        <option>Kritik</option>
+                        <option>Kam</option>
+                        <option>Yetarli</option>
+                    </select>
+                </div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Material</th>
+                        <th>Joylashuv</th>
+                        <th>Hozirgi qoldiq</th>
+                        <th>Rezerv</th>
+                        <th>Mavjud</th>
+                        <th>Oxirgi harakat</th>
+                        <th>Holat</th>
+                        <th>Amallar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="material-info">
+                                <div class="material-icon icon-wood">🪵</div>
+                                <div>
+                                    <div class="material-name">DSP 18mm Oq</div>
+                                    <div class="material-code">MAT-001</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="location-badge">Asosiy sklad</span>
+                        </td>
+                        <td><strong>320 list</strong></td>
+                        <td style="color: #f39c12;">50 list</td>
+                        <td style="color: #27ae60; font-weight: 600;">270 list</td>
+                        <td>
+                            <span class="movement-indicator movement-in">
+                                ↓ +100 list
+                            </span>
+                            <div style="font-size: 11px; color: #7f8c8d; margin-top: 3px;">2 soat oldin</div>
+                        </td>
+                        <td>
+                            <div class="stock-status">
+                                <div class="stock-bar">
+                                    <div class="stock-fill stock-good" style="width: 75%;"></div>
+                                </div>
+                                <span style="color: #27ae60; font-size: 12px; font-weight: 600;">Yetarli</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="action-btn">🔄 Transfer</button>
+                                <button class="action-btn">📊 Tarix</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="material-info">
+                                <div class="material-icon icon-wood">🪵</div>
+                                <div>
+                                    <div class="material-name">DSP 18mm Oq</div>
+                                    <div class="material-code">MAT-001</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="location-badge">Kesish sexi</span>
+                        </td>
+                        <td><strong>45 list</strong></td>
+                        <td style="color: #e74c3c;">20 list</td>
+                        <td style="color: #f39c12; font-weight: 600;">25 list</td>
+                        <td>
+                            <span class="movement-indicator movement-out">
+                                ↑ -15 list
+                            </span>
+                            <div style="font-size: 11px; color: #7f8c8d; margin-top: 3px;">1 soat oldin</div>
+                        </td>
+                        <td>
+                            <div class="stock-status">
+                                <div class="stock-bar">
+                                    <div class="stock-fill stock-warning" style="width: 35%;"></div>
+                                </div>
+                                <span style="color: #f39c12; font-size: 12px; font-weight: 600;">Kam</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="action-btn" style="background: #fee; color: #e74c3c; border-color: #e74c3c;">📥 So'rov</button>
+                                <button class="action-btn">📊 Tarix</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="material-info">
+                                <div class="material-icon icon-wood">🪵</div>
+                                <div>
+                                    <div class="material-name">MDF 16mm Venge</div>
+                                    <div class="material-code">MAT-002</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="location-badge">Asosiy sklad</span>
+                        </td>
+                        <td><strong>15 list</strong></td>
+                        <td style="color: #e74c3c;">12 list</td>
+                        <td style="color: #e74c3c; font-weight: 600;">3 list</td>
+                        <td>
+                            <span class="movement-indicator movement-out">
+                                ↑ -30 list
+                            </span>
+                            <div style="font-size: 11px; color: #7f8c8d; margin-top: 3px;">Bugun 08:00</div>
+                        </td>
+                        <td>
+                            <div class="stock-status">
+                                <div class="stock-bar">
+                                    <div class="stock-fill stock-critical" style="width: 10%;"></div>
+                                </div>
+                                <span style="color: #e74c3c; font-size: 12px; font-weight: 600;">Kritik!</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="action-btn" style="background: #fee; color: #e74c3c; border-color: #e74c3c;">🚨 Buyurtma</button>
+                                <button class="action-btn">📊 Tarix</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="material-info">
+                                <div class="material-icon icon-metal">🔩</div>
+                                <div>
+                                    <div class="material-name">Dastaklar metall 128mm</div>
+                                    <div class="material-code">MAT-045</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="location-badge">Furnitura sexi</span>
+                        </td>
+                        <td><strong>245 dona</strong></td>
+                        <td style="color: #27ae60;">0 dona</td>
+                        <td style="color: #27ae60; font-weight: 600;">245 dona</td>
+                        <td>
+                            <span class="movement-indicator movement-in">
+                                ↓ +50 dona
+                            </span>
+                            <div style="font-size: 11px; color: #7f8c8d; margin-top: 3px;">Kecha 16:30</div>
+                        </td>
+                        <td>
+                            <div class="stock-status">
+                                <div class="stock-bar">
+                                    <div class="stock-fill stock-good" style="width: 65%;"></div>
+                                </div>
+                                <span style="color: #27ae60; font-size: 12px; font-weight: 600;">Yetarli</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="action-btn">🔄 Transfer</button>
+                                <button class="action-btn">📊 Tarix</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="material-info">
+                                <div class="material-icon icon-fabric">🧵</div>
+                                <div>
+                                    <div class="material-name">Eko teri Qora</div>
+                                    <div class="material-code">MAT-028</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="location-badge">Bo'yash sexi</span>
+                        </td>
+                        <td><strong>85 metr</strong></td>
+                        <td style="color: #f39c12;">15 metr</td>
+                        <td style="color: #27ae60; font-weight: 600;">70 metr</td>
+                        <td>
+                            <span class="movement-indicator movement-out">
+                                ↑ -10 metr
+                            </span>
+                            <div style="font-size: 11px; color: #7f8c8d; margin-top: 3px;">3 soat oldin</div>
+                        </td>
+                        <td>
+                            <div class="stock-status">
+                                <div class="stock-bar">
+                                    <div class="stock-fill stock-good" style="width: 70%;"></div>
+                                </div>
+                                <span style="color: #27ae60; font-size: 12px; font-weight: 600;">Yetarli</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="action-btn">🔄 Transfer</button>
+                                <button class="action-btn">📊 Tarix</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="material-info">
+                                <div class="material-icon icon-glass">🪟</div>
+                                <div>
+                                    <div class="material-name">Shisha 4mm shaffof</div>
+                                    <div class="material-code">MAT-015</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="location-badge">Asosiy sklad</span>
+                        </td>
+                        <td><strong>8 m²</strong></td>
+                        <td style="color: #e74c3c;">5 m²</td>
+                        <td style="color: #e74c3c; font-weight: 600;">3 m²</td>
+                        <td>
+                            <span class="movement-indicator movement-out">
+                                ↑ -12 m²
+                            </span>
+                            <div style="font-size: 11px; color: #7f8c8d; margin-top: 3px;">2 kun oldin</div>
+                        </td>
+                        <td>
+                            <div class="stock-status">
+                                <div class="stock-bar">
+                                    <div class="stock-fill stock-critical" style="width: 8%;"></div>
+                                </div>
+                                <span style="color: #e74c3c; font-size: 12px; font-weight: 600;">Kritik!</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="action-btn" style="background: #fee; color: #e74c3c; border-color: #e74c3c;">🚨 Buyurtma</button>
+                                <button class="action-btn">📊 Tarix</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="material-info">
+                                <div class="material-icon icon-metal">🔩</div>
+                                <div>
+                                    <div class="material-name">Shurupa 3.5x35</div>
+                                    <div class="material-code">MAT-067</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="location-badge">Yig'ish sexi</span>
+                        </td>
+                        <td><strong>2,450 dona</strong></td>
+                        <td style="color: #27ae60;">200 dona</td>
+                        <td style="color: #27ae60; font-weight: 600;">2,250 dona</td>
+                        <td>
+                            <span class="movement-indicator movement-in">
+                                ↓ +500 dona
+                            </span>
+                            <div style="font-size: 11px; color: #7f8c8d; margin-top: 3px;">Bugun 11:00</div>
+                        </td>
+                        <td>
+                            <div class="stock-status">
+                                <div class="stock-bar">
+                                    <div class="stock-fill stock-good" style="width: 85%;"></div>
+                                </div>
+                                <span style="color: #27ae60; font-size: 12px; font-weight: 600;">Yetarli</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="action-btn">🔄 Transfer</button>
+                                <button class="action-btn">📊 Tarix</button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

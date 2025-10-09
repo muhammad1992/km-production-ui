@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPS - Master Production Schedule - Mebel ERP</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+        }
+        .sidebar {
+            width: 250px;
+            background: #2c3e50;
+            height: 100vh;
+            position: fixed;
+            color: white;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .sidebar-menu {
+            margin-top: 30px;
+        }
+        .menu-item {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .menu-item.active {
+            background: #34495e;
+        }
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+        .header {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .control-panel {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .time-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .view-controls {
+            display: flex;
+            gap: 10px;
+        }
+        .filter-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+        }
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+        .btn.active {
+            background: #2c3e50;
+        }
+        select, input {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-top: 4px solid #3498db;
+        }
+        .stat-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+        .stat-value {
+            font-size: 22px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 3px;
+        }
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 12px;
+        }
+        .schedule-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+        .schedule-header {
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border-bottom: 2px solid #ecf0f1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1200px;
+        }
+        .schedule-table th {
+            background: #34495e;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 500;
+            font-size: 13px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .schedule-table td {
+            padding: 10px;
+            border-bottom: 1px solid #ecf0f1;
+            border-right: 1px solid #f8f9fa;
+            font-size: 13px;
+        }
+        .schedule-table tr:hover {
+            background: #f8f9fa;
+        }
+        .product-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .product-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .product-details {
+            flex: 1;
+        }
+        .product-name {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 2px;
+        }
+        .product-code {
+            font-size: 11px;
+            color: #7f8c8d;
+        }
+        .week-cell {
+            text-align: center;
+            position: relative;
+            padding: 8px;
+            min-width: 80px;
+        }
+        .planned-qty {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 14px;
+            margin-bottom: 3px;
+        }
+        .actual-qty {
+            font-size: 11px;
+            color: #7f8c8d;
+        }
+        .production-bar {
+            height: 6px;
+            background: #ecf0f1;
+            border-radius: 3px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+        .production-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+        .fill-low { background: #27ae60; }
+        .fill-medium { background: #f39c12; }
+        .fill-high { background: #e74c3c; }
+        .fill-complete { background: #3498db; }
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        .status-on-track { background: #27ae60; }
+        .status-delayed { background: #f39c12; }
+        .status-critical { background: #e74c3c; }
+        .status-completed { background: #3498db; }
+        .capacity-chart {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .capacity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        .capacity-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .capacity-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .capacity-name {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #34495e;
+        }
+        .capacity-bar-container {
+            position: relative;
+            height: 120px;
+            background: white;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .capacity-bar-fill {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            background: linear-gradient(to top, #3498db, #5dade2);
+            border-radius: 5px;
+            transition: height 0.3s;
+        }
+        .capacity-percentage {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        .capacity-label {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+        .timeline-view {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            overflow-x: auto;
+        }
+        .gantt-container {
+            position: relative;
+            min-height: 400px;
+            overflow-x: auto;
+        }
+        .gantt-row {
+            height: 45px;
+            border-bottom: 1px solid #ecf0f1;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .gantt-label {
+            width: 180px;
+            padding: 0 15px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #34495e;
+            background: white;
+            border-right: 2px solid #ecf0f1;
+            position: sticky;
+            left: 0;
+            z-index: 5;
+        }
+        .gantt-timeline {
+            flex: 1;
+            position: relative;
+            display: grid;
+            grid-template-columns: repeat(52, 1fr);
+            min-width: 1000px;
+        }
+        .gantt-bar {
+            position: absolute;
+            height: 30px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .gantt-bar:hover {
+            transform: scale(1.05);
+            z-index: 10;
+        }
+        .gantt-bar-1 { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .gantt-bar-2 { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .gantt-bar-3 { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+        .gantt-bar-4 { background: linear-gradient(135deg, #30cfd0 0%, #330867 100%); }
+        .gantt-bar-5 { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
+        .week-marker {
+            border-left: 1px solid #f8f9fa;
+            height: 100%;
+        }
+        .alert-panel {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .alert-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        .alert-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .alert-item {
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .alert-warning {
+            background: #fff3e0;
+            border-left: 3px solid #f39c12;
+        }
+        .alert-danger {
+            background: #ffebee;
+            border-left: 3px solid #e74c3c;
+        }
+        .alert-info {
+            background: #e3f2fd;
+            border-left: 3px solid #3498db;
+        }
+        .alert-icon {
+            font-size: 20px;
+        }
+        .alert-content {
+            flex: 1;
+        }
+        .alert-title {
+            font-weight: 600;
+            margin-bottom: 3px;
+            color: #2c3e50;
+        }
+        .alert-desc {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+        .alert-time {
+            font-size: 11px;
+            color: #95a5a6;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .legend {
+            display: flex;
+            gap: 20px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            font-size: 12px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .legend-color {
+            width: 20px;
+            height: 10px;
+            border-radius: 2px;
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal {
+            background: white;
+            border-radius: 8px;
+            width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #ecf0f1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-body {
+            padding: 20px;
+        }
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid #ecf0f1;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #34495e;
+            font-size: 14px;
+        }
+        .form-control {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .priority-badge {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .priority-high { background: #ffebee; color: #c62828; }
+        .priority-medium { background: #fff3e0; color: #f57c00; }
+        .priority-low { background: #e8f5e9; color: #388e3c; }
+        @media (max-width: 1400px) {
+            .stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+                padding: 10px;
+            }
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>🏭 Mebel ERP</h2>
+        <div class="sidebar-menu">
+            <div class="menu-item">📦 Buyurtmalar</div>
+            <div class="menu-item">🪑 Katalog</div>
+            <div class="menu-item">📊 Xom ashyolar</div>
+            <div class="menu-item">🏢 Sexlar</div>
+            <div class="menu-item">👷 Xodimlar</div>
+            <div class="menu-item">📈 Sklad balansi</div>
+            <div class="menu-item">📋 BOM/Kalkulyatsiya</div>
+            <div class="menu-item">🛤️ Routelar</div>
+            <div class="menu-item">📊 Buyurtma tayyorligi</div>
+            <div class="menu-item">💰 Tannarx kalkulyatsiya</div>
+            <div class="menu-item">📄 Texnik hujjatlar</div>
+            <div class="menu-item">📲 Barcode/QR Tracking</div>
+            <div class="menu-item">📱 Mobile App</div>
+            <div class="menu-item">💵 Ish haqi</div>
+            <div class="menu-item">✅ Sifat nazorati</div>
+            <div class="menu-item">🛒 Supermarket</div>
+            <div class="menu-item active">📅 MPS</div>
+            <div class="menu-item">📊 Gantt diagrammalar</div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <div>
+                <h1>Master Production Schedule (MPS)</h1>
+                <p style="color: #7f8c8d; margin-top: 5px;">Asosiy ishlab chiqarish jadvali va rejalashtirish</p>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn btn-success">📊 Hisoblash</button>
+                <button class="btn btn-primary">+ Yangi buyurtma</button>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card" style="border-color: #3498db;">
+                <div class="stat-icon">📦</div>
+                <div class="stat-value">156</div>
+                <div class="stat-label">Jami buyurtmalar</div>
+            </div>
+            <div class="stat-card" style="border-color: #9b59b6;">
+                <div class="stat-icon">📅</div>
+                <div class="stat-value">42</div>
+                <div class="stat-label">Rejalashtirilgan</div>
+            </div>
+            <div class="stat-card" style="border-color: #f39c12;">
+                <div class="stat-icon">⚙️</div>
+                <div class="stat-value">28</div>
+                <div class="stat-label">Ishlab chiqarishda</div>
+            </div>
+            <div class="stat-card" style="border-color: #27ae60;">
+                <div class="stat-icon">✅</div>
+                <div class="stat-value">12</div>
+                <div class="stat-label">Tugallangan</div>
+            </div>
+            <div class="stat-card" style="border-color: #e74c3c;">
+                <div class="stat-icon">⚠️</div>
+                <div class="stat-value">5</div>
+                <div class="stat-label">Kechikishda</div>
+            </div>
+            <div class="stat-card" style="border-color: #1abc9c;">
+                <div class="stat-icon">📈</div>
+                <div class="stat-value">85%</div>
+                <div class="stat-label">Samaradorlik</div>
+            </div>
+        </div>
+
+        <div class="control-panel">
+            <div class="time-controls">
+                <button class="btn btn-sm btn-secondary">◀</button>
+                <select style="width: 150px;">
+                    <option>2025 - Yanvar</option>
+                    <option>2025 - Fevral</option>
+                    <option>2025 - Mart</option>
+                </select>
+                <button class="btn btn-sm btn-secondary">▶</button>
+            </div>
+            <div class="view-controls">
+                <button class="btn btn-sm btn-primary">Kunlik</button>
+                <button class="btn btn-sm btn-secondary active">Haftalik</button>
+                <button class="btn btn-sm btn-secondary">Oylik</button>
+                <button class="btn btn-sm btn-secondary">Kvartal</button>
+            </div>
+            <div class="filter-controls">
+                <select>
+                    <option>Barcha mahsulotlar</option>
+                    <option>Oshxona mebellari</option>
+                    <option>Yotoq mebellari</option>
+                    <option>Ofis mebellari</option>
+                </select>
+                <select>
+                    <option>Barcha sexlar</option>
+                    <option>Kesish sexi</option>
+                    <option>Yig'ish sexi</option>
+                    <option>Bo'yash sexi</option>
+                </select>
+                <button class="btn btn-sm btn-warning">🔄 Yangilash</button>
+            </div>
+        </div>
+
+        <div class="schedule-container">
+            <div class="schedule-header">
+                <h3>Ishlab chiqarish jadvali - Yanvar 2025</h3>
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #27ae60;"></div>
+                        <span>Rejada</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #f39c12;"></div>
+                        <span>Jarayonda</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #3498db;"></div>
+                        <span>Tugallangan</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #e74c3c;"></div>
+                        <span>Kechikkan</span>
+                    </div>
+                </div>
+            </div>
+            <table class="schedule-table">
+                <thead>
+                    <tr>
+                        <th style="width: 250px;">Mahsulot</th>
+                        <th style="width: 100px;">SKU</th>
+                        <th style="width: 80px;">Jami</th>
+                        <th style="width: 80px;">Holat</th>
+                        <th>1-hafta</th>
+                        <th>2-hafta</th>
+                        <th>3-hafta</th>
+                        <th>4-hafta</th>
+                        <th>5-hafta</th>
+                        <th>Jami ishlab chiqarilgan</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="product-info">
+                                <div class="product-icon">🪑</div>
+                                <div class="product-details">
+                                    <div class="product-name">Oshxona to'plami "Lux"</div>
+                                    <div class="product-code">KIT-001</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>KIT-001</td>
+                        <td style="font-weight: 600;">45</td>
+                        <td>
+                            <span class="status-indicator status-on-track"></span>
+                            <span style="font-size: 12px;">Rejada</span>
+                        </td>
+                        <td class="week-cell">
+                            <div class="planned-qty">10</div>
+                            <div class="actual-qty">Reja: 10</div>
+                            <div class="production-bar">
+                                <div class="production-fill fill-complete" style="width: 100%;"></div>
+                            </div>
+                        </td>
+                        <td class="week-cell">
+                            <div class="planned-qty">12</div>
+                            <div class="actual-qty">Reja: 12</div>
+                            <div class="production-bar">
+                                <div class="production-fill fill-medium" style="width: 75%;"></div>
+                            </div>
+                        </td>
+                        <td class="week-cell">
+                            <div class="planned-qty">8</div>
+                            <div class="actual-qty">Reja: 8</div>
+                            <div class="production-bar">
+                                <div class="production-fill fill-low" style="width: 0%;"></div>
+                            </div>
+                        </td>
+                        <td class="week-cell">
+                            <div class="planned-qty">10</div>
+                            <div class="actual-qty">Reja: 10</div>
+                            <div class="production-bar">
+                                <div class="production-fill" style="width: 0%;"></div>
+                            </div>
+                        </td>
+                        <td class="week-cell">
+                            <div class="planned-qty">5</div>
+                            <div class="actual-qty">Reja: 5</div>
+                            <div class="production-bar">
+                                <div class="production-fill" style="width: 0%;"></div>
+                            </div>
+                        </td>
+                        <td style="text-align: center;">
+                            <div style="font-weight: 600; color: #27ae60;">19 / 45</div>
+                            <div style="font-size: 11px; color: #7f8c8d;">42.2%</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="product-info">
+                                <div class="product-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">🛏️</div>
+                                <div class="product-details">
+                                    <div class="product-name">Yotoq to'plami "Comfort"</div>
+                                    <div class="product-code">BED-002</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>BED-002</td>
+                        <td style="font-weight: 600;">32</td>
+                        <td>
+                            <span class="status-indicator status-delayed"></span>
+                            <span style="font-size: 12px;">Kechikish</span>
+                        </td>
+                        <td class="week-cell">
+                            <div class="planned-qty">8</div>
+                            <div class="actual-qty">Bajarildi: 8</div>
+                            <div class="production-bar">
+                                <div class="production-fill fill-complete" style="width: 100%;"></div>
+                            </div>
+                        </td>
+                        <td class="week-cell">
+                            <div class="planned-qty">6</div>
+                            <div class="actual-qty">Bajarildi: 4</div>
+                            <div class="production-bar">
+                                <div class="production-fill fill-high" style="width: 66%;"></div>
+                            </div>
+                        </td>
+                        <td class="week-cell">
+                            <div class="planned-qty">7</div>
+                            <div class="actual-qty">Reja: 7</div>
+                            <div class="production-bar">
+                                <div class="production-fill" style="width: 0%;"></div>
+                            </div>
+                        </td>
+                        <td class="week-cell">
+                            <div class="planned-qty">6</div>
+                            <div class="actual-qty">Reja: 6</div>
+                            <div class="production-bar">
+                                <div class="production-fill" style="width: 0%;"></div>
+                            </div>
+                        </td>
+                        <td class="week-cell">
+                            <div class="planned-qty">5</div>
+                            <div class="actual-qty">Reja: 5</div>
+                            <div class="production-bar">
+                                <div class="production-fill" style="width: 0%;"></div>
+                            </div>
+                        </td>
+                        <td style="text-align: center;">
+                            <div style="font-weight: 600; color: #f39c12;">12 / 32</div>
+                            <div style="font-size: 11px; color: #7f8c8d;">37.5%</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="product-info">
+                                <div class="product-icon" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">🪑</div>
+                                <div class="product-details">
+                                    <div class="product-name">Ofis stoli "Manager"</div>
+                                    <div class="product-code">OFC-003</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>OFC-003</td>
+                        <td style="font-weight: 600;">28</td>
+                        <td>
+                            <span class="status-indicator status-on-track"></span>
+                            <span style="font-size: 12px;">Rejada</span>
+                        </td>
+                        <td class="week-cell">
+                            <div class="planned-qty">5</div>
+                            <div class="actual-qty">Bajarildi: 5</div>
+                            <div class="production-bar">
+                                <div class="production-fill fill-complete" style="width: 100%;"></div>
+                            </div>
+                        </td>
+                        <td class="week-cell">
+                            <div class="planned-qty">7</div>
+                            <div class="actual-qty">Bajarildi: 7</div>
+                            <div class="production-bar">
+                                <div class="production-fill fill-complete" style="width: 100%;"></div>
+                            </div>
+                        </td>
+                        <td class="week-cell">
+                            <div class="planned-qty">6</div>
+                            <div class="actual-qty">Jarayonda</div>
+                            <div class="production-bar">
+                                <div class="production-fill fill-medium" style="width: 30%;"></div>
+                            </div>
+                        </td>
+                        <td class="week-cell">
+                            <div class="planned-qty">5</div>
+                            <div class="actual-qty">Reja: 5</div>
+                            <div class="production-bar">
+                                <div class="production-fill" style="width: 0%;"></div>
+                            </div>
+                        </td>
+                        <td class="week-cell">
+                            <div class="planned-qty">5</div>
+                            <div class="actual-qty">Reja: 5</div>
+                            <div class="production-bar">
+                                <div class="production-fill" style="width: 0%;"></div>
+                            </div>
+                        </td>
+                        <td style="text-align: center;">
+                            <div style="font-weight: 600; color: #3498db;">14 / 28</div>
+                            <div style="font-size: 11px; color: #7f8c8d;">50%</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="product-info">
+                                <div class="product-icon" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);">📚</div>
+                                <div class="product-details">
+                                    <div class="product-name">Kitob javoni "Smart"</div>
+                                    <div class="product-code">SHF-004</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>SHF-004</td>
+                        <td style="font-weight: 600;">52</td>
+                        <td>
+                            <span class="status-indicator status-critical"></span>
+                            <span style="font-size: 12px;">Tanqis</span>
+                        </td>
+                        <td class="week-cell">
+                            <div class="planned-qty">12</div>
+                            <div class="actual-qty">Bajarildi: 8</div>
+                            <div class="production-bar">
+                                <div class="production-fill fill-high" style="width: 66%;"></div>
+                            </div>
+                        </td>
+                        <td class="week-cell">
+                            <div class="planned-qty">10</div>
+                            <div class="actual-qty">Jarayonda</div>
+                            <div class="production-bar">
+                                <div class="production-fill fill-medium" style="width: 40%;"></div>
+                            </div>
+                        </td>
+                        <td class="week-cell">
+                            <div class="planned-qty">10</div>
+                            <div class="actual-qty">Reja: 10</div>
+                            <div class="production-bar">
+                                <div class="production-fill" style="width: 0%;"></div>
+                            </div>
+                        </td>
+                        <td class="week-cell">
+                            <div class="planned-qty">10</div>
+                            <div class="actual-qty">Reja: 10</div>
+                            <div class="production-bar">
+                                <div class="production-fill" style="width: 0%;"></div>
+                            </div>
+                        </td>
+                        <td class="week-cell">
+                            <div class="planned-qty">10</div>
+                            <div class="actual-qty">Reja: 10</div>
+                            <div class="production-bar">
+                                <div class="production-fill" style="width: 0%;"></div>
+                            </div>
+                        </td>
+                        <td style="text-align: center;">
+                            <div style="font-weight: 600; color: #e74c3c;">12 / 52</div>
+                            <div style="font-size: 11px; color: #7f8c8d;">23.1%</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="capacity-chart">
+            <div class="capacity-header">
+                <h3>Sex quvvatlari yuklanishi</h3>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-sm btn-secondary">Kunlik</button>
+                    <button class="btn btn-sm btn-primary active">Haftalik</button>
+                    <button class="btn btn-sm btn-secondary">Oylik</button>
+                </div>
+            </div>
+            <div class="capacity-grid">
+                <div class="capacity-item">
+                    <div class="capacity-name">🔨 Kesish sexi</div>
+                    <div class="capacity-bar-container">
+                        <div class="capacity-bar-fill" style="height: 75%;"></div>
+                    </div>
+                    <div class="capacity-percentage">75%</div>
+                    <div class="capacity-label">320 / 426 soat</div>
+                </div>
+                <div class="capacity-item">
+                    <div class="capacity-name">🔧 Yig'ish sexi</div>
+                    <div class="capacity-bar-container">
+                        <div class="capacity-bar-fill" style="height: 92%; background: linear-gradient(to top, #f39c12, #f1c40f);"></div>
+                    </div>
+                    <div class="capacity-percentage" style="color: #f39c12;">92%</div>
+                    <div class="capacity-label">394 / 426 soat</div>
+                </div>
+                <div class="capacity-item">
+                    <div class="capacity-name">🎨 Bo'yash sexi</div>
+                    <div class="capacity-bar-container">
+                        <div class="capacity-bar-fill" style="height: 65%;"></div>
+                    </div>
+                    <div class="capacity-percentage">65%</div>
+                    <div class="capacity-label">277 / 426 soat</div>
+                </div>
+                <div class="capacity-item">
+                    <div class="capacity-name">🔩 Furnitura sexi</div>
+                    <div class="capacity-bar-container">
+                        <div class="capacity-bar-fill" style="height: 55%;"></div>
+                    </div>
+                    <div class="capacity-percentage">55%</div>
+                    <div class="capacity-label">234 / 426 soat</div>
+                </div>
+                <div class="capacity-item">
+                    <div class="capacity-name">📦 Qadoqlash</div>
+                    <div class="capacity-bar-container">
+                        <div class="capacity-bar-fill" style="height: 40%;"></div>
+                    </div>
+                    <div class="capacity-percentage">40%</div>
+                    <div class="capacity-label">170 / 426 soat</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-view">
+            <div class="capacity-header">
+                <h3>Gantt diagramma - Yanvar 2025</h3>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <span style="font-size: 13px; color: #7f8c8d;">Ko'rinish:</span>
+                    <select style="width: 150px;">
+                        <option>Mahsulot bo'yicha</option>
+                        <option>Sex bo'yicha</option>
+                        <option>Buyurtma bo'yicha</option>
+                    </select>
+                </div>
+            </div>
+            <div class="gantt-container">
+                <div class="gantt-row">
+                    <div class="gantt-label">Oshxona "Lux" #Z001</div>
+                    <div class="gantt-timeline">
+                        <div class="gantt-bar gantt-bar-1" style="left: 0%; width: 20%;">
+                            Kesish (5 kun)
+                        </div>
+                        <div class="gantt-bar gantt-bar-2" style="left: 15%; width: 25%;">
+                            Yig'ish (6 kun)
+                        </div>
+                        <div class="gantt-bar gantt-bar-3" style="left: 35%; width: 15%;">
+                            Bo'yash (4 kun)
+                        </div>
+                    </div>
+                </div>
+                <div class="gantt-row">
+                    <div class="gantt-label">Yotoq "Comfort" #Z002</div>
+                    <div class="gantt-timeline">
+                        <div class="gantt-bar gantt-bar-1" style="left: 5%; width: 15%;">
+                            Kesish (4 kun)
+                        </div>
+                        <div class="gantt-bar gantt-bar-2" style="left: 18%; width: 20%;">
+                            Yig'ish (5 kun)
+                        </div>
+                        <div class="gantt-bar gantt-bar-3" style="left: 35%; width: 10%;">
+                            Bo'yash (3 kun)
+                        </div>
+                        <div class="gantt-bar gantt-bar-4" style="left: 43%; width: 8%;">
+                            Furnitura (2 kun)
+                        </div>
+                    </div>
+                </div>
+                <div class="gantt-row">
+                    <div class="gantt-label">Ofis stoli #Z003</div>
+                    <div class="gantt-timeline">
+                        <div class="gantt-bar gantt-bar-1" style="left: 10%; width: 12%;">
+                            Kesish (3 kun)
+                        </div>
+                        <div class="gantt-bar gantt-bar-2" style="left: 20%; width: 16%;">
+                            Yig'ish (4 kun)
+                        </div>
+                        <div class="gantt-bar gantt-bar-3" style="left: 34%; width: 12%;">
+                            Bo'yash (3 kun)
+                        </div>
+                        <div class="gantt-bar gantt-bar-5" style="left: 44%; width: 10%;">
+                            Qadoqlash (2 kun)
+                        </div>
+                    </div>
+                </div>
+                <div class="gantt-row">
+                    <div class="gantt-label">Kitob javoni #Z004</div>
+                    <div class="gantt-timeline">
+                        <div class="gantt-bar gantt-bar-1" style="left: 2%; width: 18%;">
+                            Kesish (5 kun)
+                        </div>
+                        <div class="gantt-bar gantt-bar-2" style="left: 18%; width: 22%;">
+                            Yig'ish (6 kun)
+                        </div>
+                    </div>
+                </div>
+                <div class="gantt-row">
+                    <div class="gantt-label">Shkaf-kupe #Z005</div>
+                    <div class="gantt-timeline">
+                        <div class="gantt-bar gantt-bar-1" style="left: 25%; width: 20%;">
+                            Kesish (5 kun)
+                        </div>
+                        <div class="gantt-bar gantt-bar-2" style="left: 42%; width: 28%;">
+                            Yig'ish (7 kun)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="alert-panel">
+            <div class="alert-header">
+                <h3>⚠️ Ogohlantirishlar va bildirishnomalar</h3>
+                <button class="btn btn-sm btn-secondary">Barchasini ko'rish</button>
+            </div>
+            <div class="alert-list">
+                <div class="alert-item alert-danger">
+                    <div class="alert-icon">🚨</div>
+                    <div class="alert-content">
+                        <div class="alert-title">Kritik: Xom ashyo tanqisligi</div>
+                        <div class="alert-desc">DSP 18mm oq rang tugab qolmoqda. Zudlik bilan buyurtma berish kerak.</div>
+                        <div class="alert-time">10 daqiqa oldin</div>
+                    </div>
+                    <span class="priority-badge priority-high">Yuqori</span>
+                </div>
+                <div class="alert-item alert-warning">
+                    <div class="alert-icon">⚠️</div>
+                    <div class="alert-content">
+                        <div class="alert-title">Yig'ish sexi ortiqcha yuklanishi</div>
+                        <div class="alert-desc">Kelgusi hafta uchun 92% yuklanish prognoz qilinmoqda. Qo'shimcha resurs talab qilinadi.</div>
+                        <div class="alert-time">1 soat oldin</div>
+                    </div>
+                    <span class="priority-badge priority-medium">O'rta</span>
+                </div>
+                <div class="alert-item alert-info">
+                    <div class="alert-icon">📊</div>
+                    <div class="alert-content">
+                        <div class="alert-title">Buyurtma #Z001 rejadan oldinda</div>
+                        <div class="alert-desc">Oshxona to'plami ishlab chiqarishi rejalashtirilgandan 2 kun oldin tugallanishi kutilmoqda.</div>
+                        <div class="alert-time">3 soat oldin</div>
+                    </div>
+                    <span class="priority-badge priority-low">Past</span>
+                </div>
+                <div class="alert-item alert-warning">
+                    <div class="alert-icon">⏰</div>
+                    <div class="alert-content">
+                        <div class="alert-title">Buyurtma #Z004 kechikish xavfi</div>
+                        <div class="alert-desc">Kitob javoni ishlab chiqarishi material yetkazib berish muammosi tufayli kechikishi mumkin.</div>
+                        <div class="alert-time">5 soat oldin</div>
+                    </div>
+                    <span class="priority-badge priority-medium">O'rta</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn btn-primary">📊 Excel eksport</button>
+            <button class="btn btn-secondary">🖨️ Chop etish</button>
+            <button class="btn btn-success">✅ Rejani tasdiqlash</button>
+            <button class="btn btn-warning">🔄 Qayta hisoblash</button>
+        </div>
+    </div>
+
+    <!-- Modal for adding new production order -->
+    <div class="modal-overlay" id="addOrderModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Yangi ishlab chiqarish buyurtmasi</h3>
+                <button onclick="closeModal()" style="background: none; border: none; font-size: 24px; cursor: pointer;">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Mahsulot</label>
+                    <select class="form-control">
+                        <option>Oshxona to'plami "Lux-2024"</option>
+                        <option>Yotoq to'plami "Comfort Plus"</option>
+                        <option>Ofis stoli "Manager"</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Miqdor</label>
+                    <input type="number" class="form-control" placeholder="Miqdorni kiriting">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Boshlanish sanasi</label>
+                    <input type="date" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Tugash sanasi</label>
+                    <input type="date" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Muhimlik darajasi</label>
+                    <select class="form-control">
+                        <option>Oddiy</option>
+                        <option>Muhim</option>
+                        <option>Juda muhim</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Izoh</label>
+                    <textarea class="form-control" rows="3" placeholder="Qo'shimcha ma'lumotlar..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">Bekor qilish</button>
+                <button class="btn btn-primary">Saqlash</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simple interactivity
+        function closeModal() {
+            document.getElementById('addOrderModal').style.display = 'none';
+        }
+
+        // Add event listener to add button
+        document.addEventListener('DOMContentLoaded', function() {
+            // View controls toggle
+            const viewButtons = document.querySelectorAll('.view-controls .btn');
+            viewButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    viewButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+            // Capacity view toggle
+            const capacityButtons = document.querySelectorAll('.capacity-header .btn-sm');
+            capacityButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    capacityButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+            // Animate progress bars on load
+            setTimeout(() => {
+                const bars = document.querySelectorAll('.production-fill, .capacity-bar-fill');
+                bars.forEach(bar => {
+                    bar.style.transition = 'width 1s ease-out, height 1s ease-out';
+                });
+            }, 100);
+        });
+    </script>
+</body>
+</html>

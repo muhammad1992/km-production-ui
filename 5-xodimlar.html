@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xodimlar - Mebel ERP</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+        }
+        .sidebar {
+            width: 250px;
+            background: #2c3e50;
+            height: 100vh;
+            position: fixed;
+            color: white;
+            padding: 20px;
+        }
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+        .header {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .stat-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        .stat-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .stat-label {
+            color: #7f8c8d;
+            margin-top: 5px;
+            font-size: 13px;
+        }
+        .employees-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .employee-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        .employee-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .employee-header {
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .employee-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .employee-info {
+            flex: 1;
+        }
+        .employee-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        .employee-position {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        .employee-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .badge-brigadir { background: #e3f2fd; color: #1976d2; }
+        .badge-worker { background: #f3e5f5; color: #7b1fa2; }
+        .badge-master { background: #e8f5e9; color: #388e3c; }
+        .employee-details {
+            padding: 15px 20px;
+            background: #f8f9fa;
+        }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 14px;
+        }
+        .detail-label {
+            color: #7f8c8d;
+        }
+        .detail-value {
+            color: #2c3e50;
+            font-weight: 500;
+        }
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .tab {
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid #ecf0f1;
+        }
+        .tab.active {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        input[type="text"] {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 250px;
+        }
+        select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: white;
+        }
+        .status-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        .status-online { background: #27ae60; }
+        .status-busy { background: #f39c12; }
+        .status-offline { background: #95a5a6; }
+        .employee-actions {
+            padding: 15px 20px;
+            border-top: 1px solid #ecf0f1;
+            display: flex;
+            gap: 10px;
+        }
+        .action-btn {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #3498db;
+            background: white;
+            color: #3498db;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        .action-btn:hover {
+            background: #3498db;
+            color: white;
+        }
+        .performance-bar {
+            margin-top: 10px;
+        }
+        .performance-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 12px;
+        }
+        .progress-bar {
+            height: 6px;
+            background: #ecf0f1;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: 10px;
+            background: #3498db;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2 style="margin-bottom: 30px;">🏭 Mebel ERP</h2>
+        <div style="margin-bottom: 10px; padding: 10px;">📦 Buyurtmalar</div>
+        <div style="margin-bottom: 10px; padding: 10px;">🪑 Katalog</div>
+        <div style="margin-bottom: 10px; padding: 10px;">📊 Xom ashyolar</div>
+        <div style="margin-bottom: 10px; padding: 10px;">🏢 Sexlar</div>
+        <div style="margin-bottom: 10px; padding: 10px; background: #34495e; border-radius: 5px;">👷 Xodimlar</div>
+        <div style="margin-bottom: 10px; padding: 10px;">📈 Sklad balansi</div>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <div>
+                <h1>Xodimlar va brigadirlar</h1>
+                <p style="color: #7f8c8d; margin-top: 5px;">Jamoa boshqaruvi va monitoring</p>
+            </div>
+            <button class="btn btn-primary">+ Yangi xodim</button>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-value">45</div>
+                <div class="stat-label">Jami xodimlar</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">👔</div>
+                <div class="stat-value">6</div>
+                <div class="stat-label">Brigadirlar</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">✅</div>
+                <div class="stat-value">38</div>
+                <div class="stat-label">Hozir ishda</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🏖️</div>
+                <div class="stat-value">5</div>
+                <div class="stat-label">Ta'tilda</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🤒</div>
+                <div class="stat-value">2</div>
+                <div class="stat-label">Kasallikda</div>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active">👥 Barcha (45)</div>
+            <div class="tab">👔 Brigadirlar (6)</div>
+            <div class="tab">🔨 Kesish sexi (8)</div>
+            <div class="tab">🔧 Yig'ish sexi (12)</div>
+            <div class="tab">🎨 Bo'yash sexi (6)</div>
+            <div class="tab">📦 Qadoqlash (4)</div>
+        </div>
+
+        <div class="filter-bar">
+            <input type="text" placeholder="Ism yoki lavozim bo'yicha qidirish...">
+            <select>
+                <option>Barcha sexlar</option>
+                <option>Kesish sexi</option>
+                <option>Yig'ish sexi</option>
+                <option>Bo'yash sexi</option>
+                <option>Furnitura sexi</option>
+            </select>
+            <select>
+                <option>Barcha holatlar</option>
+                <option>Ishda</option>
+                <option>Dam olish</option>
+                <option>Ta'tilda</option>
+                <option>Kasallikda</option>
+            </select>
+        </div>
+
+        <div class="employees-grid">
+            <div class="employee-card">
+                <div class="employee-header">
+                    <div class="employee-avatar">SA</div>
+                    <div class="employee-info">
+                        <div class="employee-name">Aliyev Sardor</div>
+                        <div class="employee-position">Kesish sexi brigadiri</div>
+                    </div>
+                    <span class="employee-badge badge-brigadir">Brigadir</span>
+                </div>
+                <div class="employee-details">
+                    <div class="detail-row">
+                        <span class="detail-label">ID</span>
+                        <span class="detail-value">#EMP001</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Holat</span>
+                        <span class="detail-value">
+                            <span class="status-dot status-online"></span>
+                            Ishda
+                        </span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Sex</span>
+                        <span class="detail-value">Kesish sexi</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Tajriba</span>
+                        <span class="detail-value">8 yil</span>
+                    </div>
+                    <div class="performance-bar">
+                        <div class="performance-label">
+                            <span>Oy samaradorligi</span>
+                            <span style="font-weight: 600; color: #3498db;">92%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 92%;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="employee-actions">
+                    <button class="action-btn">📞 Qo'ng'iroq</button>
+                    <button class="action-btn">📊 Hisobot</button>
+                    <button class="action-btn">✏️ Tahrir</button>
+                </div>
+            </div>
+
+            <div class="employee-card">
+                <div class="employee-header">
+                    <div class="employee-avatar" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">JK</div>
+                    <div class="employee-info">
+                        <div class="employee-name">Karimov Jasur</div>
+                        <div class="employee-position">Yig'ish sexi brigadiri</div>
+                    </div>
+                    <span class="employee-badge badge-brigadir">Brigadir</span>
+                </div>
+                <div class="employee-details">
+                    <div class="detail-row">
+                        <span class="detail-label">ID</span>
+                        <span class="detail-value">#EMP002</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Holat</span>
+                        <span class="detail-value">
+                            <span class="status-dot status-online"></span>
+                            Ishda
+                        </span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Sex</span>
+                        <span class="detail-value">Yig'ish sexi</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Tajriba</span>
+                        <span class="detail-value">10 yil</span>
+                    </div>
+                    <div class="performance-bar">
+                        <div class="performance-label">
+                            <span>Oy samaradorligi</span>
+                            <span style="font-weight: 600; color: #3498db;">88%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 88%;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="employee-actions">
+                    <button class="action-btn">📞 Qo'ng'iroq</button>
+                    <button class="action-btn">📊 Hisobot</button>
+                    <button class="action-btn">✏️ Tahrir</button>
+                </div>
+            </div>
+
+            <div class="employee-card">
+                <div class="employee-header">
+                    <div class="employee-avatar" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">NR</div>
+                    <div class="employee-info">
+                        <div class="employee-name">Rahimova Nodira</div>
+                        <div class="employee-position">Bo'yash ustasi</div>
+                    </div>
+                    <span class="employee-badge badge-master">Usta</span>
+                </div>
+                <div class="employee-details">
+                    <div class="detail-row">
+                        <span class="detail-label">ID</span>
+                        <span class="detail-value">#EMP015</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Holat</span>
+                        <span class="detail-value">
+                            <span class="status-dot status-online"></span>
+                            Ishda
+                        </span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Sex</span>
+                        <span class="detail-value">Bo'yash sexi</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Tajriba</span>
+                        <span class="detail-value">5 yil</span>
+                    </div>
+                    <div class="performance-bar">
+                        <div class="performance-label">
+                            <span>Oy samaradorligi</span>
+                            <span style="font-weight: 600; color: #3498db;">95%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 95%;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="employee-actions">
+                    <button class="action-btn">📞 Qo'ng'iroq</button>
+                    <button class="action-btn">📊 Hisobot</button>
+                    <button class="action-btn">✏️ Tahrir</button>
+                </div>
+            </div>
+
+            <div class="employee-card">
+                <div class="employee-header">
+                    <div class="employee-avatar" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);">AS</div>
+                    <div class="employee-info">
+                        <div class="employee-name">Saidov Aziz</div>
+                        <div class="employee-position">Kesuvchi</div>
+                    </div>
+                    <span class="employee-badge badge-worker">Ishchi</span>
+                </div>
+                <div class="employee-details">
+                    <div class="detail-row">
+                        <span class="detail-label">ID</span>
+                        <span class="detail-value">#EMP023</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Holat</span>
+                        <span class="detail-value">
+                            <span class="status-dot status-busy"></span>
+                            Tushlikda
+                        </span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Sex</span>
+                        <span class="detail-value">Kesish sexi</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Tajriba</span>
+                        <span class="detail-value">3 yil</span>
+                    </div>
+                    <div class="performance-bar">
+                        <div class="performance-label">
+                            <span>Oy samaradorligi</span>
+                            <span style="font-weight: 600; color: #3498db;">78%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 78%;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="employee-actions">
+                    <button class="action-btn">📞 Qo'ng'iroq</button>
+                    <button class="action-btn">📊 Hisobot</button>
+                    <button class="action-btn">✏️ Tahrir</button>
+                </div>
+            </div>
+
+            <div class="employee-card">
+                <div class="employee-header">
+                    <div class="employee-avatar" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">MT</div>
+                    <div class="employee-info">
+                        <div class="employee-name">Toshev Murod</div>
+                        <div class="employee-position">Furnitura brigadiri</div>
+                    </div>
+                    <span class="employee-badge badge-brigadir">Brigadir</span>
+                </div>
+                <div class="employee-details">
+                    <div class="detail-row">
+                        <span class="detail-label">ID</span>
+                        <span class="detail-value">#EMP003</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Holat</span>
+                        <span class="detail-value">
+                            <span class="status-dot status-online"></span>
+                            Ishda
+                        </span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Sex</span>
+                        <span class="detail-value">Furnitura sexi</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Tajriba</span>
+                        <span class="detail-value">7 yil</span>
+                    </div>
+                    <div class="performance-bar">
+                        <div class="performance-label">
+                            <span>Oy samaradorligi</span>
+                            <span style="font-weight: 600; color: #3498db;">85%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 85%;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="employee-actions">
+                    <button class="action-btn">📞 Qo'ng'iroq</button>
+                    <button class="action-btn">📊 Hisobot</button>
+                    <button class="action-btn">✏️ Tahrir</button>
+                </div>
+            </div>
+
+            <div class="employee-card">
+                <div class="employee-header">
+                    <div class="employee-avatar" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);">DA</div>
+                    <div class="employee-info">
+                        <div class="employee-name">Abdullayeva Dilbar</div>
+                        <div class="employee-position">Qadoqlovchi</div>
+                    </div>
+                    <span class="employee-badge badge-worker">Ishchi</span>
+                </div>
+                <div class="employee-details">
+                    <div class="detail-row">
+                        <span class="detail-label">ID</span>
+                        <span class="detail-value">#EMP031</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Holat</span>
+                        <span class="detail-value">
+                            <span class="status-dot status-offline"></span>
+                            Ta'tilda
+                        </span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Sex</span>
+                        <span class="detail-value">Qadoqlash sexi</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Tajriba</span>
+                        <span class="detail-value">2 yil</span>
+                    </div>
+                    <div class="performance-bar">
+                        <div class="performance-label">
+                            <span>Oy samaradorligi</span>
+                            <span style="font-weight: 600; color: #3498db;">90%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 90%;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="employee-actions">
+                    <button class="action-btn">📞 Qo'ng'iroq</button>
+                    <button class="action-btn">📊 Hisobot</button>
+                    <button class="action-btn">✏️ Tahrir</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

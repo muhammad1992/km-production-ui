@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOM/Kalkulyatsiya - Mebel ERP</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+        }
+        .sidebar {
+            width: 250px;
+            background: #2c3e50;
+            height: 100vh;
+            position: fixed;
+            color: white;
+            padding: 20px;
+        }
+        .sidebar-menu {
+            margin-top: 30px;
+        }
+        .menu-item {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .menu-item.active {
+            background: #34495e;
+        }
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+        .header {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .product-selector {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 15px;
+            align-items: end;
+        }
+        .form-group {
+            flex: 1;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #34495e;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        select, input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+        .bom-container {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 20px;
+        }
+        .bom-tree {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .bom-summary {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+        .tree-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        .tree-item {
+            padding: 12px;
+            border: 1px solid #ecf0f1;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+        }
+        .tree-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        .tree-item-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .item-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        .icon-component { background: #e3f2fd; }
+        .icon-material { background: #ffeaa7; }
+        .icon-furnitura { background: #dfe6e9; }
+        .item-details {
+            flex: 1;
+        }
+        .item-name {
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+        .item-code {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+        .item-quantity {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .quantity-input {
+            width: 80px;
+            padding: 5px 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .unit-label {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        .tree-children {
+            margin-left: 40px;
+            margin-top: 15px;
+            padding-left: 20px;
+            border-left: 2px solid #ecf0f1;
+        }
+        .child-item {
+            padding: 10px;
+            background: white;
+            border: 1px solid #ecf0f1;
+            border-radius: 5px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .child-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .child-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+        .child-quantity {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .stock-status {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .stock-available { background: #e8f5e9; color: #388e3c; }
+        .stock-low { background: #fff3e0; color: #f57c00; }
+        .stock-out { background: #ffebee; color: #c62828; }
+        .summary-section {
+            margin-bottom: 20px;
+        }
+        .summary-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #f8f9fa;
+        }
+        .summary-label {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        .summary-value {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        .total-cost {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+        .total-label {
+            color: #7f8c8d;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        .total-amount {
+            font-size: 24px;
+            font-weight: bold;
+            color: #27ae60;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .expand-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            color: #7f8c8d;
+            transition: transform 0.3s;
+        }
+        .expand-btn.expanded {
+            transform: rotate(90deg);
+        }
+        .badge {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+        .badge-count { background: #e3f2fd; color: #1976d2; }
+        .add-material-btn {
+            padding: 8px 12px;
+            border: 1px dashed #3498db;
+            background: white;
+            color: #3498db;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 13px;
+            margin-top: 10px;
+            width: 100%;
+            transition: all 0.3s;
+        }
+        .add-material-btn:hover {
+            background: #f8f9fa;
+        }
+        .alert-box {
+            background: #fff3cd;
+            border-left: 4px solid #f39c12;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+        .alert-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .version-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-size: 13px;
+        }
+        .version-badge {
+            padding: 3px 8px;
+            background: #3498db;
+            color: white;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>🏭 Mebel ERP</h2>
+        <div class="sidebar-menu">
+            <div class="menu-item">📦 Buyurtmalar</div>
+            <div class="menu-item">🪑 Katalog</div>
+            <div class="menu-item">📊 Xom ashyolar</div>
+            <div class="menu-item">🏢 Sexlar</div>
+            <div class="menu-item">👷 Xodimlar</div>
+            <div class="menu-item">📈 Sklad balansi</div>
+            <div class="menu-item active">📋 BOM/Kalkulyatsiya</div>
+            <div class="menu-item">🛤️ Routelar</div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <h1>BOM (Bill of Materials) - Kalkulyatsiya</h1>
+            <p style="color: #7f8c8d; margin-top: 5px;">Mahsulot uchun kerakli materiallar va komponentlar ro'yxati</p>
+        </div>
+
+        <div class="product-selector">
+            <div class="form-group">
+                <label class="form-label">Mahsulot tanlash</label>
+                <select>
+                    <option>Oshxona to'plami "Lux-2024" (KIT-001)</option>
+                    <option>Yotoq to'plami "Comfort Plus" (BED-002)</option>
+                    <option>Ofis stoli "Manager" (OFC-003)</option>
+                    <option>Divan "Royal" (SOF-004)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Miqdor</label>
+                <input type="number" value="1" min="1">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Buyurtma</label>
+                <select>
+                    <option>Buyurtmasiz</option>
+                    <option>#Z001 - Aliyev Sardor</option>
+                    <option>#Z002 - Karimova Dilnoza</option>
+                </select>
+            </div>
+            <button class="btn btn-primary">Hisoblash</button>
+            <button class="btn btn-success">Saqlash</button>
+        </div>
+
+        <div class="bom-container">
+            <div class="bom-tree">
+                <div class="tree-header">
+                    <div>
+                        <h3>Material daraxtchasi</h3>
+                        <p style="color: #7f8c8d; font-size: 14px; margin-top: 5px;">Oshxona to'plami "Lux-2024"</p>
+                    </div>
+                    <div class="version-info">
+                        <span>Versiya:</span>
+                        <span class="version-badge">v2.1</span>
+                        <span style="color: #7f8c8d;">15.01.2025</span>
+                    </div>
+                </div>
+
+                <div class="tree-item">
+                    <div class="tree-item-header">
+                        <div class="tree-item-info">
+                            <button class="expand-btn expanded">▶</button>
+                            <div class="item-icon icon-component">🗄️</div>
+                            <div class="item-details">
+                                <div class="item-name">
+                                    Yuqori shkaflar
+                                    <span class="badge badge-count">8 komponent</span>
+                                </div>
+                                <div class="item-code">COMP-001</div>
+                            </div>
+                        </div>
+                        <div class="item-quantity">
+                            <input type="number" class="quantity-input" value="3">
+                            <span class="unit-label">dona</span>
+                        </div>
+                    </div>
+                    
+                    <div class="tree-children">
+                        <div class="child-item">
+                            <div class="child-info">
+                                <div class="child-icon icon-material">🪵</div>
+                                <div>
+                                    <div style="font-weight: 500;">DSP 18mm Oq</div>
+                                    <div style="font-size: 12px; color: #7f8c8d;">MAT-001</div>
+                                </div>
+                            </div>
+                            <div class="child-quantity">
+                                <input type="number" class="quantity-input" value="2.5" step="0.1">
+                                <span class="unit-label">list</span>
+                                <span class="stock-status stock-available">Mavjud</span>
+                            </div>
+                        </div>
+
+                        <div class="child-item">
+                            <div class="child-info">
+                                <div class="child-icon icon-material">🪵</div>
+                                <div>
+                                    <div style="font-weight: 500;">MDF 16mm</div>
+                                    <div style="font-size: 12px; color: #7f8c8d;">MAT-003</div>
+                                </div>
+                            </div>
+                            <div class="child-quantity">
+                                <input type="number" class="quantity-input" value="0.5" step="0.1">
+                                <span class="unit-label">list</span>
+                                <span class="stock-status stock-available">Mavjud</span>
+                            </div>
+                        </div>
+
+                        <div class="child-item">
+                            <div class="child-info">
+                                <div class="child-icon icon-furnitura">🔩</div>
+                                <div>
+                                    <div style="font-weight: 500;">Ilgak pechka</div>
+                                    <div style="font-size: 12px; color: #7f8c8d;">FUR-012</div>
+                                </div>
+                            </div>
+                            <div class="child-quantity">
+                                <input type="number" class="quantity-input" value="6">
+                                <span class="unit-label">dona</span>
+                                <span class="stock-status stock-available">Mavjud</span>
+                            </div>
+                        </div>
+
+                        <div class="child-item">
+                            <div class="child-info">
+                                <div class="child-icon icon-furnitura">🔩</div>
+                                <div>
+                                    <div style="font-weight: 500;">Dastak 128mm</div>
+                                    <div style="font-size: 12px; color: #7f8c8d;">FUR-045</div>
+                                </div>
+                            </div>
+                            <div class="child-quantity">
+                                <input type="number" class="quantity-input" value="3">
+                                <span class="unit-label">dona</span>
+                                <span class="stock-status stock-available">Mavjud</span>
+                            </div>
+                        </div>
+                        <button class="add-material-btn">+ Material qo'shish</button>
+                    </div>
+                </div>
+
+                <div class="tree-item">
+                    <div class="tree-item-header">
+                        <div class="tree-item-info">
+                            <button class="expand-btn">▶</button>
+                            <div class="item-icon icon-component">🗄️</div>
+                            <div class="item-details">
+                                <div class="item-name">
+                                    Pastki shkaflar
+                                    <span class="badge badge-count">12 komponent</span>
+                                </div>
+                                <div class="item-code">COMP-002</div>
+                            </div>
+                        </div>
+                        <div class="item-quantity">
+                            <input type="number" class="quantity-input" value="4">
+                            <span class="unit-label">dona</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tree-item">
+                    <div class="tree-item-header">
+                        <div class="tree-item-info">
+                            <button class="expand-btn">▶</button>
+                            <div class="item-icon icon-component">💎</div>
+                            <div class="item-details">
+                                <div class="item-name">
+                                    Stol usti (Granite)
+                                    <span class="badge badge-count">3 komponent</span>
+                                </div>
+                                <div class="item-code">COMP-003</div>
+                            </div>
+                        </div>
+                        <div class="item-quantity">
+                            <input type="number" class="quantity-input" value="3.2" step="0.1">
+                            <span class="unit-label">m</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tree-item">
+                    <div class="tree-item-header">
+                        <div class="tree-item-info">
+                            <button class="expand-btn">▶</button>
+                            <div class="item-icon icon-component">🚪</div>
+                            <div class="item-details">
+                                <div class="item-name">
+                                    Eshiklar to'plami
+                                    <span class="badge badge-count">15 komponent</span>
+                                </div>
+                                <div class="item-code">COMP-004</div>
+                            </div>
+                        </div>
+                        <div class="item-quantity">
+                            <input type="number" class="quantity-input" value="7">
+                            <span class="unit-label">dona</span>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="add-material-btn" style="margin-top: 15px;">+ Yangi komponent qo'shish</button>
+            </div>
+
+            <div class="bom-summary">
+                <div class="alert-box">
+                    <div class="alert-title">⚠️ Diqqat</div>
+                    <div>2 ta material yetarli emas: MDF 16mm Venge, Shisha 4mm</div>
+                </div>
+
+                <div class="summary-section">
+                    <div class="summary-title">📊 Material xulosa</div>
+                    <div class="summary-item">
+                        <span class="summary-label">Jami materiallar</span>
+                        <span class="summary-value">38 tur</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Mavjud</span>
+                        <span class="summary-value" style="color: #27ae60;">36 ta</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Yetishmaydi</span>
+                        <span class="summary-value" style="color: #e74c3c;">2 ta</span>
+                    </div>
+                </div>
+
+                <div class="summary-section">
+                    <div class="summary-title">💰 Tannarx</div>
+                    <div class="summary-item">
+                        <span class="summary-label">Xom ashyolar</span>
+                        <span class="summary-value">8,200,000 so'm</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Furnitura</span>
+                        <span class="summary-value">1,850,000 so'm</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Ish haqi (taxmin)</span>
+                        <span class="summary-value">1,500,000 so'm</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Qo'shimcha xarajat</span>
+                        <span class="summary-value">450,000 so'm</span>
+                    </div>
+                </div>
+
+                <div class="total-cost">
+                    <div class="total-label">Jami tannarx</div>
+                    <div class="total-amount">12,000,000 so'm</div>
+                </div>
+
+                <div class="summary-section" style="margin-top: 20px;">
+                    <div class="summary-title">⚙️ Ishlab chiqarish</div>
+                    <div class="summary-item">
+                        <span class="summary-label">Tahmini vaqt</span>
+                        <span class="summary-value">5 kun</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Kerakli sexlar</span>
+                        <span class="summary-value">4 ta</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Brigadalar</span>
+                        <span class="summary-value">3 ta</span>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-primary" style="flex: 1;">📋 Buyurtmaga</button>
+                    <button class="btn" style="flex: 1; background: #95a5a6; color: white;">🖨️ Chop etish</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

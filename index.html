@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mebel ERP - UI Mockuplar</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+        h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            font-size: 20px;
+            opacity: 0.9;
+        }
+        .phases-grid {
+            display: grid;
+            gap: 30px;
+        }
+        .phase-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .phase-title {
+            font-size: 24px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ecf0f1;
+        }
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .module-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            border: 2px solid transparent;
+        }
+        .module-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-color: #3498db;
+        }
+        .module-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        .module-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        .module-desc {
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+        .status-completed {
+            background: #e8f5e9;
+            color: #388e3c;
+        }
+        .status-pending {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+        .status-planned {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+        .progress-info {
+            background: rgba(255,255,255,0.2);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            color: white;
+        }
+        .progress-bar {
+            height: 20px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        .progress-fill {
+            height: 100%;
+            background: white;
+            border-radius: 10px;
+            transition: width 0.5s;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏭 Mebel ERP System</h1>
+            <p class="subtitle">UI/UX Mockuplar - Ishlab chiqarish boshqaruv tizimi</p>
+        </div>
+
+        <div class="progress-info">
+            <h3>Loyiha holati</h3>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 61%;"></div>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value">14</div>
+                    <div class="stat-label">Tugallangan</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">9</div>
+                    <div class="stat-label">Kutilmoqda</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">23</div>
+                    <div class="stat-label">Jami modul</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">61%</div>
+                    <div class="stat-label">Tayyor</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="phases-grid">
+            <div class="phase-section">
+                <h2 class="phase-title">📍 1-bosqich: Core (Asosiy modullar)</h2>
+                <div class="modules-grid">
+                    <a href="1-buyurtmalar.html" class="module-card">
+                        <div class="module-icon">📦</div>
+                        <div class="module-name">Buyurtmalar</div>
+                        <div class="module-desc">Zakaz qabul qilish va boshqarish</div>
+                        <span class="status-badge status-completed">✓ Tayyor</span>
+                    </a>
+                    <a href="2-katalog.html" class="module-card">
+                        <div class="module-icon">🪑</div>
+                        <div class="module-name">Mebellar katalogi</div>
+                        <div class="module-desc">Mahsulotlar ro'yxati</div>
+                        <span class="status-badge status-completed">✓ Tayyor</span>
+                    </a>
+                    <a href="3-xom-ashyolar.html" class="module-card">
+                        <div class="module-icon">📊</div>
+                        <div class="module-name">Xom ashyolar</div>
+                        <div class="module-desc">Materiallar bazasi</div>
+                        <span class="status-badge status-completed">✓ Tayyor</span>
+                    </a>
+                    <a href="4-sexlar.html" class="module-card">
+                        <div class="module-icon">🏢</div>
+                        <div class="module-name">Sexlar</div>
+                        <div class="module-desc">Ishlab chiqarish bo'limlari</div>
+                        <span class="status-badge status-completed">✓ Tayyor</span>
+                    </a>
+                    <a href="5-xodimlar.html" class="module-card">
+                        <div class="module-icon">👷</div>
+                        <div class="module-name">Xodimlar, brigadirlar</div>
+                        <div class="module-desc">Jamoa boshqaruvi</div>
+                        <span class="status-badge status-completed">✓ Tayyor</span>
+                    </a>
+                    <a href="6-sklad-balansi.html" class="module-card">
+                        <div class="module-icon">📈</div>
+                        <div class="module-name">Sklad balansi</div>
+                        <div class="module-desc">Xom ashyo qoldiqlari</div>
+                        <span class="status-badge status-completed">✓ Tayyor</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="phase-section">
+                <h2 class="phase-title">📍 2-bosqich: Production (Ishlab chiqarish)</h2>
+                <div class="modules-grid">
+                    <a href="7-bom-kalkulyatsiya.html" class="module-card">
+                        <div class="module-icon">📋</div>
+                        <div class="module-name">Kalkulyatsiya (BOM)</div>
+                        <div class="module-desc">Material talablari ro'yxati</div>
+                        <span class="status-badge status-completed">✓ Tayyor</span>
+                    </a>
+                    <a href="8-routelar.html" class="module-card">
+                        <div class="module-icon">🛤️</div>
+                        <div class="module-name">Routelar</div>
+                        <div class="module-desc">Ishlab chiqarish marshruti</div>
+                        <span class="status-badge status-completed">✓ Tayyor</span>
+                    </a>
+                    <a href="9-buyurtma-tayyorligi.html" class="module-card">
+                        <div class="module-icon">📊</div>
+                        <div class="module-name">Buyurtma tayyorligi</div>
+                        <div class="module-desc">Statuslar va foizlar</div>
+                        <span class="status-badge status-completed">✓ Tayyor</span>
+                    </a>
+                    <a href="10-tannarx-kalkulyatsiya.html" class="module-card">
+                        <div class="module-icon">💰</div>
+                        <div class="module-name">Tannarx kalkulyatsiyasi</div>
+                        <div class="module-desc">Real-time narx hisobi</div>
+                        <span class="status-badge status-completed">✓ Tayyor</span>
+                    </a>
+                    <div class="module-card" style="opacity: 0.6; cursor: not-allowed;">
+                        <div class="module-icon">📱</div>
+                        <div class="module-name">Texnik hujjatlar</div>
+                        <div class="module-desc">Chizmalar, spetsifikatsiyalar</div>
+                        <span class="status-badge status-pending">⏳ Kutilmoqda</span>
+                    </div>
+                    <div class="module-card" style="opacity: 0.6; cursor: not-allowed;">
+                        <div class="module-icon">📲</div>
+                        <div class="module-name">Barcode/QR skanerlash</div>
+                        <div class="module-desc">Mahsulot tracking</div>
+                        <span class="status-badge status-pending">⏳ Kutilmoqda</span>
+                    </div>
+                    <div class="module-card" style="opacity: 0.6; cursor: not-allowed;">
+                        <div class="module-icon">📱</div>
+                        <div class="module-name">Mobile app</div>
+                        <div class="module-desc">Sex xodimlari uchun</div>
+                        <span class="status-badge status-pending">⏳ Kutilmoqda</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="phase-section">
+                <h2 class="phase-title">📍 3-bosqich: Ish haqi</h2>
+                <div class="modules-grid">
+                    <a href="14-ish-haqi.html" class="module-card">
+                        <div class="module-icon">💵</div>
+                        <div class="module-name">Ish haqi</div>
+                        <div class="module-desc">Oylik + bonus hisoblash</div>
+                        <span class="status-badge status-completed">✓ Tayyor</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="phase-section">
+                <h2 class="phase-title">📍 4-bosqich: Planning & Control</h2>
+                <div class="modules-grid">
+                    <a href="15-sifat-nazorati.html" class="module-card">
+                        <div class="module-icon">✅</div>
+                        <div class="module-name">Sifat nazorati</div>
+                        <div class="module-desc">Qadoqlashdan oldingi tekshiruv</div>
+                        <span class="status-badge status-completed">✓ Tayyor</span>
+                    </a>
+                    <a href="16-supermarket.html" class="module-card">
+                        <div class="module-icon">🛒</div>
+                        <div class="module-name">Supermarket</div>
+                        <div class="module-desc">Avtomatik buyurtmalar</div>
+                        <span class="status-badge status-completed">✓ Tayyor</span>
+                    </a>
+                    <div class="module-card" style="opacity: 0.6; cursor: not-allowed;">
+                        <div class="module-icon">📅</div>
+                        <div class="module-name">MPS</div>
+                        <div class="module-desc">Asosiy ishlab chiqarish jadvali</div>
+                        <span class="status-badge status-planned">📅 Rejalashtirilgan</span>
+                    </div>
+                    <div class="module-card" style="opacity: 0.6; cursor: not-allowed;">
+                        <div class="module-icon">📊</div>
+                        <div class="module-name">Gantt diagrammalar</div>
+                        <div class="module-desc">Vizual rejalashtirish</div>
+                        <span class="status-badge status-planned">📅 Rejalashtirilgan</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="phase-section">
+                <h2 class="phase-title">📍 5-bosqich: Monitoring & Reports</h2>
+                <div class="modules-grid">
+                    <div class="module-card" style="opacity: 0.6; cursor: not-allowed;">
+                        <div class="module-icon">📈</div>
+                        <div class="module-name">Monitoring</div>
+                        <div class="module-desc">Sex yuklanishi, resurslar</div>
+                        <span class="status-badge status-planned">📅 Rejalashtirilgan</span>
+                    </div>
+                    <div class="module-card" style="opacity: 0.6; cursor: not-allowed;">
+                        <div class="module-icon">📊</div>
+                        <div class="module-name">Xisobotlar</div>
+                        <div class="module-desc">Analitik hisobotlar</div>
+                        <span class="status-badge status-planned">📅 Rejalashtirilgan</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="phase-section">
+                <h2 class="phase-title">📍 6-bosqich: Advanced Planning</h2>
+                <div class="modules-grid">
+                    <div class="module-card" style="opacity: 0.6; cursor: not-allowed;">
+                        <div class="module-icon">🔮</div>
+                        <div class="module-name">MRP</div>
+                        <div class="module-desc">Material rejalashtirish</div>
+                        <span class="status-badge status-planned">📅 Rejalashtirilgan</span>
+                    </div>
+                    <div class="module-card" style="opacity: 0.6; cursor: not-allowed;">
+                        <div class="module-icon">⚙️</div>
+                        <div class="module-name">Capacity Planning</div>
+                        <div class="module-desc">Quvvat rejalashtirish</div>
+                        <span class="status-badge status-planned">📅 Rejalashtirilgan</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="phase-section">
+                <h2 class="phase-title">📍 7-bosqich: Rahbariyat</h2>
+                <div class="modules-grid">
+                    <div class="module-card" style="opacity: 0.6; cursor: not-allowed;">
+                        <div class="module-icon">💹</div>
+                        <div class="module-name">Foyda/zarar tahlili</div>
+                        <div class="module-desc">Buyurtma rentabelligi</div>
+                        <span class="status-badge status-planned">📅 Rejalashtirilgan</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
