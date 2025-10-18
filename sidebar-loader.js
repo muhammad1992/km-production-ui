@@ -90,6 +90,32 @@ function highlightActiveMenuItem() {
         if (itemHref === currentPage || (currentPage === '' && itemHref === 'index.html')) {
             item.classList.add('active');
         }
+
+        // Override default click behavior to open in tabs
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            // Get tab information
+            const href = this.getAttribute('href');
+            const iconElement = this.querySelector('.menu-item-icon');
+            const icon = iconElement ? iconElement.textContent : '';
+            // Get title without icon
+            const titleText = this.textContent.trim();
+            const title = titleText.replace(icon, '').trim();
+
+            // Generate tab ID from href
+            const tabId = href.replace('.html', '').replace(/-/g, '_');
+
+            // Call parent window's addTab function if it exists
+            if (window.parent && window.parent.addTab) {
+                window.parent.addTab(tabId, title, icon, href);
+            } else if (window.addTab) {
+                window.addTab(tabId, title, icon, href);
+            } else {
+                // Fallback to regular navigation if tab system not available
+                window.location.href = href;
+            }
+        });
     });
 }
 
