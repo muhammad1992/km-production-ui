@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prayslist - Mebel ERP</title>
+    <link rel="stylesheet" href="sidebar-styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .main-content {
+            height: calc(100vh - 40px);
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            background: white;
+            padding: 15px 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            font-size: 24px;
+        }
+        .pricelist-container {
+            display: grid;
+            grid-template-columns: 280px 400px 1fr;
+            gap: 15px;
+            flex: 1;
+            overflow: hidden;
+        }
+        .column {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .column-header {
+            padding: 15px;
+            background: #34495e;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+        }
+        .column-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+        .category-item {
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid #ecf0f1;
+        }
+        .collection-item {
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid #ecf0f1;
+        }
+        .category-item:hover, .collection-item:hover {
+            background: #e3f2fd;
+            border-color: #3498db;
+        }
+        .category-item.active, .collection-item.active {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        .item-title {
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .item-subtitle {
+            font-size: 11px;
+            color: #7f8c8d;
+            margin-top: 2px;
+            line-height: 1.4;
+        }
+        .category-item.active .item-subtitle,
+        .collection-item.active .item-subtitle {
+            color: rgba(255,255,255,0.8);
+        }
+
+        /* Furniture table */
+        .furniture-table-container {
+            flex: 1;
+            overflow: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        thead {
+            position: sticky;
+            top: 0;
+            background: #34495e;
+            color: white;
+            z-index: 10;
+        }
+        th {
+            padding: 12px 10px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #ecf0f1;
+            font-size: 13px;
+        }
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+        .price {
+            font-weight: 600;
+            color: #27ae60;
+            font-size: 12px;
+        }
+        th:nth-child(8) { background: #95a5a6; }
+        th:nth-child(9) { background: #3498db; }
+        th:nth-child(10) { background: #9b59b6; }
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+        }
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        .action-btns {
+            display: flex;
+            gap: 5px;
+        }
+        .action-btn {
+            padding: 4px 8px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            transition: all 0.3s;
+        }
+        .action-btn:hover {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+    </style>
+</head>
+<body>
+    <div id="sidebar-container"></div>
+
+    <div class="main-content">
+        <div class="header">
+            <h1>💰 Prayslist</h1>
+        </div>
+
+        <div class="pricelist-container">
+            <!-- Kategoriyalar ustuni -->
+            <div class="column">
+                <div class="column-header">📂 Kategoriyalar</div>
+                <div class="column-body" id="categories">
+                    <div class="category-item active" onclick="selectCategory('KIT', this)">
+                        <div>
+                            <div class="item-title">Oshxona</div>
+                            <div class="item-subtitle">15 ta to'plam</div>
+                        </div>
+                    </div>
+                    <div class="category-item" onclick="selectCategory('BED', this)">
+                        <div>
+                            <div class="item-title">Yotoq xonasi</div>
+                            <div class="item-subtitle">12 ta to'plam</div>
+                        </div>
+                    </div>
+                    <div class="category-item" onclick="selectCategory('LIV', this)">
+                        <div>
+                            <div class="item-title">Yashash xonasi</div>
+                            <div class="item-subtitle">8 ta to'plam</div>
+                        </div>
+                    </div>
+                    <div class="category-item" onclick="selectCategory('OFF', this)">
+                        <div>
+                            <div class="item-title">Ofis</div>
+                            <div class="item-subtitle">10 ta to'plam</div>
+                        </div>
+                    </div>
+                    <div class="category-item" onclick="selectCategory('BAT', this)">
+                        <div>
+                            <div class="item-title">Hammon</div>
+                            <div class="item-subtitle">6 ta to'plam</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- To'plamlar ustuni -->
+            <div class="column">
+                <div class="column-header">📦 To'plamlar</div>
+                <div class="column-body" id="collections">
+                    <div class="collection-item active" onclick="selectCollection('KIT-001', this)">
+                        <div>
+                            <div class="item-title">Oshxona Lux-2024</div>
+                            <div class="item-subtitle">5 dona mebel</div>
+                            <div class="item-subtitle">💰 Oddiy: 11.5 mln</div>
+                            <div class="item-subtitle">💎 O'rta: 12.5 mln</div>
+                            <div class="item-subtitle">👑 Premium: 13.9 mln</div>
+                        </div>
+                    </div>
+                    <div class="collection-item" onclick="selectCollection('KIT-002', this)">
+                        <div>
+                            <div class="item-title">Oshxona Standart</div>
+                            <div class="item-subtitle">4 dona mebel</div>
+                            <div class="item-subtitle">💰 Oddiy: 7.5 mln</div>
+                            <div class="item-subtitle">💎 O'rta: 8.2 mln</div>
+                            <div class="item-subtitle">👑 Premium: 9.1 mln</div>
+                        </div>
+                    </div>
+                    <div class="collection-item" onclick="selectCollection('KIT-003', this)">
+                        <div>
+                            <div class="item-title">Oshxona Mini</div>
+                            <div class="item-subtitle">3 dona mebel</div>
+                            <div class="item-subtitle">💰 Oddiy: 5.2 mln</div>
+                            <div class="item-subtitle">💎 O'rta: 5.8 mln</div>
+                            <div class="item-subtitle">👑 Premium: 6.5 mln</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mebellar ustuni -->
+            <div class="column">
+                <div class="column-header">🪑 Mebellar</div>
+                <div class="column-body furniture-table-container" id="furniture">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 40px;">№</th>
+                                <th>Mebel nomi</th>
+                                <th>Kod</th>
+                                <th>Material</th>
+                                <th>Soni</th>
+                                <th>Pozitsiya</th>
+                                <th>O'lchov</th>
+                                <th>Oddiy</th>
+                                <th>O'rta</th>
+                                <th>Premium</th>
+                                <th>Amallar</th>
+                            </tr>
+                        </thead>
+                        <tbody id="furnitureTableBody">
+                            <tr>
+                                <td style="text-align: center; font-weight: 600;">1</td>
+                                <td><strong>Yuqori shkaf</strong></td>
+                                <td>KIT-001-UC1</td>
+                                <td>MDF</td>
+                                <td>2 dona</td>
+                                <td>Yuqori</td>
+                                <td>80x35x72</td>
+                                <td class="price">1,650,000</td>
+                                <td class="price">1,850,000</td>
+                                <td class="price">2,100,000</td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn">💵 Narx</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: center; font-weight: 600;">2</td>
+                                <td><strong>Pastki shkaf (chiroy)</strong></td>
+                                <td>KIT-001-BC1</td>
+                                <td>MDF</td>
+                                <td>1 dona</td>
+                                <td>Pastki</td>
+                                <td>80x60x82</td>
+                                <td class="price">2,000,000</td>
+                                <td class="price">2,200,000</td>
+                                <td class="price">2,450,000</td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn">💵 Narx</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: center; font-weight: 600;">3</td>
+                                <td><strong>Ustun shkaf</strong></td>
+                                <td>KIT-001-TC1</td>
+                                <td>MDF</td>
+                                <td>2 dona</td>
+                                <td>Ustun</td>
+                                <td>60x35x140</td>
+                                <td class="price">2,750,000</td>
+                                <td class="price">2,950,000</td>
+                                <td class="price">3,200,000</td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn">💵 Narx</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: center; font-weight: 600;">4</td>
+                                <td><strong>Ish stoli</strong></td>
+                                <td>KIT-001-WS1</td>
+                                <td>MDF + Tosh</td>
+                                <td>1 dona</td>
+                                <td>Pastki</td>
+                                <td>200x60x85</td>
+                                <td class="price">3,200,000</td>
+                                <td class="price">3,500,000</td>
+                                <td class="price">3,900,000</td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn">💵 Narx</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: center; font-weight: 600;">5</td>
+                                <td><strong>Burchak shkaf</strong></td>
+                                <td>KIT-001-CO1</td>
+                                <td>MDF</td>
+                                <td>1 dona</td>
+                                <td>Burchak</td>
+                                <td>90x90x82</td>
+                                <td class="price">1,850,000</td>
+                                <td class="price">2,000,000</td>
+                                <td class="price">2,200,000</td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn">💵 Narx</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="sidebar-loader.js"></script>
+    <script>
+        // Kategoriyani tanlash
+        function selectCategory(categoryId, element) {
+            // Barcha kategoriyalardan active ni olib tashlash
+            document.querySelectorAll('.category-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            element.classList.add('active');
+
+            // To'plamlarni yuklash (demo data)
+            loadCollections(categoryId);
+        }
+
+        // To'plamlarni yuklash
+        function loadCollections(categoryId) {
+            const collectionsData = {
+                'KIT': [
+                    { id: 'KIT-001', name: 'Oshxona Lux-2024', count: 5, priceBasic: '11.5 mln', priceMid: '12.5 mln', pricePremium: '13.9 mln' },
+                    { id: 'KIT-002', name: 'Oshxona Standart', count: 4, priceBasic: '7.5 mln', priceMid: '8.2 mln', pricePremium: '9.1 mln' },
+                    { id: 'KIT-003', name: 'Oshxona Mini', count: 3, priceBasic: '5.2 mln', priceMid: '5.8 mln', pricePremium: '6.5 mln' }
+                ],
+                'BED': [
+                    { id: 'BED-001', name: 'Yotoq Comfort Plus', count: 4, priceBasic: '16.5 mln', priceMid: '18.2 mln', pricePremium: '20.5 mln' },
+                    { id: 'BED-002', name: 'Yotoq Standart', count: 3, priceBasic: '11.2 mln', priceMid: '12.5 mln', pricePremium: '14.1 mln' }
+                ],
+                'LIV': [
+                    { id: 'LIV-001', name: 'Yashash Elegant', count: 6, priceBasic: '19.8 mln', priceMid: '22.0 mln', pricePremium: '24.8 mln' },
+                    { id: 'LIV-002', name: 'Yashash Klassik', count: 5, priceBasic: '15.0 mln', priceMid: '16.8 mln', pricePremium: '18.9 mln' }
+                ],
+                'OFF': [
+                    { id: 'OFF-001', name: 'Ofis Premium', count: 7, priceBasic: '14.2 mln', priceMid: '15.8 mln', pricePremium: '17.8 mln' },
+                    { id: 'OFF-002', name: 'Ofis Standart', count: 5, priceBasic: '9.1 mln', priceMid: '10.2 mln', pricePremium: '11.5 mln' }
+                ],
+                'BAT': [
+                    { id: 'BAT-001', name: 'Hammon Lux', count: 5, priceBasic: '7.6 mln', priceMid: '8.5 mln', pricePremium: '9.6 mln' }
+                ]
+            };
+
+            const collections = collectionsData[categoryId] || [];
+            const container = document.getElementById('collections');
+
+            container.innerHTML = collections.map((item, index) => `
+                <div class="collection-item ${index === 0 ? 'active' : ''}" onclick="selectCollection('${item.id}', this)">
+                    <div>
+                        <div class="item-title">${item.name}</div>
+                        <div class="item-subtitle">${item.count} dona mebel</div>
+                        <div class="item-subtitle">💰 Oddiy: ${item.priceBasic}</div>
+                        <div class="item-subtitle">💎 O'rta: ${item.priceMid}</div>
+                        <div class="item-subtitle">👑 Premium: ${item.pricePremium}</div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Birinchi to'plamni avtomatik yuklash
+            if (collections.length > 0) {
+                loadFurniture(collections[0].id);
+            }
+        }
+
+        // To'plamni tanlash
+        function selectCollection(collectionId, element) {
+            // Barcha to'plamlardan active ni olib tashlash
+            document.querySelectorAll('.collection-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            element.classList.add('active');
+
+            // Mebellarni yuklash
+            loadFurniture(collectionId);
+        }
+
+        // Mebellarni yuklash
+        function loadFurniture(collectionId) {
+            // Bu yerda serverdan ma'lumotlarni yuklash mumkin
+            // Hozircha demo data ko'rsatiladi
+            console.log('Loading furniture for:', collectionId);
+        }
+    </script>
+</body>
+</html>
