@@ -1,0 +1,1474 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To'plam ko'rinishi - Mebel ERP</title>
+    <link rel="stylesheet" href="sidebar-styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+        }
+        .header {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .breadcrumb a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+        .collection-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-top: 25px;
+        }
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .info-label {
+            font-size: 12px;
+            color: #7f8c8d;
+            text-transform: uppercase;
+        }
+        .info-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+        }
+        .btn-warning:hover {
+            background: #e67e22;
+        }
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+        .btn-success:hover {
+            background: #229954;
+        }
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .furniture-table {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        thead {
+            background: #34495e;
+            color: white;
+        }
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+        .furniture-image {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            background-size: cover;
+            background-position: center;
+        }
+        .collection-main-image {
+            background-size: cover;
+            background-position: center;
+        }
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .status-active { background: #e8f5e9; color: #388e3c; }
+        .status-inactive { background: #ffebee; color: #c62828; }
+        .action-btns {
+            display: flex;
+            gap: 8px;
+        }
+        .action-btn-small {
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            transition: all 0.3s;
+        }
+        .action-btn-small:hover {
+            background: #f8f9fa;
+            border-color: #3498db;
+            color: #3498db;
+        }
+        .price {
+            font-weight: 600;
+            color: #27ae60;
+        }
+        .quantity {
+            font-weight: 600;
+            color: #3498db;
+            background: #e3f2fd;
+            padding: 5px 10px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        .order-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            cursor: grab;
+        }
+        .order-controls:active {
+            cursor: grabbing;
+        }
+        .furniture-row {
+            transition: all 0.3s;
+        }
+        .furniture-row.dragging {
+            opacity: 0.5;
+            background: #e3f2fd;
+        }
+        .furniture-row.drag-over {
+            border-top: 3px solid #3498db;
+        }
+        .drag-handle {
+            color: #95a5a6;
+            font-size: 16px;
+            padding: 0 5px;
+            user-select: none;
+        }
+        .row-number {
+            user-select: none;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .modal-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid #ecf0f1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-header h2 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 20px;
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 28px;
+            color: #95a5a6;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        .modal-close:hover {
+            background: #ecf0f1;
+            color: #2c3e50;
+        }
+        .modal-body {
+            padding: 25px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+        }
+        .modal-footer {
+            padding: 20px 25px;
+            border-top: 1px solid #ecf0f1;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+        .image-upload-area {
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            background: #f8f9fa;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .image-upload-area:hover {
+            border-color: #3498db;
+            background: #e3f2fd;
+        }
+        .image-preview {
+            width: 150px;
+            height: 150px;
+            border-radius: 8px;
+            object-fit: cover;
+            margin: 0 auto 15px;
+            display: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .emoji-preview {
+            font-size: 80px;
+            margin: 10px 0;
+        }
+        .bom-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        .bom-table th {
+            background: #34495e;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-size: 13px;
+        }
+        .bom-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        .bom-table tr:last-child td {
+            border-bottom: none;
+        }
+        .bom-table tr:hover {
+            background: #f8f9fa;
+        }
+        .input-with-unit {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .input-with-unit input {
+            flex: 1;
+        }
+        .input-with-unit .unit {
+            color: #7f8c8d;
+            font-weight: 600;
+            min-width: 60px;
+        }
+        @media (max-width: 600px) {
+            .modal-content {
+                width: 95%;
+                max-height: 95vh;
+            }
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            .modal-header h2 {
+                font-size: 18px;
+            }
+            .modal-body {
+                padding: 20px;
+            }
+        }
+
+        .total-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .total-label {
+            font-size: 18px;
+            color: #7f8c8d;
+        }
+        .total-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #27ae60;
+        }
+        .collection-header-content {
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+        @media (max-width: 768px) {
+            .collection-header-content {
+                flex-direction: column;
+                align-items: center;
+            }
+            .collection-details {
+                width: 100%;
+            }
+            .header-top {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .action-row {
+                width: 100%;
+                flex-direction: column;
+            }
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+        .collection-image-container {
+            flex-shrink: 0;
+        }
+        .collection-main-image {
+            width: 250px;
+            height: 250px;
+            border-radius: 12px;
+            object-fit: cover;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+        }
+        .collection-details {
+            flex: 1;
+            min-width: 0;
+        }
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+        }
+        .header-info {
+            flex: 1;
+        }
+        .action-row {
+            display: flex;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="sidebar-container"></div>
+
+    <div class="main-content">
+        <div class="header">
+            <div class="breadcrumb">
+                <a href="2-katalog.html">📚 Katalog</a>
+                <span>/</span>
+                <span id="collection-name">To'plam</span>
+            </div>
+
+            <div class="collection-header-content">
+                <div class="collection-image-container">
+                    <div class="collection-main-image" id="collection-image">
+                        🏠
+                    </div>
+                </div>
+                <div class="collection-details">
+                    <div class="header-top">
+                        <div class="header-info">
+                            <h1 id="collection-title">To'plam nomi</h1>
+                            <p style="color: #7f8c8d; margin-top: 5px;">To'plamga tegishli barcha mebellar</p>
+                        </div>
+                        <div class="action-row">
+                            <button class="btn btn-warning" onclick="editCollection()">
+                                ✏️ To'plamni tahrirlash
+                            </button>
+                            <button class="btn btn-success" onclick="addFurniture()">
+                                + Mebel qo'shish
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="collection-info">
+                <div class="info-item">
+                    <span class="info-label">To'plam kodi</span>
+                    <span class="info-value" id="collection-code">KIT-001</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Mebellar soni</span>
+                    <span class="info-value" id="furniture-count">5 dona</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Umumiy narx</span>
+                    <span class="info-value price" id="total-price">12,500,000 so'm</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Holati</span>
+                    <span class="status-badge status-active" id="collection-status">Faol</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="furniture-table">
+            <div style="padding: 20px 20px 10px 20px;">
+                <div class="section-title">
+                    🪑 To'plamdagi mebellar
+                </div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 70px;">Tartib</th>
+                        <th style="width: 80px;">Rasm</th>
+                        <th>Mebel nomi</th>
+                        <th>Kod</th>
+                        <th>Soni</th>
+                        <th>Material</th>
+                        <th>O'lchov</th>
+                        <th>Narx</th>
+                        <th>Holat</th>
+                        <th>Amallar</th>
+                    </tr>
+                </thead>
+                <tbody id="furniture-list">
+                    <tr data-index="0" class="furniture-row">
+                        <td style="text-align: center;">
+                            <div class="order-controls">
+                                <span class="drag-handle" title="Surish uchun ushlang">⋮⋮</span>
+                                <span class="row-number" style="font-weight: 600; color: #7f8c8d; margin: 0 5px;">1</span>
+                            </div>
+                        </td>
+                        <td><div class="furniture-image">🚪</div></td>
+                        <td><strong>Yuqori shkaf</strong></td>
+                        <td>KIT-001-UC1</td>
+                        <td style="text-align: center;"><span class="quantity">2 dona</span></td>
+                        <td>MDF</td>
+                        <td>80x35x72 sm</td>
+                        <td class="price">1,850,000 so'm</td>
+                        <td><span class="status-badge status-active">Faol</span></td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="action-btn-small" onclick="showBom(this)">📋 BOM</button>
+                                <button class="action-btn-small" onclick="editFurnitureRow(this)">✏️ Tahrir</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr data-index="1" class="furniture-row">
+                        <td style="text-align: center;">
+                            <div class="order-controls">
+                                <span class="drag-handle" title="Surish uchun ushlang">⋮⋮</span>
+                                <span class="row-number" style="font-weight: 600; color: #7f8c8d; margin: 0 5px;">2</span>
+                            </div>
+                        </td>
+                        <td><div class="furniture-image">📦</div></td>
+                        <td><strong>Pastki shkaf (chiroy)</strong></td>
+                        <td>KIT-001-BC1</td>
+                        <td style="text-align: center;"><span class="quantity">1 dona</span></td>
+                        <td>MDF</td>
+                        <td>80x60x82 sm</td>
+                        <td class="price">2,200,000 so'm</td>
+                        <td><span class="status-badge status-active">Faol</span></td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="action-btn-small" onclick="showBom(this)">📋 BOM</button>
+                                <button class="action-btn-small" onclick="editFurnitureRow(this)">✏️ Tahrir</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr data-index="2" class="furniture-row">
+                        <td style="text-align: center;">
+                            <div class="order-controls">
+                                <span class="drag-handle" title="Surish uchun ushlang">⋮⋮</span>
+                                <span class="row-number" style="font-weight: 600; color: #7f8c8d; margin: 0 5px;">3</span>
+                            </div>
+                        </td>
+                        <td><div class="furniture-image">🍽️</div></td>
+                        <td><strong>Ustun shkaf (javon)</strong></td>
+                        <td>KIT-001-TC1</td>
+                        <td style="text-align: center;"><span class="quantity">2 dona</span></td>
+                        <td>MDF</td>
+                        <td>60x35x140 sm</td>
+                        <td class="price">2,950,000 so'm</td>
+                        <td><span class="status-badge status-active">Faol</span></td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="action-btn-small" onclick="showBom(this)">📋 BOM</button>
+                                <button class="action-btn-small" onclick="editFurnitureRow(this)">✏️ Tahrir</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr data-index="3" class="furniture-row">
+                        <td style="text-align: center;">
+                            <div class="order-controls">
+                                <span class="drag-handle" title="Surish uchun ushlang">⋮⋮</span>
+                                <span class="row-number" style="font-weight: 600; color: #7f8c8d; margin: 0 5px;">4</span>
+                            </div>
+                        </td>
+                        <td><div class="furniture-image">🔲</div></td>
+                        <td><strong>Ish stoli</strong></td>
+                        <td>KIT-001-WS1</td>
+                        <td style="text-align: center;"><span class="quantity">1 dona</span></td>
+                        <td>MDF + Tosh</td>
+                        <td>200x60x85 sm</td>
+                        <td class="price">3,500,000 so'm</td>
+                        <td><span class="status-badge status-active">Faol</span></td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="action-btn-small" onclick="showBom(this)">📋 BOM</button>
+                                <button class="action-btn-small" onclick="editFurnitureRow(this)">✏️ Tahrir</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr data-index="4" class="furniture-row">
+                        <td style="text-align: center;">
+                            <div class="order-controls">
+                                <span class="drag-handle" title="Surish uchun ushlang">⋮⋮</span>
+                                <span class="row-number" style="font-weight: 600; color: #7f8c8d; margin: 0 5px;">5</span>
+                            </div>
+                        </td>
+                        <td><div class="furniture-image">🔄</div></td>
+                        <td><strong>Burchak shkaf</strong></td>
+                        <td>KIT-001-CO1</td>
+                        <td style="text-align: center;"><span class="quantity">1 dona</span></td>
+                        <td>MDF</td>
+                        <td>90x90x82 sm</td>
+                        <td class="price">2,000,000 so'm</td>
+                        <td><span class="status-badge status-active">Faol</span></td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="action-btn-small" onclick="showBom(this)">📋 BOM</button>
+                                <button class="action-btn-small" onclick="editFurnitureRow(this)">✏️ Tahrir</button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="total-section">
+            <div class="total-label">Umumiy to'plam narxi:</div>
+            <div class="total-value">12,500,000 so'm</div>
+        </div>
+    </div>
+
+    <!-- To'plamni tahrirlash modali -->
+    <div id="editCollectionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📝 To'plam haqida ma'lumot</h2>
+                <button class="modal-close" onclick="closeEditCollectionModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editCollectionForm">
+                    <div class="form-group">
+                        <label>To'plam rasmi</label>
+                        <div class="image-upload-area" onclick="document.getElementById('collection_image_file').click()">
+                            <div class="emoji-preview" id="collection_emoji_preview">🏠</div>
+                            <p style="color: #7f8c8d; margin: 0;">Rasm tanlash uchun bosing</p>
+                            <input type="file" id="collection_image_file" accept="image/*" style="display: none;" onchange="handleCollectionImageUpload(event)">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>To'plam nomi *</label>
+                        <input type="text" id="edit_collection_name" required placeholder="Masalan: Oshxona to'plami Lux-2024">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Holati</label>
+                        <select id="edit_collection_status">
+                            <option value="active">✓ Faol</option>
+                            <option value="inactive">✗ Nofaol</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Tavsif</label>
+                        <textarea id="edit_collection_description" placeholder="To'plam haqida qo'shimcha ma'lumot..." rows="4"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeEditCollectionModal()">Bekor qilish</button>
+                <button class="btn btn-primary" onclick="saveCollectionChanges()">✓ Saqlash</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mebel qo'shish modali -->
+    <div id="addFurnitureModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🪑 Yangi mebel qo'shish</h2>
+                <button class="modal-close" onclick="closeAddFurnitureModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="addFurnitureForm">
+                    <div class="form-group">
+                        <label>Mebel rasmi</label>
+                        <div class="image-upload-area" onclick="document.getElementById('furniture_image_file').click()">
+                            <div class="emoji-preview" id="furniture_emoji_preview">📦</div>
+                            <p style="color: #7f8c8d; margin: 0;">Rasm tanlash uchun bosing</p>
+                            <input type="file" id="furniture_image_file" accept="image/*" style="display: none;" onchange="handleFurnitureImageUpload(event)">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Mebel nomi *</label>
+                        <input type="text" id="furniture_name" required placeholder="Masalan: Yuqori shkaf">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Soni *</label>
+                        <div class="input-with-unit">
+                            <input type="number" id="furniture_quantity" required min="1" value="1" placeholder="1">
+                            <span class="unit">dona</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Material</label>
+                        <input type="text" id="furniture_material" placeholder="Masalan: MDF, DSP, Tosh">
+                    </div>
+
+                    <div class="form-group">
+                        <label>O'lchovlar</label>
+                        <div class="form-row">
+                            <div class="input-with-unit">
+                                <input type="number" id="furniture_width" placeholder="Eni" min="0">
+                                <span class="unit">sm</span>
+                            </div>
+                            <div class="input-with-unit">
+                                <input type="number" id="furniture_depth" placeholder="Chuq." min="0">
+                                <span class="unit">sm</span>
+                            </div>
+                            <div class="input-with-unit">
+                                <input type="number" id="furniture_height" placeholder="Bal." min="0">
+                                <span class="unit">sm</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Narx *</label>
+                        <div class="input-with-unit">
+                            <input type="number" id="furniture_price" required min="0" placeholder="Masalan: 1850000">
+                            <span class="unit">so'm</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Holati</label>
+                        <select id="furniture_status">
+                            <option value="active">✓ Faol</option>
+                            <option value="inactive">✗ Nofaol</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeAddFurnitureModal()">Bekor qilish</button>
+                <button class="btn btn-success" onclick="saveFurniture()">+ Qo'shish</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOM (Bill of Materials) modali -->
+    <div id="bomModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📋 Xom ashyolar ro'yxati (BOM)</h2>
+                <button class="modal-close" onclick="closeBomModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h3 id="bom_furniture_name" style="margin-bottom: 20px; color: #2c3e50;"></h3>
+                <table class="bom-table">
+                    <thead>
+                        <tr>
+                            <th>№</th>
+                            <th>Material nomi</th>
+                            <th>O'lchov</th>
+                            <th>Soni</th>
+                            <th>Birlik</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bom_items">
+                        <!-- BOM items will be added here -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeBomModal()">Yopish</button>
+                <button class="btn btn-primary" onclick="printBom()">🖨️ Chop etish</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mebel tahrirlash modali -->
+    <div id="editFurnitureModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>✏️ Mebelni tahrirlash</h2>
+                <button class="modal-close" onclick="closeEditFurnitureModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editFurnitureForm">
+                    <div class="form-group">
+                        <label>Mebel rasmi</label>
+                        <div class="image-upload-area" onclick="document.getElementById('edit_furniture_image_file').click()">
+                            <div class="emoji-preview" id="edit_furniture_emoji_preview">📦</div>
+                            <p style="color: #7f8c8d; margin: 0;">Rasm tanlash uchun bosing</p>
+                            <input type="file" id="edit_furniture_image_file" accept="image/*" style="display: none;" onchange="handleEditFurnitureImageUpload(event)">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Mebel nomi *</label>
+                        <input type="text" id="edit_furniture_name" required placeholder="Masalan: Yuqori shkaf">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Soni *</label>
+                        <div class="input-with-unit">
+                            <input type="number" id="edit_furniture_quantity" required min="1" value="1">
+                            <span class="unit">dona</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Material</label>
+                        <input type="text" id="edit_furniture_material" placeholder="Masalan: MDF, DSP, Tosh">
+                    </div>
+
+                    <div class="form-group">
+                        <label>O'lchovlar</label>
+                        <div class="form-row">
+                            <div class="input-with-unit">
+                                <input type="number" id="edit_furniture_width" placeholder="Eni" min="0">
+                                <span class="unit">sm</span>
+                            </div>
+                            <div class="input-with-unit">
+                                <input type="number" id="edit_furniture_depth" placeholder="Chuq." min="0">
+                                <span class="unit">sm</span>
+                            </div>
+                            <div class="input-with-unit">
+                                <input type="number" id="edit_furniture_height" placeholder="Bal." min="0">
+                                <span class="unit">sm</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Narx *</label>
+                        <div class="input-with-unit">
+                            <input type="number" id="edit_furniture_price" required min="0">
+                            <span class="unit">so'm</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Holati</label>
+                        <select id="edit_furniture_status">
+                            <option value="active">✓ Faol</option>
+                            <option value="inactive">✗ Nofaol</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeEditFurnitureModal()">Bekor qilish</button>
+                <button class="btn btn-primary" onclick="saveFurnitureEdit()">✓ Saqlash</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="sidebar-loader.js"></script>
+    <script>
+        // URL parametrlarini olish
+        const urlParams = new URLSearchParams(window.location.search);
+        let collectionId = urlParams.get('id');
+        let collectionName = urlParams.get('name');
+
+        // Sahifani ma'lumotlar bilan to'ldirish
+        if (collectionName) {
+            document.getElementById('collection-name').textContent = collectionName;
+            document.getElementById('collection-title').textContent = collectionName;
+        }
+
+        if (collectionId) {
+            document.getElementById('collection-code').textContent = collectionId;
+
+            // To'plam turiga qarab rasm belgilash
+            const imageElement = document.getElementById('collection-image');
+            if (collectionId.startsWith('KIT')) {
+                imageElement.textContent = '🍳'; // Oshxona
+            } else if (collectionId.startsWith('BED')) {
+                imageElement.textContent = '🛏️'; // Yotoq xonasi
+            } else if (collectionId.startsWith('LIV')) {
+                imageElement.textContent = '🛋️'; // Yashash xonasi
+            } else if (collectionId.startsWith('OFF')) {
+                imageElement.textContent = '💼'; // Ofis
+            } else {
+                imageElement.textContent = '🏠'; // Default
+            }
+        }
+
+        // Rasm yuklash uchun o'zgaruvchilar
+        let collectionImageData = null;
+        let furnitureImageData = null;
+        let editFurnitureImageData = null;
+
+        // To'plam rasmi yuklash
+        function handleCollectionImageUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    collectionImageData = e.target.result;
+                    const preview = document.getElementById('collection_emoji_preview');
+                    preview.style.backgroundImage = `url(${e.target.result})`;
+                    preview.style.backgroundSize = 'cover';
+                    preview.style.backgroundPosition = 'center';
+                    preview.textContent = '';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Mebel rasmi yuklash
+        function handleFurnitureImageUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    furnitureImageData = e.target.result;
+                    const preview = document.getElementById('furniture_emoji_preview');
+                    preview.style.backgroundImage = `url(${e.target.result})`;
+                    preview.style.backgroundSize = 'cover';
+                    preview.style.backgroundPosition = 'center';
+                    preview.textContent = '';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Mebel tahrirlash rasmi yuklash
+        function handleEditFurnitureImageUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    editFurnitureImageData = e.target.result;
+                    const preview = document.getElementById('edit_furniture_emoji_preview');
+                    preview.style.backgroundImage = `url(${e.target.result})`;
+                    preview.style.backgroundSize = 'cover';
+                    preview.style.backgroundPosition = 'center';
+                    preview.textContent = '';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // To'plamni tahrirlash modalni ochish
+        function editCollection() {
+            const modal = document.getElementById('editCollectionModal');
+            const currentImage = document.getElementById('collection-image').textContent;
+
+            // Hozirgi qiymatlarni yuklash
+            document.getElementById('edit_collection_name').value = collectionName || '';
+            document.getElementById('edit_collection_status').value = 'active';
+
+            // Rasmni reset qilish
+            const preview = document.getElementById('collection_emoji_preview');
+            preview.style.backgroundImage = '';
+            preview.textContent = currentImage;
+            collectionImageData = null;
+
+            modal.classList.add('active');
+        }
+
+        // To'plamni tahrirlash modalni yopish
+        function closeEditCollectionModal() {
+            const modal = document.getElementById('editCollectionModal');
+            modal.classList.remove('active');
+        }
+
+        // To'plam o'zgarishlarini saqlash
+        function saveCollectionChanges() {
+            const name = document.getElementById('edit_collection_name').value;
+            const status = document.getElementById('edit_collection_status').value;
+
+            if (!name) {
+                alert('Iltimos, to\'plam nomini kiriting!');
+                return;
+            }
+
+            // Global o'zgaruvchilarni yangilash
+            collectionName = name;
+
+            // Sahifadagi ma'lumotlarni yangilash
+            document.getElementById('collection-name').textContent = name;
+            document.getElementById('collection-title').textContent = name;
+
+            // Agar yangi rasm yuklangan bo'lsa
+            if (collectionImageData) {
+                const collectionImage = document.getElementById('collection-image');
+                collectionImage.style.backgroundImage = `url(${collectionImageData})`;
+                collectionImage.style.backgroundSize = 'cover';
+                collectionImage.style.backgroundPosition = 'center';
+                collectionImage.textContent = '';
+            }
+
+            // URL ni yangilash
+            const newUrl = `${window.location.pathname}?id=${collectionId}&name=${encodeURIComponent(name)}`;
+            window.history.pushState({}, '', newUrl);
+
+            // Holat badge ni yangilash
+            const statusBadge = document.getElementById('collection-status');
+            if (status === 'active') {
+                statusBadge.textContent = 'Faol';
+                statusBadge.className = 'status-badge status-active';
+            } else {
+                statusBadge.textContent = 'Nofaol';
+                statusBadge.className = 'status-badge status-inactive';
+            }
+
+            closeEditCollectionModal();
+            alert('To\'plam yangilandi!');
+        }
+
+        // Mebel qo'shish modalni ochish
+        function addFurniture() {
+            const modal = document.getElementById('addFurnitureModal');
+
+            // Formani tozalash
+            document.getElementById('addFurnitureForm').reset();
+
+            // Rasmni reset qilish
+            const preview = document.getElementById('furniture_emoji_preview');
+            preview.style.backgroundImage = '';
+            preview.textContent = '📦';
+            furnitureImageData = null;
+
+            modal.classList.add('active');
+        }
+
+        // Mebel qo'shish modalni yopish
+        function closeAddFurnitureModal() {
+            const modal = document.getElementById('addFurnitureModal');
+            modal.classList.remove('active');
+        }
+
+        // Yangi mebel saqlash
+        function saveFurniture() {
+            const name = document.getElementById('furniture_name').value;
+            const quantity = document.getElementById('furniture_quantity').value;
+            const material = document.getElementById('furniture_material').value;
+            const width = document.getElementById('furniture_width').value;
+            const depth = document.getElementById('furniture_depth').value;
+            const height = document.getElementById('furniture_height').value;
+            const price = document.getElementById('furniture_price').value;
+            const status = document.getElementById('furniture_status').value;
+
+            if (!name || !quantity || !price) {
+                alert('Iltimos, majburiy maydonlarni to\'ldiring!');
+                return;
+            }
+
+            // Avtomatik kod yaratish
+            const code = `${collectionId}-${Date.now().toString().slice(-6)}`;
+
+            // O'lchovlarni shakllantirish
+            let dimensions = '';
+            if (width || depth || height) {
+                dimensions = `${width || '?'}x${depth || '?'}x${height || '?'} sm`;
+            }
+
+            // Narxni shakllantirish
+            const formattedPrice = parseInt(price).toLocaleString('uz-UZ');
+
+            // Yangi qator yaratish
+            const tbody = document.getElementById('furniture-list');
+            const rowCount = tbody.querySelectorAll('tr').length;
+            const newRow = document.createElement('tr');
+            newRow.setAttribute('data-index', rowCount);
+            newRow.className = 'furniture-row';
+
+            const statusClass = status === 'active' ? 'status-active' : 'status-inactive';
+            const statusText = status === 'active' ? 'Faol' : 'Nofaol';
+
+            newRow.innerHTML = `
+                <td style="text-align: center;">
+                    <div class="order-controls">
+                        <span class="drag-handle" title="Surish uchun ushlang">⋮⋮</span>
+                        <span class="row-number" style="font-weight: 600; color: #7f8c8d; margin: 0 5px;">${rowCount + 1}</span>
+                    </div>
+                </td>
+                <td><div class="furniture-image" ${furnitureImageData ? `style="background-image: url(${furnitureImageData}); background-size: cover; background-position: center;"` : ''}>${furnitureImageData ? '' : '📦'}</div></td>
+                <td><strong>${name}</strong></td>
+                <td>${code}</td>
+                <td style="text-align: center;"><span class="quantity">${quantity} dona</span></td>
+                <td>${material || '-'}</td>
+                <td>${dimensions || '-'}</td>
+                <td class="price">${formattedPrice} so'm</td>
+                <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                <td>
+                    <div class="action-btns">
+                        <button class="action-btn-small">📋 BOM</button>
+                        <button class="action-btn-small">✏️ Tahrir</button>
+                    </div>
+                </td>
+            `;
+
+            tbody.appendChild(newRow);
+
+            // Drag and drop ni yangi qator uchun sozlash
+            setupDragAndDrop();
+
+            // Umumiy ma'lumotlarni yangilash
+            loadCollectionData();
+
+            closeAddFurnitureModal();
+
+            // Xabar ko'rsatish
+            alert('Yangi mebel qo\'shildi!');
+        }
+
+        // BOM ko'rsatish
+        function showBom(button) {
+            const row = button.closest('tr');
+            const cells = row.cells;
+            const furnitureName = cells[2].textContent;
+
+            // Modal ochish
+            document.getElementById('bom_furniture_name').textContent = furnitureName;
+
+            // BOM ma'lumotlarini yaratish (demo data)
+            const bomData = [
+                { name: 'MDF panel 18mm', size: '2800x2070', qty: 2, unit: 'dona' },
+                { name: 'Qopqoq (cheti)', size: '2mm', qty: 10, unit: 'm' },
+                { name: 'Ilgich', size: '-', qty: 4, unit: 'dona' },
+                { name: 'Vida 16mm', size: '-', qty: 20, unit: 'dona' },
+                { name: 'Mentesha', size: '-', qty: 2, unit: 'juft' }
+            ];
+
+            const bomItems = document.getElementById('bom_items');
+            bomItems.innerHTML = '';
+
+            bomData.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${item.name}</td>
+                    <td>${item.size}</td>
+                    <td>${item.qty}</td>
+                    <td>${item.unit}</td>
+                `;
+                bomItems.appendChild(tr);
+            });
+
+            document.getElementById('bomModal').classList.add('active');
+        }
+
+        function closeBomModal() {
+            document.getElementById('bomModal').classList.remove('active');
+        }
+
+        function printBom() {
+            window.print();
+        }
+
+        // Mebelni tahrirlash
+        let currentEditRow = null;
+
+        function editFurnitureRow(button) {
+            currentEditRow = button.closest('tr');
+            const cells = currentEditRow.cells;
+
+            // Ma'lumotlarni olish
+            const imageDiv = cells[1].querySelector('.furniture-image');
+            const name = cells[2].textContent;
+            const quantity = cells[4].textContent.replace(' dona', '').trim();
+            const material = cells[5].textContent;
+            const dimensions = cells[6].textContent;
+            const price = cells[7].textContent.replace(/[^\d]/g, '');
+
+            // Formaga yuklash
+            const preview = document.getElementById('edit_furniture_emoji_preview');
+
+            // Agar rasm yuklangan bo'lsa
+            if (imageDiv.style.backgroundImage) {
+                preview.style.backgroundImage = imageDiv.style.backgroundImage;
+                preview.style.backgroundSize = 'cover';
+                preview.style.backgroundPosition = 'center';
+                preview.textContent = '';
+            } else {
+                preview.style.backgroundImage = '';
+                preview.textContent = imageDiv.textContent;
+            }
+
+            editFurnitureImageData = null;
+
+            document.getElementById('edit_furniture_name').value = name;
+            document.getElementById('edit_furniture_quantity').value = quantity;
+            document.getElementById('edit_furniture_material').value = material;
+
+            // O'lchovlarni ajratish
+            if (dimensions !== '-') {
+                const dims = dimensions.replace(' sm', '').split('x');
+                document.getElementById('edit_furniture_width').value = dims[0] || '';
+                document.getElementById('edit_furniture_depth').value = dims[1] || '';
+                document.getElementById('edit_furniture_height').value = dims[2] || '';
+            }
+
+            document.getElementById('edit_furniture_price').value = price;
+
+            document.getElementById('editFurnitureModal').classList.add('active');
+        }
+
+        function closeEditFurnitureModal() {
+            document.getElementById('editFurnitureModal').classList.remove('active');
+            currentEditRow = null;
+        }
+
+        function saveFurnitureEdit() {
+            if (!currentEditRow) return;
+
+            const name = document.getElementById('edit_furniture_name').value;
+            const quantity = document.getElementById('edit_furniture_quantity').value;
+            const material = document.getElementById('edit_furniture_material').value;
+            const width = document.getElementById('edit_furniture_width').value;
+            const depth = document.getElementById('edit_furniture_depth').value;
+            const height = document.getElementById('edit_furniture_height').value;
+            const price = document.getElementById('edit_furniture_price').value;
+            const status = document.getElementById('edit_furniture_status').value;
+
+            if (!name || !quantity || !price) {
+                alert('Iltimos, majburiy maydonlarni to\'ldiring!');
+                return;
+            }
+
+            // O'lchovlar
+            let dimensions = '-';
+            if (width || depth || height) {
+                dimensions = `${width || '?'}x${depth || '?'}x${height || '?'} sm`;
+            }
+
+            // Narx formatlash
+            const formattedPrice = parseInt(price).toLocaleString('uz-UZ');
+
+            const statusClass = status === 'active' ? 'status-active' : 'status-inactive';
+            const statusText = status === 'active' ? 'Faol' : 'Nofaol';
+
+            // Qatorni yangilash
+            const cells = currentEditRow.cells;
+
+            // Rasmni yangilash
+            const imageDiv = cells[1].querySelector('.furniture-image');
+            if (editFurnitureImageData) {
+                imageDiv.style.backgroundImage = `url(${editFurnitureImageData})`;
+                imageDiv.style.backgroundSize = 'cover';
+                imageDiv.style.backgroundPosition = 'center';
+                imageDiv.textContent = '';
+            }
+
+            cells[2].querySelector('strong').textContent = name;
+            cells[4].querySelector('.quantity').textContent = `${quantity} dona`;
+            cells[5].textContent = material || '-';
+            cells[6].textContent = dimensions;
+            cells[7].textContent = `${formattedPrice} so'm`;
+            cells[8].innerHTML = `<span class="status-badge ${statusClass}">${statusText}</span>`;
+
+            closeEditFurnitureModal();
+            loadCollectionData();
+            alert('Mebel yangilandi!');
+        }
+
+        // Modal tashqarisiga bosilganda yopish
+        window.onclick = function(event) {
+            const modals = ['editCollectionModal', 'addFurnitureModal', 'bomModal', 'editFurnitureModal'];
+            modals.forEach(modalId => {
+                const modal = document.getElementById(modalId);
+                if (event.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
+        }
+
+        // To'plam ma'lumotlarini yuklash va hisoblash
+        function loadCollectionData() {
+            // Mebellar sonini hisoblash
+            const furnitureRows = document.querySelectorAll('#furniture-list tr');
+            const furnitureCount = furnitureRows.length;
+            document.getElementById('furniture-count').textContent = `${furnitureCount} dona`;
+
+            // Umumiy narxni hisoblash
+            let totalPrice = 0;
+            furnitureRows.forEach(row => {
+                const priceCell = row.querySelector('.price');
+                if (priceCell) {
+                    const priceText = priceCell.textContent.replace(/[^\d]/g, '');
+                    totalPrice += parseInt(priceText) || 0;
+                }
+            });
+
+            // Narxni formatlash
+            const formattedPrice = totalPrice.toLocaleString('uz-UZ');
+            document.getElementById('total-price').textContent = `${formattedPrice} so'm`;
+            document.querySelector('.total-value').textContent = `${formattedPrice} so'm`;
+        }
+
+        // Drag and drop o'zgaruvchilari
+        let draggedRow = null;
+
+        // Tartib raqamlarini yangilash
+        function updateRowNumbers() {
+            const tbody = document.getElementById('furniture-list');
+            const rows = tbody.querySelectorAll('tr');
+
+            rows.forEach((row, index) => {
+                row.setAttribute('data-index', index);
+                const numberSpan = row.querySelector('.row-number');
+                if (numberSpan) {
+                    numberSpan.textContent = index + 1;
+                }
+            });
+        }
+
+        // Drag and drop hodisalarini sozlash
+        function setupDragAndDrop() {
+            const rows = document.querySelectorAll('.furniture-row');
+
+            rows.forEach(row => {
+                const orderControls = row.querySelector('.order-controls');
+
+                // Faqat tartib raqami ustiga bosilganda drag qilish imkoniyati
+                orderControls.addEventListener('mousedown', function(e) {
+                    row.setAttribute('draggable', 'true');
+                });
+
+                orderControls.addEventListener('mouseup', function(e) {
+                    row.setAttribute('draggable', 'false');
+                });
+
+                row.addEventListener('dragstart', handleDragStart);
+                row.addEventListener('dragover', handleDragOver);
+                row.addEventListener('drop', handleDrop);
+                row.addEventListener('dragenter', handleDragEnter);
+                row.addEventListener('dragleave', handleDragLeave);
+                row.addEventListener('dragend', handleDragEnd);
+            });
+        }
+
+        function handleDragStart(e) {
+            draggedRow = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', this.innerHTML);
+        }
+
+        function handleDragOver(e) {
+            if (e.preventDefault) {
+                e.preventDefault();
+            }
+            e.dataTransfer.dropEffect = 'move';
+            return false;
+        }
+
+        function handleDragEnter(e) {
+            if (this !== draggedRow) {
+                this.classList.add('drag-over');
+            }
+        }
+
+        function handleDragLeave(e) {
+            this.classList.remove('drag-over');
+        }
+
+        function handleDrop(e) {
+            if (e.stopPropagation) {
+                e.stopPropagation();
+            }
+
+            if (draggedRow !== this) {
+                const tbody = document.getElementById('furniture-list');
+                const allRows = Array.from(tbody.querySelectorAll('tr'));
+                const draggedIndex = allRows.indexOf(draggedRow);
+                const targetIndex = allRows.indexOf(this);
+
+                if (draggedIndex < targetIndex) {
+                    tbody.insertBefore(draggedRow, this.nextSibling);
+                } else {
+                    tbody.insertBefore(draggedRow, this);
+                }
+
+                updateRowNumbers();
+            }
+
+            return false;
+        }
+
+        function handleDragEnd(e) {
+            const rows = document.querySelectorAll('.furniture-row');
+            rows.forEach(row => {
+                row.classList.remove('dragging', 'drag-over');
+                row.setAttribute('draggable', 'false');
+            });
+        }
+
+        // Sahifa yuklanganda ma'lumotlarni yuklash
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCollectionData();
+            updateRowNumbers();
+            setupDragAndDrop();
+        });
+    </script>
+</body>
+</html>

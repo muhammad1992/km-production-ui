@@ -19,8 +19,11 @@ const mimeTypes = {
 const server = http.createServer((req, res) => {
   console.log(`${req.method} ${req.url}`);
 
+  // Parse URL to remove query string parameters
+  const parsedUrl = new URL(req.url, `http://localhost:${PORT}`);
+  let filePath = '.' + parsedUrl.pathname;
+
   // Default to index.html if root is requested
-  let filePath = '.' + req.url;
   if (filePath === './') {
     filePath = './index.html';
   }
