@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skladga prixod - Mebel ERP</title>
+    <link rel="stylesheet" href="sidebar-styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+        }
+        .header {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: #27ae60;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #229954;
+        }
+        .btn-secondary {
+            background: #3498db;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background: #2980b9;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-left: 4px solid #27ae60;
+        }
+        .stat-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .stat-label {
+            color: #7f8c8d;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+        .filters-section {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .filters-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .filter-label {
+            font-size: 13px;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+        }
+        .filter-input, .filter-select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .filter-input:focus, .filter-select:focus {
+            outline: none;
+            border-color: #27ae60;
+        }
+        .table-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .table thead {
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+            color: white;
+        }
+        .table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .table td {
+            padding: 15px;
+            border-bottom: 1px solid #ecf0f1;
+            font-size: 14px;
+        }
+        .table tbody tr:hover {
+            background: #f8f9fa;
+        }
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .status-received {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status-partial {
+            background: #cce5ff;
+            color: #004085;
+        }
+        .status-cancelled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .action-btn {
+            padding: 5px 10px;
+            margin: 0 3px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+        .btn-view {
+            background: #3498db;
+            color: white;
+        }
+        .btn-view:hover {
+            background: #2980b9;
+        }
+        .btn-edit {
+            background: #f39c12;
+            color: white;
+        }
+        .btn-edit:hover {
+            background: #e67e22;
+        }
+        .btn-delete {
+            background: #e74c3c;
+            color: white;
+        }
+        .btn-delete:hover {
+            background: #c0392b;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal.active {
+            display: flex;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-header {
+            padding: 20px;
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 8px 8px 0 0;
+        }
+        .modal-header h2 {
+            font-size: 20px;
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .modal-body {
+            padding: 20px;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .form-label {
+            font-size: 14px;
+            color: #2c3e50;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        .form-input, .form-select, .form-textarea {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #27ae60;
+        }
+        .form-textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        .items-table {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .items-table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #ddd;
+        }
+        .btn-add-item {
+            background: #27ae60;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        .btn-add-item:hover {
+            background: #229954;
+        }
+        .item-row {
+            display: grid;
+            grid-template-columns: 3fr 1.5fr 1fr 1fr 1fr 0.5fr;
+            gap: 10px;
+            padding: 10px 15px;
+            border-bottom: 1px solid #ecf0f1;
+            align-items: center;
+        }
+        .item-row:last-child {
+            border-bottom: none;
+        }
+        .item-input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+        .btn-remove-item {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid #ecf0f1;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        .btn-cancel {
+            background: #95a5a6;
+            color: white;
+        }
+        .btn-cancel:hover {
+            background: #7f8c8d;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            padding: 20px;
+            background: white;
+            margin-top: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .page-btn {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .page-btn:hover {
+            background: #f8f9fa;
+        }
+        .page-btn.active {
+            background: #27ae60;
+            color: white;
+            border-color: #27ae60;
+        }
+        .summary-section {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #ddd;
+        }
+        .summary-row:last-child {
+            border-bottom: none;
+            font-weight: bold;
+            font-size: 16px;
+            color: #27ae60;
+        }
+    </style>
+</head>
+<body>
+    <div id="sidebar-container"></div>
+
+    <div class="main-content">
+        <div class="header">
+            <div>
+                <h1>Skladga prixod</h1>
+                <p style="color: #7f8c8d; margin-top: 5px;">Xom ashyo va materiallar qabul qilish</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-secondary">📊 Hisobot</button>
+                <button class="btn btn-primary" onclick="openModal()">+ Yangi prixod</button>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card" style="border-color: #27ae60;">
+                <div class="stat-value">24</div>
+                <div class="stat-label">Bugungi prixodlar</div>
+            </div>
+            <div class="stat-card" style="border-color: #3498db;">
+                <div class="stat-value">156</div>
+                <div class="stat-label">Jami pozitsiyalar</div>
+            </div>
+            <div class="stat-card" style="border-color: #f39c12;">
+                <div class="stat-value">8</div>
+                <div class="stat-label">Kutilayotgan</div>
+            </div>
+            <div class="stat-card" style="border-color: #9b59b6;">
+                <div class="stat-value">85.4M</div>
+                <div class="stat-label">Umumiy summa (so'm)</div>
+            </div>
+        </div>
+
+        <div class="filters-section">
+            <div class="filters-row">
+                <div class="filter-group">
+                    <label class="filter-label">Sana (dan)</label>
+                    <input type="date" class="filter-input">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Sana (gacha)</label>
+                    <input type="date" class="filter-input">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Yetkazib beruvchi</label>
+                    <select class="filter-select">
+                        <option value="">Barchasi</option>
+                        <option value="supplier1">LesPromSnab</option>
+                        <option value="supplier2">MebelKomplekt</option>
+                        <option value="supplier3">FurnituraPro</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Holat</label>
+                    <select class="filter-select">
+                        <option value="">Barchasi</option>
+                        <option value="pending">Kutilmoqda</option>
+                        <option value="received">Qabul qilindi</option>
+                        <option value="partial">Qisman</option>
+                        <option value="cancelled">Bekor qilindi</option>
+                    </select>
+                </div>
+            </div>
+            <div class="filters-row">
+                <div class="filter-group">
+                    <label class="filter-label">Qidiruv (Hujjat raqami, Material)</label>
+                    <input type="text" class="filter-input" placeholder="Qidiruv...">
+                </div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Hujjat №</th>
+                        <th>Sana</th>
+                        <th>Yetkazib beruvchi</th>
+                        <th>Materiallar soni</th>
+                        <th>Jami summa</th>
+                        <th>Holat</th>
+                        <th>Mas'ul</th>
+                        <th>Amallar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>PX-2024-0156</strong></td>
+                        <td>14.11.2024 10:30</td>
+                        <td>LesPromSnab</td>
+                        <td>12 pozitsiya</td>
+                        <td>15,850,000 so'm</td>
+                        <td><span class="status-badge status-received">Qabul qilindi</span></td>
+                        <td>Xoliqov D.</td>
+                        <td>
+                            <button class="action-btn btn-view">👁 Ko'rish</button>
+                            <button class="action-btn btn-edit">✏ O'zgartirish</button>
+                            <button class="action-btn btn-delete">🗑 O'chirish</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>PX-2024-0155</strong></td>
+                        <td>14.11.2024 09:15</td>
+                        <td>MebelKomplekt</td>
+                        <td>8 pozitsiya</td>
+                        <td>8,200,000 so'm</td>
+                        <td><span class="status-badge status-received">Qabul qilindi</span></td>
+                        <td>Xoliqov D.</td>
+                        <td>
+                            <button class="action-btn btn-view">👁 Ko'rish</button>
+                            <button class="action-btn btn-edit">✏ O'zgartirish</button>
+                            <button class="action-btn btn-delete">🗑 O'chirish</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>PX-2024-0154</strong></td>
+                        <td>13.11.2024 16:45</td>
+                        <td>FurnituraPro</td>
+                        <td>25 pozitsiya</td>
+                        <td>12,450,000 so'm</td>
+                        <td><span class="status-badge status-partial">Qisman</span></td>
+                        <td>Xoliqov D.</td>
+                        <td>
+                            <button class="action-btn btn-view">👁 Ko'rish</button>
+                            <button class="action-btn btn-edit">✏ O'zgartirish</button>
+                            <button class="action-btn btn-delete">🗑 O'chirish</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>PX-2024-0153</strong></td>
+                        <td>13.11.2024 14:20</td>
+                        <td>LesPromSnab</td>
+                        <td>15 pozitsiya</td>
+                        <td>18,900,000 so'm</td>
+                        <td><span class="status-badge status-received">Qabul qilindi</span></td>
+                        <td>Xoliqov D.</td>
+                        <td>
+                            <button class="action-btn btn-view">👁 Ko'rish</button>
+                            <button class="action-btn btn-edit">✏ O'zgartirish</button>
+                            <button class="action-btn btn-delete">🗑 O'chirish</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>PX-2024-0152</strong></td>
+                        <td>13.11.2024 11:00</td>
+                        <td>MebelKomplekt</td>
+                        <td>6 pozitsiya</td>
+                        <td>5,600,000 so'm</td>
+                        <td><span class="status-badge status-pending">Kutilmoqda</span></td>
+                        <td>Xoliqov D.</td>
+                        <td>
+                            <button class="action-btn btn-view">👁 Ko'rish</button>
+                            <button class="action-btn btn-edit">✏ O'zgartirish</button>
+                            <button class="action-btn btn-delete">🗑 O'chirish</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>PX-2024-0151</strong></td>
+                        <td>12.11.2024 15:30</td>
+                        <td>FurnituraPro</td>
+                        <td>18 pozitsiya</td>
+                        <td>14,750,000 so'm</td>
+                        <td><span class="status-badge status-received">Qabul qilindi</span></td>
+                        <td>Xoliqov D.</td>
+                        <td>
+                            <button class="action-btn btn-view">👁 Ko'rish</button>
+                            <button class="action-btn btn-edit">✏ O'zgartirish</button>
+                            <button class="action-btn btn-delete">🗑 O'chirish</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>PX-2024-0150</strong></td>
+                        <td>12.11.2024 10:15</td>
+                        <td>LesPromSnab</td>
+                        <td>10 pozitsiya</td>
+                        <td>9,700,000 so'm</td>
+                        <td><span class="status-badge status-received">Qabul qilindi</span></td>
+                        <td>Xoliqov D.</td>
+                        <td>
+                            <button class="action-btn btn-view">👁 Ko'rish</button>
+                            <button class="action-btn btn-edit">✏ O'zgartirish</button>
+                            <button class="action-btn btn-delete">🗑 O'chirish</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pagination">
+            <button class="page-btn">← Oldingi</button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <button class="page-btn">4</button>
+            <button class="page-btn">5</button>
+            <button class="page-btn">Keyingi →</button>
+        </div>
+    </div>
+
+    <!-- Modal oynasi -->
+    <div class="modal" id="receiptModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Yangi prixod hujjati</h2>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Hujjat raqami *</label>
+                        <input type="text" class="form-input" value="PX-2024-0157" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Sana *</label>
+                        <input type="datetime-local" class="form-input" value="2024-11-14T10:00">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Yetkazib beruvchi *</label>
+                        <select class="form-select">
+                            <option value="">Tanlang...</option>
+                            <option value="supplier1">LesPromSnab</option>
+                            <option value="supplier2">MebelKomplekt</option>
+                            <option value="supplier3">FurnituraPro</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Mas'ul xodim *</label>
+                        <select class="form-select">
+                            <option value="">Tanlang...</option>
+                            <option value="emp1" selected>Xoliqov D.</option>
+                            <option value="emp2">Saidov B.</option>
+                            <option value="emp3">Karimov J.</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">TTN raqami</label>
+                        <input type="text" class="form-input" placeholder="Transport hujjati raqami">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Schyot-faktura №</label>
+                        <input type="text" class="form-input" placeholder="Hisob-faktura raqami">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label class="form-label">Izoh</label>
+                        <textarea class="form-textarea" placeholder="Qo'shimcha izohlar..."></textarea>
+                    </div>
+                </div>
+
+                <div class="items-table">
+                    <div class="items-table-header">
+                        <strong>Materiallar ro'yxati</strong>
+                        <button class="btn-add-item" onclick="addItem()">+ Material qo'shish</button>
+                    </div>
+                    <div id="itemsContainer">
+                        <div class="item-row">
+                            <select class="item-input">
+                                <option value="">Material tanlang...</option>
+                                <option value="1">LDSP 16mm (Dub sonoma)</option>
+                                <option value="2">LDSP 18mm (Belyy)</option>
+                                <option value="3">Kromka PVC 2mm</option>
+                                <option value="4">Furnitura (Ruchka)</option>
+                            </select>
+                            <input type="text" class="item-input" placeholder="O'lchov birligi" value="m²" readonly>
+                            <input type="number" class="item-input" placeholder="Miqdori" value="50">
+                            <input type="number" class="item-input" placeholder="Narxi" value="85000">
+                            <input type="text" class="item-input" placeholder="Summa" value="4,250,000" readonly>
+                            <button class="btn-remove-item" onclick="removeItem(this)">×</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="summary-section">
+                    <div class="summary-row">
+                        <span>Jami pozitsiyalar:</span>
+                        <span id="totalItems">1</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Jami miqdor:</span>
+                        <span id="totalQty">50</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Jami summa:</span>
+                        <span id="totalAmount">4,250,000 so'm</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-cancel" onclick="closeModal()">Bekor qilish</button>
+                <button class="btn btn-primary">Saqlash</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="sidebar-loader.js"></script>
+    <script>
+        function openModal() {
+            document.getElementById('receiptModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('receiptModal').classList.remove('active');
+        }
+
+        function addItem() {
+            const container = document.getElementById('itemsContainer');
+            const newRow = document.createElement('div');
+            newRow.className = 'item-row';
+            newRow.innerHTML = `
+                <select class="item-input">
+                    <option value="">Material tanlang...</option>
+                    <option value="1">LDSP 16mm (Dub sonoma)</option>
+                    <option value="2">LDSP 18mm (Belyy)</option>
+                    <option value="3">Kromka PVC 2mm</option>
+                    <option value="4">Furnitura (Ruchka)</option>
+                </select>
+                <input type="text" class="item-input" placeholder="O'lchov birligi" readonly>
+                <input type="number" class="item-input" placeholder="Miqdori">
+                <input type="number" class="item-input" placeholder="Narxi">
+                <input type="text" class="item-input" placeholder="Summa" readonly>
+                <button class="btn-remove-item" onclick="removeItem(this)">×</button>
+            `;
+            container.appendChild(newRow);
+        }
+
+        function removeItem(button) {
+            const container = document.getElementById('itemsContainer');
+            if (container.children.length > 1) {
+                button.parentElement.remove();
+            } else {
+                alert('Kamida bitta material bo\'lishi kerak!');
+            }
+        }
+
+        // Modal tashqarisiga bosilganda yopish
+        document.getElementById('receiptModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -156,6 +156,38 @@
             background: #3498db;
             color: white;
         }
+        .view-toggle {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .view-btn {
+            width: 40px;
+            height: 40px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            font-size: 18px;
+        }
+        .view-btn:hover {
+            background: #f5f5f5;
+            border-color: #3498db;
+        }
+        .view-btn.active {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
         .overview-stats {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -218,7 +250,13 @@
                 <h1>Ishlab chiqarish sexlari</h1>
                 <p style="color: #7f8c8d; margin-top: 5px;">Sex va uskunalar boshqaruvi</p>
             </div>
-            <button class="btn btn-primary">+ Yangi sex</button>
+            <div class="header-actions">
+                <div class="view-toggle">
+                    <button class="view-btn active" title="Grid ko'rinish">⊞</button>
+                    <button class="view-btn" title="Table ko'rinish">☰</button>
+                </div>
+                <button class="btn btn-primary">+ Yangi sex</button>
+            </div>
         </div>
 
         <div class="overview-stats">
