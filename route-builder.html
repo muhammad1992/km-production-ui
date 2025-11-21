@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Material bo'yicha Marshrut - Route Builder</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 2000px;
+            margin: 0 auto;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 15px;
+        }
+        
+        /* Top Controls */
+        .top-controls {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        
+        .control-group {
+            flex: 1;
+        }
+        
+        .control-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .form-select, .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e8e8e8;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .form-select:focus, .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* Summary Stats */
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 15px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+        
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 3px;
+        }
+        
+        .stat-label {
+            font-size: 11px;
+            color: #666;
+        }
+        
+        /* Main Flow Container */
+        .flow-container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+        
+        .flow-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .flow-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* Material Tracks */
+        .material-tracks {
+            display: grid;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .material-track {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            gap: 20px;
+            align-items: start;
+            background: #fafbfc;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 5px solid;
+            min-height: 120px;
+        }
+        
+        .track-dsp { border-color: #3498db; }
+        .track-mdf { border-color: #e67e22; }
+        .track-pvh { border-color: #9b59b6; }
+        
+        .material-header {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .material-title-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .material-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            flex-shrink: 0;
+        }
+        
+        .icon-dsp { background: linear-gradient(135deg, #3498db, #2980b9); }
+        .icon-mdf { background: linear-gradient(135deg, #e67e22, #d35400); }
+        .icon-pvh { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
+        
+        .material-info {
+            flex: 1;
+        }
+        
+        .material-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 3px;
+        }
+        
+        .material-meta {
+            font-size: 13px;
+            color: #7f8c8d;
+        }
+        
+        .add-operation-btn {
+            width: 100%;
+            padding: 10px 15px;
+            background: white;
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #667eea;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .add-operation-btn:hover:not(:disabled) {
+            background: #f8f9ff;
+            border-color: #667eea;
+        }
+        
+        .add-operation-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            color: #999;
+        }
+        
+        /* Operations Flow */
+        .operations-flow {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .empty-track {
+            width: 100%;
+            padding: 30px;
+            text-align: center;
+            color: #999;
+            font-size: 14px;
+            border: 2px dashed #e0e0e0;
+            border-radius: 8px;
+        }
+        
+        .operation-node {
+            background: white;
+            border: 2px solid #e8e8e8;
+            border-radius: 10px;
+            padding: 15px;
+            min-width: 180px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            position: relative;
+        }
+        
+        .node-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .node-icon {
+            font-size: 20px;
+        }
+        
+        .node-name {
+            font-weight: 600;
+            font-size: 14px;
+            color: #2c3e50;
+        }
+        
+        .node-details {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+        
+        .node-detail {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .node-delete-btn {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #e74c3c;
+            color: white;
+            border: 2px solid white;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .flow-arrow {
+            font-size: 24px;
+            color: #ddd;
+        }
+        
+        /* Convergence Visual */
+        .convergence-visual {
+            margin: 40px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .convergence-line {
+            width: 2px;
+            height: 30px;
+            background: linear-gradient(to bottom, #e0e0e0, #667eea);
+        }
+        
+        .convergence-text {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 16px;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        
+        /* Final Stages */
+        .final-stages {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .stage-zone {
+            background: #fafbfc;
+            border-radius: 12px;
+            padding: 20px;
+            border: 2px solid #e8e8e8;
+        }
+        
+        .assembly-zone {
+            border-color: #27ae60;
+        }
+        
+        .otk-zone {
+            border-color: #3498db;
+        }
+        
+        .packaging-zone {
+            border-color: #2c3e50;
+        }
+        
+        .stage-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e8e8e8;
+        }
+        
+        .stage-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+        }
+        
+        .icon-assembly {
+            background: linear-gradient(135deg, #27ae60, #229954);
+        }
+        
+        .icon-otk {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+        }
+        
+        .icon-packaging {
+            background: linear-gradient(135deg, #2c3e50, #1a252f);
+        }
+        
+        .stage-info {
+            flex: 1;
+        }
+        
+        .stage-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 3px;
+        }
+        
+        .stage-subtitle {
+            font-size: 13px;
+            color: #7f8c8d;
+        }
+        
+        .stage-operations {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .stage-operations-empty {
+            padding: 30px;
+            text-align: center;
+            color: #999;
+            border: 2px dashed #e0e0e0;
+            border-radius: 8px;
+        }
+        
+        .stage-operations-empty-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+            opacity: 0.5;
+        }
+        
+        .stage-op {
+            background: white;
+            border: 2px solid #e8e8e8;
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+        }
+        
+        .stage-op-info {
+            flex: 1;
+        }
+        
+        .stage-op-name {
+            font-weight: 600;
+            font-size: 14px;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .stage-op-meta {
+            display: flex;
+            gap: 10px;
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+        
+        .stage-op-fee {
+            font-weight: 600;
+            color: #27ae60;
+            font-size: 14px;
+        }
+        
+        .stage-default-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #3498db;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 600;
+            border: 2px solid white;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #f0f0f0;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            color: #666;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 8px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+        
+        .fee-input-group {
+            position: relative;
+        }
+        
+        .fee-input-group input {
+            padding-right: 60px;
+        }
+        
+        .currency-label {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-weight: 600;
+            color: #27ae60;
+            font-size: 14px;
+        }
+        
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: white;
+            padding: 20px 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            display: none;
+            align-items: center;
+            gap: 15px;
+            z-index: 2000;
+        }
+        
+        .toast.show {
+            display: flex;
+            animation: slideIn 0.3s ease;
+        }
+        
+        .toast.success {
+            border-left: 4px solid #27ae60;
+        }
+        
+        .toast.error {
+            border-left: 4px solid #e74c3c;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>📦 Material bo'yicha Marshrut Tizimi</h1>
+            <p>Har bir material turi alohida ishlov beriladi → Sborkada birlashadi → OTK → Qadoqlanadi</p>
+        </div>
+
+        <!-- Top Controls -->
+        <div class="top-controls">
+            <div class="control-group">
+                <label class="control-label">Mebel tanlash</label>
+                <select class="form-select" id="furnitureSelect">
+                    <option value="">Mebel tanlang...</option>
+                    <option value="1">Oshxona to'plami "Lux-2024" (KIT-001)</option>
+                    <option value="2">Yotoq to'plami "Comfort Plus" (BED-002)</option>
+                    <option value="3">Shkaf-kupe "Modern Elite" (WAR-003)</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label class="control-label">Marshrut nomi</label>
+                <input type="text" class="form-input" id="routeName" placeholder="Masalan: Shkaf ishlab chiqarish v1.0">
+            </div>
+            <div class="control-group">
+                <label class="control-label">Versiya</label>
+                <input type="text" class="form-input" id="routeVersion" value="1.0">
+            </div>
+            <div class="control-group" style="display: flex; gap: 10px; align-items: flex-end;">
+                <button class="btn btn-primary" onclick="saveRoute()" style="flex: 1;">
+                    💾 Saqlash
+                </button>
+            </div>
+        </div>
+
+        <!-- Summary Stats -->
+        <div class="summary-stats">
+            <div class="stat-card">
+                <div class="stat-icon">⏱️</div>
+                <div class="stat-value" id="totalDuration">0</div>
+                <div class="stat-label">Jami daqiqa</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">💰</div>
+                <div class="stat-value" id="totalCost">0</div>
+                <div class="stat-label">Jami xarajat (so'm)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📦</div>
+                <div class="stat-value" id="totalMaterials">0</div>
+                <div class="stat-label">Materiallar</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⚙️</div>
+                <div class="stat-value" id="totalOperations">0</div>
+                <div class="stat-label">Operatsiyalar</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🏭</div>
+                <div class="stat-value" id="totalWorkshops">0</div>
+                <div class="stat-label">Sexlar</div>
+            </div>
+        </div>
+
+        <!-- Flow Container -->
+        <div class="flow-container">
+            <div class="flow-header">
+                <h2 class="flow-title">🎯 Material Marshrutlari</h2>
+            </div>
+
+            <div class="material-tracks">
+                <!-- DSP Track -->
+                <div class="material-track track-dsp">
+                    <div class="material-header">
+                        <div class="material-title-section">
+                            <div class="material-icon icon-dsp">📋</div>
+                            <div class="material-info">
+                                <div class="material-name">DSP / LDSP</div>
+                                <div class="material-meta">Panel materiallari</div>
+                            </div>
+                        </div>
+                        <button class="add-operation-btn" onclick="openOperationModal('dsp')">
+                            ➕ Qo'shish
+                        </button>
+                    </div>
+                    
+                    <div class="operations-flow" id="flow-dsp">
+                        <div class="empty-track">Operatsiya qo'shing</div>
+                    </div>
+                </div>
+
+                <!-- MDF Track -->
+                <div class="material-track track-mdf">
+                    <div class="material-header">
+                        <div class="material-title-section">
+                            <div class="material-icon icon-mdf">🪵</div>
+                            <div class="material-info">
+                                <div class="material-name">MDF</div>
+                                <div class="material-meta">Fasad qismlari</div>
+                            </div>
+                        </div>
+                        <button class="add-operation-btn" onclick="openOperationModal('mdf')">
+                            ➕ Qo'shish
+                        </button>
+                    </div>
+                    
+                    <div class="operations-flow" id="flow-mdf">
+                        <div class="empty-track">Operatsiya qo'shing</div>
+                    </div>
+                </div>
+
+                <!-- PVH Track -->
+                <div class="material-track track-pvh">
+                    <div class="material-header">
+                        <div class="material-title-section">
+                            <div class="material-icon icon-pvh">🎨</div>
+                            <div class="material-info">
+                                <div class="material-name">PVH</div>
+                                <div class="material-meta">Qoplama mato</div>
+                            </div>
+                        </div>
+                        <button class="add-operation-btn" onclick="openOperationModal('pvh')">
+                            ➕ Qo'shish
+                        </button>
+                    </div>
+                    
+                    <div class="operations-flow" id="flow-pvh">
+                        <div class="empty-track">Operatsiya qo'shing</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Convergence Visual -->
+            <div class="convergence-visual">
+                <div class="convergence-line"></div>
+                <div class="convergence-text">
+                    ⬇️ Barcha materiallar birlashadi ⬇️
+                </div>
+            </div>
+
+            <!-- Assembly and Packaging -->
+            <div class="final-stages">
+                <!-- Assembly Zone -->
+                <div class="stage-zone assembly-zone">
+                    <div class="stage-header">
+                        <div class="stage-icon icon-assembly">🔧</div>
+                        <div class="stage-info">
+                            <div class="stage-title">SBORKA</div>
+                            <div class="stage-subtitle">Yig'ish sexi - barcha qismlar birlashadi</div>
+                        </div>
+                        <button class="add-operation-btn" id="btn-assembly" onclick="openOperationModal('assembly')">
+                            ➕ Qo'shish
+                        </button>
+                    </div>
+                    
+                    <div class="stage-operations" id="assemblyOperations">
+                        <div class="stage-operations-empty">
+                            <div class="stage-operations-empty-icon">🔧</div>
+                            <div>Yig'ish operatsiyasini qo'shing</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- OTK (Quality Control) Zone -->
+                <div class="stage-zone otk-zone">
+                    <div class="stage-header">
+                        <div class="stage-icon icon-otk">✅</div>
+                        <div class="stage-info">
+                            <div class="stage-title">OTK</div>
+                            <div class="stage-subtitle">Sifat nazorati - tekshirish</div>
+                        </div>
+                        <button class="add-operation-btn" id="btn-otk" onclick="openOperationModal('otk')">
+                            ➕ Qo'shish
+                        </button>
+                    </div>
+                    
+                    <div class="stage-operations" id="otkOperations">
+                        <div class="stage-operations-empty">
+                            <div class="stage-operations-empty-icon">✅</div>
+                            <div>Sifat nazorati operatsiyasini qo'shing</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Packaging Zone -->
+                <div class="stage-zone packaging-zone">
+                    <div class="stage-header">
+                        <div class="stage-icon icon-packaging">📦</div>
+                        <div class="stage-info">
+                            <div class="stage-title">QADOQLASH</div>
+                            <div class="stage-subtitle">Yakuniy bosqich - tayyor mahsulot</div>
+                        </div>
+                        <button class="add-operation-btn" id="btn-packaging" onclick="openOperationModal('packaging')">
+                            ➕ Qo'shish
+                        </button>
+                    </div>
+                    
+                    <div class="stage-operations" id="packagingOperations">
+                        <div class="stage-operations-empty">
+                            <div class="stage-operations-empty-icon">📦</div>
+                            <div>Qadoqlash operatsiyasini qo'shing</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Operation Modal -->
+    <div class="modal" id="operationModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">➕ Yangi Operatsiya</h3>
+                <button class="modal-close" onclick="closeModal()">✕</button>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Material turi</label>
+                <select class="form-select" id="modalMaterialType" disabled>
+                    <option value="dsp">📋 DSP/LDSP</option>
+                    <option value="mdf">🪵 MDF</option>
+                    <option value="pvh">🎨 PVH</option>
+                    <option value="assembly">🔧 Sborka</option>
+                    <option value="otk">✅ OTK</option>
+                    <option value="packaging">📦 Qadoqlash</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Operatsiya turi</label>
+                <select class="form-select" id="modalOperationType">
+                    <option value="kesish">🔨 Kesish</option>
+                    <option value="kromka">📏 Kromka yopish</option>
+                    <option value="sverklovka">🔩 Sverklovka</option>
+                    <option value="frezerovka">🌀 Frezerovka</option>
+                    <option value="yigish">🔧 Yig'ish</option>
+                    <option value="boyash">🎨 Bo'yash</option>
+                    <option value="quritish">💨 Quritish</option>
+                    <option value="qoplash">🎭 Qoplash</option>
+                    <option value="tekshirish">✅ Tekshirish</option>
+                    <option value="qadoqlash">📦 Qadoqlash</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Operatsiya nomi</label>
+                <input type="text" class="form-input" id="modalOperationName" placeholder="Masalan: DSP panel kesish">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Sex</label>
+                <select class="form-select" id="modalWorkshop">
+                    <option value="1">Kesish sexi</option>
+                    <option value="2">Kromka sexi</option>
+                    <option value="3">Yig'ish sexi</option>
+                    <option value="4">Bo'yash sexi</option>
+                    <option value="5">OTK sexi</option>
+                    <option value="6">Qadoqlash sexi</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Davomiyligi (daqiqa)</label>
+                <input type="number" class="form-input" id="modalDuration" value="60">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">💰 Operatsiya narxi</label>
+                <div class="fee-input-group">
+                    <input type="number" class="form-input" id="modalFee" value="50000" placeholder="50000">
+                    <span class="currency-label">so'm</span>
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn btn-primary" onclick="addOperation()" style="flex: 1;">Qo'shish</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <div style="font-size: 24px;">✅</div>
+        <div id="toastMessage">Operatsiya qo'shildi!</div>
+    </div>
+
+    <script>
+        // State
+        const materialOperations = {
+            dsp: [],
+            mdf: [],
+            pvh: [],
+            assembly: [],
+            otk: [],
+            packaging: []
+        };
+        
+        let currentMaterialType = '';
+        let nextOperationId = 1;
+        
+        const workshopNames = {
+            '1': 'Kesish sexi',
+            '2': 'Kromka sexi',
+            '3': 'Yig\'ish sexi',
+            '4': 'Bo\'yash sexi',
+            '5': 'OTK sexi',
+            '6': 'Qadoqlash sexi'
+        };
+        
+        const materialTypeIds = {
+            'dsp': 1,
+            'mdf': 2,
+            'pvh': 3
+        };
+        
+        // Format number with spaces
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+        }
+        
+        // Open modal
+        function openOperationModal(materialType) {
+            // Faqat assembly, otk, packaging uchun bitta operatsiya mumkin
+            if (['assembly', 'otk', 'packaging'].includes(materialType)) {
+                if (materialOperations[materialType].length > 0) {
+                    showToast('Bu bosqich uchun allaqachon operatsiya qo\'shilgan!', 'error');
+                    return;
+                }
+            }
+            
+            currentMaterialType = materialType;
+            document.getElementById('modalMaterialType').value = materialType;
+            document.getElementById('operationModal').classList.add('active');
+            
+            // Set defaults
+            const typeSelect = document.getElementById('modalOperationType');
+            const nameInput = document.getElementById('modalOperationName');
+            const workshopSelect = document.getElementById('modalWorkshop');
+            const feeInput = document.getElementById('modalFee');
+            
+            if (materialType === 'dsp') {
+                typeSelect.value = 'kesish';
+                nameInput.value = 'DSP panel kesish';
+                workshopSelect.value = '1';
+                feeInput.value = '50000';
+            } else if (materialType === 'mdf') {
+                typeSelect.value = 'kesish';
+                nameInput.value = 'MDF fasad kesish';
+                workshopSelect.value = '1';
+                feeInput.value = '60000';
+            } else if (materialType === 'pvh') {
+                typeSelect.value = 'qoplash';
+                nameInput.value = 'PVH mato qoplash';
+                workshopSelect.value = '3';
+                feeInput.value = '80000';
+            } else if (materialType === 'assembly') {
+                typeSelect.value = 'yigish';
+                nameInput.value = 'Korpus yig\'ish';
+                workshopSelect.value = '3';
+                feeInput.value = '150000';
+            } else if (materialType === 'otk') {
+                typeSelect.value = 'tekshirish';
+                nameInput.value = 'Sifat tekshirish';
+                workshopSelect.value = '5';
+                feeInput.value = '50000';
+            } else if (materialType === 'packaging') {
+                typeSelect.value = 'qadoqlash';
+                nameInput.value = 'Mahsulot qadoqlash';
+                workshopSelect.value = '6';
+                feeInput.value = '25000';
+            }
+        }
+        
+        // Close modal
+        function closeModal() {
+            document.getElementById('operationModal').classList.remove('active');
+        }
+        
+        // Add operation
+        function addOperation() {
+            const type = document.getElementById('modalOperationType').value;
+            const name = document.getElementById('modalOperationName').value;
+            const workshopId = document.getElementById('modalWorkshop').value;
+            const duration = parseInt(document.getElementById('modalDuration').value);
+            const fee = parseInt(document.getElementById('modalFee').value);
+            
+            if (!name || !duration || !fee) {
+                alert('Barcha maydonlarni to\'ldiring!');
+                return;
+            }
+            
+            const operation = {
+                id: nextOperationId++,
+                sequence: materialOperations[currentMaterialType].length + 1,
+                name: name,
+                type: type,
+                workshopId: workshopId,
+                workshopName: workshopNames[workshopId],
+                duration: duration,
+                fee: fee,
+                materialTypeId: materialTypeIds[currentMaterialType]
+            };
+            
+            materialOperations[currentMaterialType].push(operation);
+            
+            // Render based on type
+            if (['dsp', 'mdf', 'pvh'].includes(currentMaterialType)) {
+                renderMaterialFlow(currentMaterialType);
+            } else if (currentMaterialType === 'assembly') {
+                renderStageOperations('assembly', 'assemblyOperations');
+                // Disable button
+                document.getElementById('btn-assembly').disabled = true;
+                document.getElementById('btn-assembly').textContent = '✓ Qo\'shilgan';
+            } else if (currentMaterialType === 'otk') {
+                renderStageOperations('otk', 'otkOperations');
+                // Disable button
+                document.getElementById('btn-otk').disabled = true;
+                document.getElementById('btn-otk').textContent = '✓ Qo\'shilgan';
+            } else if (currentMaterialType === 'packaging') {
+                renderStageOperations('packaging', 'packagingOperations');
+                // Disable button
+                document.getElementById('btn-packaging').disabled = true;
+                document.getElementById('btn-packaging').textContent = '✓ Qo\'shilgan';
+            }
+            
+            updateStats();
+            closeModal();
+            showToast('Operatsiya qo\'shildi!', 'success');
+        }
+        
+        // Render material flow
+        function renderMaterialFlow(materialType) {
+            const operations = materialOperations[materialType];
+            const container = document.getElementById(`flow-${materialType}`);
+            
+            if (operations.length === 0) {
+                container.innerHTML = '<div class="empty-track">Operatsiya qo\'shing</div>';
+                return;
+            }
+            
+            container.innerHTML = operations.map((op, index) => `
+                <div class="operation-node">
+                    <div class="node-header">
+                        <div class="node-icon">${getOperationIcon(op.type)}</div>
+                        <div class="node-name">${op.sequence}. ${op.name}</div>
+                    </div>
+                    <div class="node-details">
+                        <div class="node-detail">⏱️ ${op.duration} daqiqa</div>
+                        <div class="node-detail">🏭 ${op.workshopName}</div>
+                        <div class="node-detail">💰 ${formatNumber(op.fee)} so'm</div>
+                    </div>
+                    <button class="node-delete-btn" onclick="deleteOperation('${materialType}', ${op.id})">✕</button>
+                </div>
+            `).join('');
+        }
+        
+        // Get operation icon
+        function getOperationIcon(type) {
+            const icons = {
+                'kesish': '🔨',
+                'kromka': '📏',
+                'sverklovka': '🔩',
+                'frezerovka': '🌀',
+                'yigish': '🔧',
+                'boyash': '🎨',
+                'quritish': '💨',
+                'qoplash': '🎭',
+                'tekshirish': '✅',
+                'qadoqlash': '📦'
+            };
+            return icons[type] || '⚙️';
+        }
+        
+        // Render stage operations (for assembly, otk, packaging)
+        function renderStageOperations(stageType, containerId) {
+            const operations = materialOperations[stageType];
+            const container = document.getElementById(containerId);
+            
+            if (operations.length === 0) {
+                const labels = {
+                    'assembly': 'Yig\'ish operatsiyasini qo\'shing',
+                    'otk': 'Sifat nazorati operatsiyasini qo\'shing',
+                    'packaging': 'Qadoqlash operatsiyasini qo\'shing'
+                };
+                const icons = {
+                    'assembly': '🔧',
+                    'otk': '✅',
+                    'packaging': '📦'
+                };
+                container.innerHTML = `
+                    <div class="stage-operations-empty">
+                        <div class="stage-operations-empty-icon">${icons[stageType]}</div>
+                        <div>${labels[stageType]}</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = operations.map(op => `
+                <div class="stage-op">
+                    <div class="stage-op-info">
+                        <div class="stage-op-name">${op.sequence}. ${op.name}</div>
+                        <div class="stage-op-meta">
+                            <span>⏱️ ${op.duration} daqiqa</span>
+                            <span>${op.workshopName}</span>
+                        </div>
+                    </div>
+                    <div class="stage-op-fee">💰 ${formatNumber(op.fee)} so'm</div>
+                    <button class="node-delete-btn" onclick="deleteOperation('${stageType}', ${op.id})">✕</button>
+                </div>
+            `).join('');
+        }
+        
+        // Delete operation
+        function deleteOperation(materialType, id) {
+            if (confirm('Operatsiyani o\'chirmoqchimisiz?')) {
+                materialOperations[materialType] = materialOperations[materialType].filter(op => op.id !== id);
+                materialOperations[materialType].forEach((op, index) => {
+                    op.sequence = index + 1;
+                });
+                
+                // Render based on type
+                if (['dsp', 'mdf', 'pvh'].includes(materialType)) {
+                    renderMaterialFlow(materialType);
+                } else if (materialType === 'assembly') {
+                    renderStageOperations('assembly', 'assemblyOperations');
+                    // Enable button
+                    document.getElementById('btn-assembly').disabled = false;
+                    document.getElementById('btn-assembly').textContent = '➕ Qo\'shish';
+                } else if (materialType === 'otk') {
+                    renderStageOperations('otk', 'otkOperations');
+                    // Enable button
+                    document.getElementById('btn-otk').disabled = false;
+                    document.getElementById('btn-otk').textContent = '➕ Qo\'shish';
+                } else if (materialType === 'packaging') {
+                    renderStageOperations('packaging', 'packagingOperations');
+                    // Enable button
+                    document.getElementById('btn-packaging').disabled = false;
+                    document.getElementById('btn-packaging').textContent = '➕ Qo\'shish';
+                }
+                
+                updateStats();
+                showToast('Operatsiya o\'chirildi', 'error');
+            }
+        }
+        
+        // Update stats
+        function updateStats() {
+            let totalDuration = 0;
+            let totalCost = 0;
+            let totalOperations = 0;
+            const workshops = new Set();
+            let activeMaterials = 0;
+            
+            Object.keys(materialOperations).forEach(materialType => {
+                const ops = materialOperations[materialType];
+                if (ops.length > 0) {
+                    activeMaterials++;
+                }
+                ops.forEach(op => {
+                    totalDuration += op.duration;
+                    totalCost += op.fee;
+                    totalOperations++;
+                    workshops.add(op.workshopId);
+                });
+            });
+            
+            document.getElementById('totalDuration').textContent = totalDuration;
+            document.getElementById('totalCost').textContent = formatNumber(totalCost);
+            document.getElementById('totalMaterials').textContent = activeMaterials;
+            document.getElementById('totalOperations').textContent = totalOperations;
+            document.getElementById('totalWorkshops').textContent = workshops.size;
+        }
+        
+        // Save route
+        function saveRoute() {
+            const furnitureId = document.getElementById('furnitureSelect').value;
+            const routeName = document.getElementById('routeName').value;
+            const version = document.getElementById('routeVersion').value;
+            
+            if (!furnitureId) {
+                alert('Mebelni tanlang!');
+                return;
+            }
+            
+            if (!routeName) {
+                alert('Marshrut nomini kiriting!');
+                return;
+            }
+            
+            const hasOperations = Object.values(materialOperations).some(ops => ops.length > 0);
+            if (!hasOperations) {
+                alert('Kamida bitta operatsiya qo\'shing!');
+                return;
+            }
+            
+            // Combine all operations
+            let allOperations = [];
+            let globalSequence = 1;
+            
+            // Material operations
+            ['dsp', 'mdf', 'pvh'].forEach(materialType => {
+                materialOperations[materialType].forEach(op => {
+                    allOperations.push({
+                        sequence_number: globalSequence++,
+                        workshop_id: op.workshopId,
+                        material_type_id: op.materialTypeId,
+                        operation_type: op.type,
+                        operation_name: op.name,
+                        description: `Material: ${materialType.toUpperCase()}`,
+                        duration_minutes: op.duration,
+                        operation_fee: op.fee
+                    });
+                });
+            });
+            
+            // Assembly operations
+            materialOperations.assembly.forEach(op => {
+                allOperations.push({
+                    sequence_number: globalSequence++,
+                    workshop_id: op.workshopId,
+                    material_type_id: null,
+                    operation_type: op.type,
+                    operation_name: op.name,
+                    description: 'SBORKA',
+                    duration_minutes: op.duration,
+                    operation_fee: op.fee
+                });
+            });
+            
+            // OTK operations
+            materialOperations.otk.forEach(op => {
+                allOperations.push({
+                    sequence_number: globalSequence++,
+                    workshop_id: op.workshopId,
+                    material_type_id: null,
+                    operation_type: op.type,
+                    operation_name: op.name,
+                    description: 'OTK',
+                    duration_minutes: op.duration,
+                    operation_fee: op.fee
+                });
+            });
+            
+            // Packaging operations
+            materialOperations.packaging.forEach(op => {
+                allOperations.push({
+                    sequence_number: globalSequence++,
+                    workshop_id: op.workshopId,
+                    material_type_id: null,
+                    operation_type: op.type,
+                    operation_name: op.name,
+                    description: 'QADOQLASH',
+                    duration_minutes: op.duration,
+                    operation_fee: op.fee
+                });
+            });
+            
+            const totalDuration = allOperations.reduce((sum, op) => 
+                sum + op.duration_minutes, 0
+            );
+            
+            const totalCost = allOperations.reduce((sum, op) => 
+                sum + op.operation_fee, 0
+            );
+            
+            const routeData = {
+                furniture_id: furnitureId,
+                route_name: routeName,
+                version: version,
+                total_duration_minutes: totalDuration,
+                total_cost: totalCost,
+                operations: allOperations
+            };
+            
+            console.log('='.repeat(70));
+            console.log('MARSHRUT SAQLASH - Material → Sborka → OTK → Qadoqlash');
+            console.log('='.repeat(70));
+            console.log(JSON.stringify(routeData, null, 2));
+            console.log('='.repeat(70));
+            
+            showToast('Marshrut muvaffaqiyatli saqlandi! ✅', 'success');
+        }
+        
+        // Show toast
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.className = 'toast ' + type + ' show';
+            document.getElementById('toastMessage').textContent = message;
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Initialize
+        updateStats();
+    </script>
+</body>
+</html>
