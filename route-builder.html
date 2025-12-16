@@ -374,9 +374,121 @@
         
         /* Final Stages */
         .final-stages {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
+            display: flex;
+            flex-direction: column;
             gap: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Branching Layout */
+        .branching-container {
+            display: flex;
+            gap: 40px;
+            justify-content: center;
+            position: relative;
+        }
+
+        .branch-left {
+            flex: 1;
+            max-width: 400px;
+        }
+
+        .branch-right {
+            flex: 1;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .branch-connector {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .branch-lines {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            position: relative;
+            height: 50px;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .branch-lines::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 2px;
+            height: 20px;
+            background: #667eea;
+        }
+
+        .branch-lines::after {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: calc(25% + 50px);
+            right: calc(25% + 50px);
+            height: 2px;
+            background: #667eea;
+        }
+
+        .branch-line-left,
+        .branch-line-right {
+            position: absolute;
+            top: 20px;
+            width: 2px;
+            height: 30px;
+            background: #667eea;
+        }
+
+        .branch-line-left {
+            left: calc(25% + 50px);
+        }
+
+        .branch-line-right {
+            right: calc(25% + 50px);
+        }
+
+        .branch-label {
+            position: absolute;
+            top: 25px;
+            padding: 3px 10px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            font-size: 11px;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .branch-label-left {
+            left: calc(25% - 30px);
+        }
+
+        .branch-label-right {
+            right: calc(25% - 30px);
+        }
+
+        .arrow-down {
+            font-size: 20px;
+            color: #667eea;
+            text-align: center;
+            padding: 5px 0;
+        }
+
+        .myagkiy-zone {
+            border-color: #e91e63;
+        }
+
+        .icon-myagkiy {
+            background: linear-gradient(135deg, #e91e63, #c2185b);
         }
         
         .stage-zone {
@@ -783,9 +895,8 @@
                 </div>
             </div>
 
-            <!-- Assembly and Packaging -->
+            <!-- Assembly Zone (Center) -->
             <div class="final-stages">
-                <!-- Assembly Zone -->
                 <div class="stage-zone assembly-zone">
                     <div class="stage-header">
                         <div class="stage-icon icon-assembly">🔧</div>
@@ -797,7 +908,7 @@
                             ➕ Qo'shish
                         </button>
                     </div>
-                    
+
                     <div class="stage-operations" id="assemblyOperations">
                         <div class="stage-operations-empty">
                             <div class="stage-operations-empty-icon">🔧</div>
@@ -805,45 +916,82 @@
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- OTK (Quality Control) Zone -->
-                <div class="stage-zone otk-zone">
-                    <div class="stage-header">
-                        <div class="stage-icon icon-otk">✅</div>
-                        <div class="stage-info">
-                            <div class="stage-title">OTK</div>
-                            <div class="stage-subtitle">Sifat nazorati - tekshirish</div>
+            <!-- Branch Lines -->
+            <div class="branch-lines">
+                <div class="branch-line-left"></div>
+                <div class="branch-line-right"></div>
+            </div>
+
+            <!-- Branching: Left = Myagkiy Seh, Right = OTK -> Qadoqlash -->
+            <div class="branching-container">
+                <!-- Left Branch: Myagkiy Seh -->
+                <div class="branch-left">
+                    <div class="stage-zone myagkiy-zone">
+                        <div class="stage-header">
+                            <div class="stage-icon icon-myagkiy">🛋️</div>
+                            <div class="stage-info">
+                                <div class="stage-title">MYAGKIY SEH</div>
+                                <div class="stage-subtitle">Yumshoq mebel ishlov berish</div>
+                            </div>
+                            <button class="add-operation-btn" id="btn-myagkiy" onclick="openOperationModal('myagkiy')">
+                                ➕ Qo'shish
+                            </button>
                         </div>
-                        <button class="add-operation-btn" id="btn-otk" onclick="openOperationModal('otk')">
-                            ➕ Qo'shish
-                        </button>
-                    </div>
-                    
-                    <div class="stage-operations" id="otkOperations">
-                        <div class="stage-operations-empty">
-                            <div class="stage-operations-empty-icon">✅</div>
-                            <div>Sifat nazorati operatsiyasini qo'shing</div>
+
+                        <div class="stage-operations" id="myagkiyOperations">
+                            <div class="stage-operations-empty">
+                                <div class="stage-operations-empty-icon">🛋️</div>
+                                <div>Myagkiy seh operatsiyasini qo'shing</div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Packaging Zone -->
-                <div class="stage-zone packaging-zone">
-                    <div class="stage-header">
-                        <div class="stage-icon icon-packaging">📦</div>
-                        <div class="stage-info">
-                            <div class="stage-title">QADOQLASH</div>
-                            <div class="stage-subtitle">Yakuniy bosqich - tayyor mahsulot</div>
+                <!-- Right Branch: OTK -> Qadoqlash -->
+                <div class="branch-right">
+                    <!-- OTK Zone -->
+                    <div class="stage-zone otk-zone">
+                        <div class="stage-header">
+                            <div class="stage-icon icon-otk">✅</div>
+                            <div class="stage-info">
+                                <div class="stage-title">OTK</div>
+                                <div class="stage-subtitle">Sifat nazorati - tekshirish</div>
+                            </div>
+                            <button class="add-operation-btn" id="btn-otk" onclick="openOperationModal('otk')">
+                                ➕ Qo'shish
+                            </button>
                         </div>
-                        <button class="add-operation-btn" id="btn-packaging" onclick="openOperationModal('packaging')">
-                            ➕ Qo'shish
-                        </button>
+
+                        <div class="stage-operations" id="otkOperations">
+                            <div class="stage-operations-empty">
+                                <div class="stage-operations-empty-icon">✅</div>
+                                <div>Sifat nazorati operatsiyasini qo'shing</div>
+                            </div>
+                        </div>
                     </div>
-                    
-                    <div class="stage-operations" id="packagingOperations">
-                        <div class="stage-operations-empty">
-                            <div class="stage-operations-empty-icon">📦</div>
-                            <div>Qadoqlash operatsiyasini qo'shing</div>
+
+                    <div class="arrow-down">⬇️</div>
+
+                    <!-- Packaging Zone -->
+                    <div class="stage-zone packaging-zone">
+                        <div class="stage-header">
+                            <div class="stage-icon icon-packaging">📦</div>
+                            <div class="stage-info">
+                                <div class="stage-title">QADOQLASH</div>
+                                <div class="stage-subtitle">Yakuniy bosqich - tayyor mahsulot</div>
+                            </div>
+                            <button class="add-operation-btn" id="btn-packaging" onclick="openOperationModal('packaging')">
+                                ➕ Qo'shish
+                            </button>
+                        </div>
+
+                        <div class="stage-operations" id="packagingOperations">
+                            <div class="stage-operations-empty">
+                                <div class="stage-operations-empty-icon">📦</div>
+                                <div>Qadoqlash operatsiyasini qo'shing</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -866,6 +1014,7 @@
                     <option value="mdf">🪵 MDF</option>
                     <option value="pvh">🎨 PVH</option>
                     <option value="assembly">🔧 Sborka</option>
+                    <option value="myagkiy">🛋️ Myagkiy seh</option>
                     <option value="otk">✅ OTK</option>
                     <option value="packaging">📦 Qadoqlash</option>
                 </select>
@@ -901,6 +1050,7 @@
                     <option value="4">Bo'yash sexi</option>
                     <option value="5">OTK sexi</option>
                     <option value="6">Qadoqlash sexi</option>
+                    <option value="7">Myagkiy seh</option>
                 </select>
             </div>
             
@@ -936,6 +1086,7 @@
             mdf: [],
             pvh: [],
             assembly: [],
+            myagkiy: [],
             otk: [],
             packaging: []
         };
@@ -949,7 +1100,8 @@
             '3': 'Yig\'ish sexi',
             '4': 'Bo\'yash sexi',
             '5': 'OTK sexi',
-            '6': 'Qadoqlash sexi'
+            '6': 'Qadoqlash sexi',
+            '7': 'Myagkiy seh'
         };
         
         const materialTypeIds = {
@@ -965,8 +1117,8 @@
         
         // Open modal
         function openOperationModal(materialType) {
-            // Faqat assembly, otk, packaging uchun bitta operatsiya mumkin
-            if (['assembly', 'otk', 'packaging'].includes(materialType)) {
+            // Faqat assembly, myagkiy, otk, packaging uchun bitta operatsiya mumkin
+            if (['assembly', 'myagkiy', 'otk', 'packaging'].includes(materialType)) {
                 if (materialOperations[materialType].length > 0) {
                     showToast('Bu bosqich uchun allaqachon operatsiya qo\'shilgan!', 'error');
                     return;
@@ -1003,6 +1155,11 @@
                 nameInput.value = 'Korpus yig\'ish';
                 workshopSelect.value = '3';
                 feeInput.value = '150000';
+            } else if (materialType === 'myagkiy') {
+                typeSelect.value = 'qoplash';
+                nameInput.value = 'Yumshoq qism tayyorlash';
+                workshopSelect.value = '7';
+                feeInput.value = '200000';
             } else if (materialType === 'otk') {
                 typeSelect.value = 'tekshirish';
                 nameInput.value = 'Sifat tekshirish';
@@ -1056,6 +1213,11 @@
                 // Disable button
                 document.getElementById('btn-assembly').disabled = true;
                 document.getElementById('btn-assembly').textContent = '✓ Qo\'shilgan';
+            } else if (currentMaterialType === 'myagkiy') {
+                renderStageOperations('myagkiy', 'myagkiyOperations');
+                // Disable button
+                document.getElementById('btn-myagkiy').disabled = true;
+                document.getElementById('btn-myagkiy').textContent = '✓ Qo\'shilgan';
             } else if (currentMaterialType === 'otk') {
                 renderStageOperations('otk', 'otkOperations');
                 // Disable button
@@ -1124,11 +1286,13 @@
             if (operations.length === 0) {
                 const labels = {
                     'assembly': 'Yig\'ish operatsiyasini qo\'shing',
+                    'myagkiy': 'Myagkiy seh operatsiyasini qo\'shing',
                     'otk': 'Sifat nazorati operatsiyasini qo\'shing',
                     'packaging': 'Qadoqlash operatsiyasini qo\'shing'
                 };
                 const icons = {
                     'assembly': '🔧',
+                    'myagkiy': '🛋️',
                     'otk': '✅',
                     'packaging': '📦'
                 };
@@ -1172,6 +1336,11 @@
                     // Enable button
                     document.getElementById('btn-assembly').disabled = false;
                     document.getElementById('btn-assembly').textContent = '➕ Qo\'shish';
+                } else if (materialType === 'myagkiy') {
+                    renderStageOperations('myagkiy', 'myagkiyOperations');
+                    // Enable button
+                    document.getElementById('btn-myagkiy').disabled = false;
+                    document.getElementById('btn-myagkiy').textContent = '➕ Qo\'shish';
                 } else if (materialType === 'otk') {
                     renderStageOperations('otk', 'otkOperations');
                     // Enable button
@@ -1272,7 +1441,21 @@
                     operation_fee: op.fee
                 });
             });
-            
+
+            // Myagkiy seh operations
+            materialOperations.myagkiy.forEach(op => {
+                allOperations.push({
+                    sequence_number: globalSequence++,
+                    workshop_id: op.workshopId,
+                    material_type_id: null,
+                    operation_type: op.type,
+                    operation_name: op.name,
+                    description: 'MYAGKIY SEH',
+                    duration_minutes: op.duration,
+                    operation_fee: op.fee
+                });
+            });
+
             // OTK operations
             materialOperations.otk.forEach(op => {
                 allOperations.push({
