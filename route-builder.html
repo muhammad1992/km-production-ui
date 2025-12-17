@@ -490,6 +490,14 @@
         .icon-myagkiy {
             background: linear-gradient(135deg, #e91e63, #c2185b);
         }
+
+        .lak-zone {
+            border-color: #ff9800;
+        }
+
+        .icon-lak {
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+        }
         
         .stage-zone {
             background: #fafbfc;
@@ -761,7 +769,7 @@
         <!-- Header -->
         <div class="header">
             <h1>📦 Material bo'yicha Marshrut Tizimi</h1>
-            <p>Har bir material turi alohida ishlov beriladi → Sborkada birlashadi → OTK → Qadoqlanadi</p>
+            <p>Har bir material turi alohida ishlov beriladi → Sborkada birlashadi → Lak → OTK → Qadoqlanadi</p>
         </div>
 
         <!-- Top Controls -->
@@ -916,6 +924,29 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- LAK Zone -->
+                <div class="arrow-down">⬇️</div>
+
+                <div class="stage-zone lak-zone">
+                    <div class="stage-header">
+                        <div class="stage-icon icon-lak">🎨</div>
+                        <div class="stage-info">
+                            <div class="stage-title">LAK</div>
+                            <div class="stage-subtitle">Lak sexi - sirt qoplamasi</div>
+                        </div>
+                        <button class="add-operation-btn" id="btn-lak" onclick="openOperationModal('lak')">
+                            ➕ Qo'shish
+                        </button>
+                    </div>
+
+                    <div class="stage-operations" id="lakOperations">
+                        <div class="stage-operations-empty">
+                            <div class="stage-operations-empty-icon">🎨</div>
+                            <div>Lak operatsiyasini qo'shing</div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Branch Lines -->
@@ -1014,6 +1045,7 @@
                     <option value="mdf">🪵 MDF</option>
                     <option value="pvh">🎨 PVH</option>
                     <option value="assembly">🔧 Sborka</option>
+                    <option value="lak">🎨 Lak</option>
                     <option value="myagkiy">🛋️ Myagkiy seh</option>
                     <option value="otk">✅ OTK</option>
                     <option value="packaging">📦 Qadoqlash</option>
@@ -1029,6 +1061,7 @@
                     <option value="frezerovka">🌀 Frezerovka</option>
                     <option value="yigish">🔧 Yig'ish</option>
                     <option value="boyash">🎨 Bo'yash</option>
+                    <option value="lak">✨ Lak qoplash</option>
                     <option value="quritish">💨 Quritish</option>
                     <option value="qoplash">🎭 Qoplash</option>
                     <option value="tekshirish">✅ Tekshirish</option>
@@ -1051,6 +1084,7 @@
                     <option value="5">OTK sexi</option>
                     <option value="6">Qadoqlash sexi</option>
                     <option value="7">Myagkiy seh</option>
+                    <option value="8">Lak sexi</option>
                 </select>
             </div>
             
@@ -1086,6 +1120,7 @@
             mdf: [],
             pvh: [],
             assembly: [],
+            lak: [],
             myagkiy: [],
             otk: [],
             packaging: []
@@ -1101,7 +1136,8 @@
             '4': 'Bo\'yash sexi',
             '5': 'OTK sexi',
             '6': 'Qadoqlash sexi',
-            '7': 'Myagkiy seh'
+            '7': 'Myagkiy seh',
+            '8': 'Lak sexi'
         };
         
         const materialTypeIds = {
@@ -1117,8 +1153,8 @@
         
         // Open modal
         function openOperationModal(materialType) {
-            // Faqat assembly, myagkiy, otk, packaging uchun bitta operatsiya mumkin
-            if (['assembly', 'myagkiy', 'otk', 'packaging'].includes(materialType)) {
+            // Faqat assembly, lak, myagkiy, otk, packaging uchun bitta operatsiya mumkin
+            if (['assembly', 'lak', 'myagkiy', 'otk', 'packaging'].includes(materialType)) {
                 if (materialOperations[materialType].length > 0) {
                     showToast('Bu bosqich uchun allaqachon operatsiya qo\'shilgan!', 'error');
                     return;
@@ -1155,6 +1191,11 @@
                 nameInput.value = 'Korpus yig\'ish';
                 workshopSelect.value = '3';
                 feeInput.value = '150000';
+            } else if (materialType === 'lak') {
+                typeSelect.value = 'boyash';
+                nameInput.value = 'Lak qoplash';
+                workshopSelect.value = '8';
+                feeInput.value = '120000';
             } else if (materialType === 'myagkiy') {
                 typeSelect.value = 'qoplash';
                 nameInput.value = 'Yumshoq qism tayyorlash';
@@ -1213,6 +1254,11 @@
                 // Disable button
                 document.getElementById('btn-assembly').disabled = true;
                 document.getElementById('btn-assembly').textContent = '✓ Qo\'shilgan';
+            } else if (currentMaterialType === 'lak') {
+                renderStageOperations('lak', 'lakOperations');
+                // Disable button
+                document.getElementById('btn-lak').disabled = true;
+                document.getElementById('btn-lak').textContent = '✓ Qo\'shilgan';
             } else if (currentMaterialType === 'myagkiy') {
                 renderStageOperations('myagkiy', 'myagkiyOperations');
                 // Disable button
@@ -1270,6 +1316,7 @@
                 'frezerovka': '🌀',
                 'yigish': '🔧',
                 'boyash': '🎨',
+                'lak': '✨',
                 'quritish': '💨',
                 'qoplash': '🎭',
                 'tekshirish': '✅',
@@ -1286,12 +1333,14 @@
             if (operations.length === 0) {
                 const labels = {
                     'assembly': 'Yig\'ish operatsiyasini qo\'shing',
+                    'lak': 'Lak operatsiyasini qo\'shing',
                     'myagkiy': 'Myagkiy seh operatsiyasini qo\'shing',
                     'otk': 'Sifat nazorati operatsiyasini qo\'shing',
                     'packaging': 'Qadoqlash operatsiyasini qo\'shing'
                 };
                 const icons = {
                     'assembly': '🔧',
+                    'lak': '🎨',
                     'myagkiy': '🛋️',
                     'otk': '✅',
                     'packaging': '📦'
@@ -1336,6 +1385,11 @@
                     // Enable button
                     document.getElementById('btn-assembly').disabled = false;
                     document.getElementById('btn-assembly').textContent = '➕ Qo\'shish';
+                } else if (materialType === 'lak') {
+                    renderStageOperations('lak', 'lakOperations');
+                    // Enable button
+                    document.getElementById('btn-lak').disabled = false;
+                    document.getElementById('btn-lak').textContent = '➕ Qo\'shish';
                 } else if (materialType === 'myagkiy') {
                     renderStageOperations('myagkiy', 'myagkiyOperations');
                     // Enable button
@@ -1437,6 +1491,20 @@
                     operation_type: op.type,
                     operation_name: op.name,
                     description: 'SBORKA',
+                    duration_minutes: op.duration,
+                    operation_fee: op.fee
+                });
+            });
+
+            // Lak operations
+            materialOperations.lak.forEach(op => {
+                allOperations.push({
+                    sequence_number: globalSequence++,
+                    workshop_id: op.workshopId,
+                    material_type_id: null,
+                    operation_type: op.type,
+                    operation_name: op.name,
+                    description: 'LAK',
                     duration_minutes: op.duration,
                     operation_fee: op.fee
                 });

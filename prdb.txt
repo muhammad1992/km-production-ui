@@ -1,0 +1,210 @@
+================================================================================
+MEBEL ERP - ISHLAB CHIQARISH MARSHRUT TIZIMI
+DATABASE STRUKTURA
+================================================================================
+
+================================================================================
+ASOSIY JADVALLAR
+================================================================================
+ham
+
+3. operation_types (Operatsiya turlari)
+--------------------------------------------------------------------------------
+| Ustun                    | Turi        | Tavsif                             |
+|--------------------------|-------------|------------------------------------|
+| id                       | PK          |                                    |
+| name                     | VARCHAR     | "Kesish", "Kromka yopish"          |
+| code                     | VARCHAR     | "KESISH", "KROMKA"                 |
+| icon                     | VARCHAR     | Emoji                              |
+| default_duration_minutes | INT         | Standart davomiylik                |
+| default_fee              | DECIMAL     | Standart narx                      |
+| created_at               | TIMESTAMP   |                                    |
+| updated_at               | TIMESTAMP   |                                    |
+| deleted_at               | TIMESTAMP   | Soft delete                        |
+--------------------------------------------------------------------------------
+
+================================================================================
+MARSHRUT JADVALLARI
+================================================================================
+
+6. routes (Marshrutlar)
+--------------------------------------------------------------------------------
+| Ustun                  | Turi        | Tavsif                               |
+|------------------------|-------------|--------------------------------------|
+| id                     | PK          |                                      |
+| furniture_id           | FK          | → furniture (qaysi mebel uchun)     |
+| name                   | VARCHAR     | "Shkaf ishlab chiqarish v1.0"        |
+| version                | VARCHAR     | "1.0", "2.0"                         |
+| total_duration_minutes | INT         | Jami vaqt (hisoblangan)              |
+| total_cost             | DECIMAL     | Jami xarajat (hisoblangan)           |
+| active                 | BOOLEAN     | Faolmi                               |
+| default                | BOOLEAN     | Standart marshrutmi                  |
+| created_by             | FK          | → users (kim yaratdi)                |
+| created_at             | TIMESTAMP   |                                      |
+| updated_at             | TIMESTAMP   |                                      |
+| deleted_at             | TIMESTAMP   | Soft delete                          |
+--------------------------------------------------------------------------------
+
+7. route_stages (Marshrut bosqichlari)
+--------------------------------------------------------------------------------
+| Ustun           | Turi        | Tavsif                                      |
+|-----------------|-------------|---------------------------------------------|
+| id              | PK          |                                             |
+| route_id        | FK          | → routes                                    |
+| code            | VARCHAR     | "MATERIAL_PROCESSING", "SBORKA", "OTK"...   |
+| name            | VARCHAR     | "Material ishlov berish", "Sborka"          |
+| stage_order     | INT         | Bosqich tartibi: 1, 2, 3...                 |
+| merge_point     | BOOLEAN     | Birlashish nuqtasi (SBORKA = true)          |
+| parent_stage_id | FK          | → route_stages (qaysi bosqichdan tarmoq)    |
+| optional        | BOOLEAN     | Ixtiyoriymi                                 |
+| created_at      | TIMESTAMP   |                                             |
+| updated_at      | TIMESTAMP   |                                             |
+--------------------------------------------------------------------------------
+
+MISOL (route_stages):
+| id | code                | name              | stage_order | merge_point | parent_stage_id |
+|----|---------------------|-------------------|-------------|-----------------|-----------------|
+| 1  | MATERIAL_PROCESSING | Material ishlov   | 1           | false           | NULL            |
+| 2  | SBORKA              | Sborka            | 2           | true            | NULL            |
+| 3  | LAK                 | Lak sexi          | 3           | false           | 2               |
+| 4  | MYAGKIY             | Myagkiy seh       | 4           | false           | 3               |
+| 5  | OTK                 | Sifat nazorati    | 4           | false           | 3               |
+| 6  | PACKAGING           | Qadoqlash         | 5           | false           | 5               |
+
+
+8. route_operations (Marshrut operatsiyalari)
+--------------------------------------------------------------------------------
+| Ustun             | Turi        | Tavsif                                     |
+|-------------------|-------------|--------------------------------------------|
+| id                | PK          |                                            |
+| route_id          | FK          | → routes                                   |
+| stage_id          | FK          | → route_stages                             |
+| tip_id            | FK          | → tip (NULL = umumiy operatsiya)           |
+| operation_type_id | FK          | → operation_types                          |
+| operation_name    | VARCHAR     | "DSP panel kesish", "Korpus yig'ish"       |
+| workshop_id       | FK          | → workshops                                |
+| sequence_number   | INT         | Material ichida tartib: 1, 2, 3            |
+| duration_minutes  | INT         | Davomiyligi (daqiqa)                       |
+| fee_percent       | DECIMAL     | Foiz (ishchi haqi %)                       |
+| description       | TEXT        | Qo'shimcha izoh                            |
+| required          | BOOLEAN     | Majburiymi                                 |
+| parallel          | BOOLEAN     | Parallel bajarilishi mumkinmi              |
+| created_at        | TIMESTAMP   |                                            |
+| updated_at        | TIMESTAMP   |                                            |
+--------------------------------------------------------------------------------
+
+MISOL (route_operations):
+| id | stage_id | tip_id           | operation_name     | workshop_id  | sequence | duration | fee_percent |
+|----|----------|------------------|--------------------|--------------|----------|----------|-------------|
+| 1  | 1        | 1 (DSP)          | DSP panel kesish   | 1 (Kesish)   | 1        | 60       | 5.0         |
+| 2  | 1        | 1 (DSP)          | DSP kromka yopish  | 2 (Kromka)   | 2        | 45       | 4.0         |
+| 3  | 1        | 2 (MDF)          | MDF fasad kesish   | 1 (Kesish)   | 1        | 60       | 6.0         |
+| 4  | 1        | 2 (MDF)          | MDF bo'yash        | 4 (Bo'yash)  | 2        | 90       | 8.0         |
+| 5  | 2        | NULL             | Korpus yig'ish     | 3 (Yig'ish)  | 1        | 120      | 15.0        |
+| 6  | 3        | NULL             | Yumshoq qism       | 7 (Myagkiy)  | 1        | 180      | 20.0        |
+| 7  | 4        | NULL             | Sifat tekshirish   | 5 (OTK)      | 1        | 30       | 3.0         |
+| 8  | 5        | NULL             | Qadoqlash          | 6 (Qadoqlash)| 1        | 20       | 2.5         |
+
+ESLATMA:
+- tip_id = NULL → umumiy operatsiya (Sborka, OTK, Qadoqlash, Myagkiy)
+- tip_id = 1,2,3 → material operatsiyasi (DSP, MDF, PVH)
+
+
+9. operation_dependencies (Operatsiyalar bog'liqligi)
+--------------------------------------------------------------------------------
+| Ustun                  | Turi        | Tavsif                               |
+|------------------------|-------------|--------------------------------------|
+| id                     | PK          |                                      |
+| route_id               | FK          | → routes                             |
+| operation_id           | FK          | → route_operations                   |
+| depends_on_operation_id| FK          | → route_operations                   |
+| dependency_type        | VARCHAR     | "FINISH_TO_START", "START_TO_START"  |
+| created_at             | TIMESTAMP   |                                      |
+| updated_at             | TIMESTAMP   |                                      |
+--------------------------------------------------------------------------------
+
+MISOL (operation_dependencies):
+| operation_id | depends_on_operation_id | dependency_type  | Ma'nosi                              |
+|--------------|-------------------------|------------------|--------------------------------------|
+| 5 (Sborka)   | 2 (DSP kromka)          | FINISH_TO_START  | DSP tugagandan keyin Sborka          |
+| 5 (Sborka)   | 4 (MDF bo'yash)         | FINISH_TO_START  | MDF tugagandan keyin Sborka          |
+| 6 (OTK)      | 5 (Sborka)              | FINISH_TO_START  | Sborka keyin OTK                     |
+| 7 (Qadoqlash)| 6 (OTK)                 | FINISH_TO_START  | OTK keyin Qadoqlash                  |
+| 8 (Myagkiy)  | 5 (Sborka)              | FINISH_TO_START  | Sborka keyin Myagkiy seh             |
+
+
+================================================================================
+ISHLAB CHIQARISH JADVALLARI
+================================================================================
+
+10. production_orders (Ishlab chiqarish buyurtmalari)
+--------------------------------------------------------------------------------
+| Ustun              | Turi        | Tavsif                                   |
+|--------------------|-------------|------------------------------------------|
+| id                 | PK          |                                          |
+| demand_furniture_id| FK          | → demand_furniture                       |
+| route_id           | FK          | → routes                                 |
+| quantity           | INT         | Miqdor                                   |
+| status             | VARCHAR     | "PENDING", "IN_PROGRESS", "COMPLETED"    |
+| priority           | INT         | Muhimlik darajasi                        |
+| planned_start_date | DATE        | Rejalashtirilgan boshlanish              |
+| planned_end_date   | DATE        | Rejalashtirilgan tugash                  |
+| actual_start_date  | TIMESTAMP   | Haqiqiy boshlanish                       |
+| actual_end_date    | TIMESTAMP   | Haqiqiy tugash                           |
+| created_at         | TIMESTAMP   |                                          |
+| updated_at         | TIMESTAMP   |                                          |
+| deleted_at         | TIMESTAMP   | Soft delete                              |
+--------------------------------------------------------------------------------
+
+11. production_order_operations (Buyurtma operatsiyalari holati)
+--------------------------------------------------------------------------------
+| Ustun                  | Turi        | Tavsif                               |
+|------------------------|-------------|--------------------------------------|
+| id                     | PK          |                                      |
+| production_order_id    | FK          | → production_orders                  |
+| route_operation_id     | FK          | → route_operations                   |
+| status                 | VARCHAR     | "PENDING", "IN_PROGRESS", "COMPLETED"|
+| started_at             | TIMESTAMP   | Boshlangan vaqt                      |
+| completed_at           | TIMESTAMP   | Tugagan vaqt                         |
+| actual_duration_minutes| INT         | Haqiqiy davomiylik                   |
+| fee_percent            | DECIMAL     | Foiz (ishchi haqi %)                 |
+| quality_check_status   | VARCHAR     | "PASSED", "FAILED", "REWORK"         |
+| notes                  | TEXT        | Izohlar                              |
+| created_at             | TIMESTAMP   |                                      |
+| updated_at             | TIMESTAMP   |                                      |
+--------------------------------------------------------------------------------
+
+
+================================================================================
+MUNOSABATLAR SXEMASI
+================================================================================
+
+furnitures
+    └── routes
+            ├── route_stages (parent_stage_id → o'ziga - tarmoqlanish)
+            ├── route_operations
+            │       ├── tip (nullable)
+            │       ├── operation_types
+            │       ├── workshops
+            │       └── route_stages
+            └── operation_dependencies
+                    ├── route_operations (operation_id)
+                    └── route_operations (depends_on_operation_id)
+
+production_orders
+    ├── furniture
+    ├── routes
+    └── production_order_operations → route_operations
+
+
+================================================================================
+OQIM SXEMASI
+================================================================================
+
+    DSP ──→ [Kesish] ──→ [Kromka] ──┐
+                                    │
+    MDF ──→ [Kesish] ──→ [Bo'yash] ─┼──→ [SBORKA] ──→ [LAK] ──┬──→ [OTK] ──→ [QADOQLASH]
+                                    │                         │
+    PVH ──→ [Qoplash] ──────────────┘                         └──→ [MYAGKIY SEH]
+
+================================================================================
