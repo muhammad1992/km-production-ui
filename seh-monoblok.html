@@ -134,6 +134,52 @@
             font-size: 14px;
         }
 
+        /* Kanban Board */
+        .kanban-board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        .kanban-column {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 15px;
+            min-height: 500px;
+        }
+        .kanban-column-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-weight: 600;
+            font-size: 15px;
+        }
+        .kanban-column.new .kanban-column-header {
+            background: rgba(52, 152, 219, 0.2);
+            color: #3498db;
+        }
+        .kanban-column.progress .kanban-column-header {
+            background: rgba(243, 156, 18, 0.2);
+            color: #f39c12;
+        }
+        .kanban-column.done .kanban-column-header {
+            background: rgba(39, 174, 96, 0.2);
+            color: #27ae60;
+        }
+        .kanban-column-count {
+            background: rgba(255,255,255,0.2);
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 13px;
+        }
+        .kanban-tasks {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
         /* Tasks Grid */
         .tasks-grid {
             display: grid;
@@ -575,6 +621,15 @@
         }
 
         /* Responsive */
+        @media (max-width: 1200px) {
+            .kanban-board {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            .kanban-column {
+                min-height: auto;
+            }
+        }
         @media (max-width: 768px) {
             .stats-row {
                 grid-template-columns: repeat(2, 1fr);
@@ -636,140 +691,207 @@
             </div>
         </div>
 
-        <!-- Tasks -->
+        <!-- Kanban Board -->
         <div class="section-title">
             Bugungi vazifalar <span>8 ta</span>
         </div>
 
-        <div class="tasks-grid">
-            <!-- Task 1 - In Progress -->
-            <div class="task-card in-progress" onclick="openModal('task1')">
-                <div class="task-body">
-                    <div class="task-top-row">
-                        <span class="task-code">#023AD</span>
-                        <span class="task-status in-progress">Jarayonda</span>
-                    </div>
-                    <div class="task-product">Oshxona yuqori shkaf</div>
-                    <div class="task-meta">
-                        <span>3 dona</span>
-                    </div>
-                    <div class="task-meta">
-                        Boshlangan: 10:30
-                    </div>
-                    <div class="task-progress">
-                        <div class="progress-bar-bg">
-                            <div class="progress-bar-fill" style="width: 65%;"></div>
+        <div class="kanban-board">
+            <!-- Column 1: Vazifalar (Yangi) -->
+            <div class="kanban-column new">
+                <div class="kanban-column-header">
+                    <span>Vazifalar</span>
+                    <span class="kanban-column-count">3</span>
+                </div>
+                <div class="kanban-tasks">
+                    <!-- Task 2 - New -->
+                    <div class="task-card" onclick="openModal('task2')">
+                        <div class="task-body">
+                            <div class="task-top-row">
+                                <span class="task-code">#024BE</span>
+                                <span class="task-status new">Yangi</span>
+                            </div>
+                            <div class="task-product">Oshxona pastki shkaf</div>
+                            <div class="task-meta">
+                                <span>4 dona</span>
+                            </div>
+                            <div class="task-meta">
+                                Taxminiy vaqt: 2.5 soat
+                            </div>
+                            <div class="task-actions">
+                                <button class="task-btn primary" onclick="event.stopPropagation(); openModal('task2')">Boshlash</button>
+                            </div>
                         </div>
                     </div>
-                    <div class="task-actions">
-                        <button class="task-btn outline" onclick="event.stopPropagation()">Pauza</button>
-                        <button class="task-btn primary" onclick="event.stopPropagation(); openModal('task1')">Tugatish</button>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Task 2 - New -->
-            <div class="task-card" onclick="openModal('task2')">
-                <div class="task-body">
-                    <div class="task-top-row">
-                        <span class="task-code">#024BE</span>
-                        <span class="task-status new">Yangi</span>
-                    </div>
-                    <div class="task-product">Oshxona pastki shkaf</div>
-                    <div class="task-meta">
-                        <span>4 dona</span>
-                    </div>
-                    <div class="task-meta">
-                        Taxminiy vaqt: 2.5 soat
-                    </div>
-                    <div class="task-actions">
-                        <button class="task-btn primary" onclick="event.stopPropagation(); openModal('task2')">Boshlash</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Task 3 - New -->
-            <div class="task-card" onclick="openModal('task3')">
-                <div class="task-body">
-                    <div class="task-top-row">
-                        <span class="task-code">#025CF</span>
-                        <span class="task-status new">Yangi</span>
-                    </div>
-                    <div class="task-product">Shkaf-kupe yon panel</div>
-                    <div class="task-meta">
-                        <span>2 dona</span>
-                    </div>
-                    <div class="task-meta">
-                        Taxminiy vaqt: 1 soat
-                    </div>
-                    <div class="task-actions">
-                        <button class="task-btn primary" onclick="event.stopPropagation(); openModal('task3')">Boshlash</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Task 4 - In Progress -->
-            <div class="task-card in-progress" onclick="openModal('task4')">
-                <div class="task-body">
-                    <div class="task-top-row">
-                        <span class="task-code">#026DG</span>
-                        <span class="task-status in-progress">Jarayonda</span>
-                    </div>
-                    <div class="task-product">Yotoq bosh paneli</div>
-                    <div class="task-meta">
-                        <span>1 dona</span>
-                    </div>
-                    <div class="task-meta">
-                        Boshlangan: 09:15
-                    </div>
-                    <div class="task-progress">
-                        <div class="progress-bar-bg">
-                            <div class="progress-bar-fill" style="width: 40%;"></div>
+                    <!-- Task 3 - New -->
+                    <div class="task-card" onclick="openModal('task3')">
+                        <div class="task-body">
+                            <div class="task-top-row">
+                                <span class="task-code">#025CF</span>
+                                <span class="task-status new">Yangi</span>
+                            </div>
+                            <div class="task-product">Shkaf-kupe yon panel</div>
+                            <div class="task-meta">
+                                <span>2 dona</span>
+                            </div>
+                            <div class="task-meta">
+                                Taxminiy vaqt: 1 soat
+                            </div>
+                            <div class="task-actions">
+                                <button class="task-btn primary" onclick="event.stopPropagation(); openModal('task3')">Boshlash</button>
+                            </div>
                         </div>
                     </div>
-                    <div class="task-actions">
-                        <button class="task-btn outline" onclick="event.stopPropagation()">Pauza</button>
-                        <button class="task-btn primary" onclick="event.stopPropagation(); openModal('task4')">Tugatish</button>
+
+                    <!-- Task 5 - New -->
+                    <div class="task-card" onclick="openModal('task5')">
+                        <div class="task-body">
+                            <div class="task-top-row">
+                                <span class="task-code">#027EH</span>
+                                <span class="task-status new">Yangi</span>
+                            </div>
+                            <div class="task-product">Ofis stoli ustki qism</div>
+                            <div class="task-meta">
+                                <span>10 dona</span>
+                            </div>
+                            <div class="task-meta">
+                                Taxminiy vaqt: 4 soat
+                            </div>
+                            <div class="task-actions">
+                                <button class="task-btn primary" onclick="event.stopPropagation(); openModal('task5')">Boshlash</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Task 5 - New -->
-            <div class="task-card" onclick="openModal('task5')">
-                <div class="task-body">
-                    <div class="task-top-row">
-                        <span class="task-code">#027EH</span>
-                        <span class="task-status new">Yangi</span>
+            <!-- Column 2: Jarayonda -->
+            <div class="kanban-column progress">
+                <div class="kanban-column-header">
+                    <span>Jarayonda</span>
+                    <span class="kanban-column-count">2</span>
+                </div>
+                <div class="kanban-tasks">
+                    <!-- Task 1 - In Progress -->
+                    <div class="task-card in-progress" onclick="openModal('task1')">
+                        <div class="task-body">
+                            <div class="task-top-row">
+                                <span class="task-code">#023AD</span>
+                                <span class="task-status in-progress">Jarayonda</span>
+                            </div>
+                            <div class="task-product">Oshxona yuqori shkaf</div>
+                            <div class="task-meta">
+                                <span>3 dona</span>
+                            </div>
+                            <div class="task-meta">
+                                Boshlangan: 10:30
+                            </div>
+                            <div class="task-progress">
+                                <div class="progress-bar-bg">
+                                    <div class="progress-bar-fill" style="width: 65%;"></div>
+                                </div>
+                            </div>
+                            <div class="task-actions">
+                                <button class="task-btn outline" onclick="event.stopPropagation()">Pauza</button>
+                                <button class="task-btn primary" onclick="event.stopPropagation(); openModal('task1')">Tugatish</button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="task-product">Ofis stoli ustki qism</div>
-                    <div class="task-meta">
-                        <span>10 dona</span>
-                    </div>
-                    <div class="task-meta">
-                        Taxminiy vaqt: 4 soat
-                    </div>
-                    <div class="task-actions">
-                        <button class="task-btn primary" onclick="event.stopPropagation(); openModal('task5')">Boshlash</button>
+
+                    <!-- Task 4 - In Progress -->
+                    <div class="task-card in-progress" onclick="openModal('task4')">
+                        <div class="task-body">
+                            <div class="task-top-row">
+                                <span class="task-code">#026DG</span>
+                                <span class="task-status in-progress">Jarayonda</span>
+                            </div>
+                            <div class="task-product">Yotoq bosh paneli</div>
+                            <div class="task-meta">
+                                <span>1 dona</span>
+                            </div>
+                            <div class="task-meta">
+                                Boshlangan: 09:15
+                            </div>
+                            <div class="task-progress">
+                                <div class="progress-bar-bg">
+                                    <div class="progress-bar-fill" style="width: 40%;"></div>
+                                </div>
+                            </div>
+                            <div class="task-actions">
+                                <button class="task-btn outline" onclick="event.stopPropagation()">Pauza</button>
+                                <button class="task-btn primary" onclick="event.stopPropagation(); openModal('task4')">Tugatish</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Task 6 - Completed -->
-            <div class="task-card completed" onclick="openModal('task6')">
-                <div class="task-body">
-                    <div class="task-top-row">
-                        <span class="task-code">#022AC</span>
-                        <span class="task-status completed">Tugallangan</span>
+            <!-- Column 3: Bajarildi -->
+            <div class="kanban-column done">
+                <div class="kanban-column-header">
+                    <span>Bajarildi</span>
+                    <span class="kanban-column-count">3</span>
+                </div>
+                <div class="kanban-tasks">
+                    <!-- Task 6 - Completed -->
+                    <div class="task-card completed" onclick="openModal('task6')">
+                        <div class="task-body">
+                            <div class="task-top-row">
+                                <span class="task-code">#022AC</span>
+                                <span class="task-status completed">Tugallangan</span>
+                            </div>
+                            <div class="task-product">Oshxona yuqori shkaf</div>
+                            <div class="task-meta">
+                                <span>2 dona</span>
+                            </div>
+                            <div class="task-meta">
+                                Tugallangan: 09:45
+                            </div>
+                            <div class="task-actions">
+                                <button class="task-btn secondary" onclick="event.stopPropagation(); openModal('task6')">Ko'rish</button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="task-product">Oshxona yuqori shkaf</div>
-                    <div class="task-meta">
-                        <span>2 dona</span>
+
+                    <!-- Task 7 - Completed -->
+                    <div class="task-card completed" onclick="openModal('task7')">
+                        <div class="task-body">
+                            <div class="task-top-row">
+                                <span class="task-code">#021AB</span>
+                                <span class="task-status completed">Tugallangan</span>
+                            </div>
+                            <div class="task-product">Yozuv stoli paneli</div>
+                            <div class="task-meta">
+                                <span>5 dona</span>
+                            </div>
+                            <div class="task-meta">
+                                Tugallangan: 08:30
+                            </div>
+                            <div class="task-actions">
+                                <button class="task-btn secondary" onclick="event.stopPropagation(); openModal('task7')">Ko'rish</button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="task-meta">
-                        Tugallangan: 09:45
-                    </div>
-                    <div class="task-actions">
-                        <button class="task-btn secondary" onclick="event.stopPropagation(); openModal('task6')">Ko'rish</button>
+
+                    <!-- Task 8 - Completed -->
+                    <div class="task-card completed" onclick="openModal('task8')">
+                        <div class="task-body">
+                            <div class="task-top-row">
+                                <span class="task-code">#020AA</span>
+                                <span class="task-status completed">Tugallangan</span>
+                            </div>
+                            <div class="task-product">Kitob javoni</div>
+                            <div class="task-meta">
+                                <span>3 dona</span>
+                            </div>
+                            <div class="task-meta">
+                                Tugallangan: 07:45
+                            </div>
+                            <div class="task-actions">
+                                <button class="task-btn secondary" onclick="event.stopPropagation(); openModal('task8')">Ko'rish</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
